@@ -5801,7 +5801,7 @@
         if (byo_state === "running") return;
         byoMode = m;
         document.querySelectorAll(".byo-mode-btn").forEach(b => {
-            b.classList.toggle("byo-active", b.dataset.byoMode === m);
+            b.classList.toggle("byo-active", b.dataset.mode === m);
         });
         const watch = document.getElementById("byo-watch");
         watch.classList.toggle("byo-hidden-timer", m === "blind");
@@ -5834,6 +5834,9 @@
         const watch = document.getElementById("byo-watch");
         watch.classList.remove("byo-idle");
         watch.classList.add("byo-running");
+        // 🙈 数字なしモードなら、計測中は再び数字を隠す
+        watch.classList.toggle("byo-hidden-timer", byoMode === "blind");
+        document.getElementById("byo-time").innerText = "0.0000";
         byo_sndStart();
         byo_hideToast();
         byo_loop();
@@ -5856,12 +5859,14 @@
         if (byo_rafId) cancelAnimationFrame(byo_rafId);
         const elapsed = (performance.now() - byo_startTime) / 1000;
         const shown = Math.min(elapsed, 20);
+        const watch = document.getElementById("byo-watch");
+        watch.classList.remove("byo-hidden-timer");   // 🕑 止めた瞬間は数字なしモードでも結果を見せる
         document.getElementById("byo-time").innerText = shown.toFixed(4);
         const btn = document.getElementById("byo-main-btn");
         btn.innerText = "もう一度";
         btn.classList.remove("byo-stop");
-        document.getElementById("byo-watch").classList.remove("byo-running");
-        document.getElementById("byo-watch").classList.add("byo-idle");
+        watch.classList.remove("byo-running");
+        watch.classList.add("byo-idle");
         byo_sndStop();
         byo_judge(shown);
     }
