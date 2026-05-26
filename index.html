@@ -1742,6 +1742,10 @@
     .pwr-hall-total .pwr-nm { flex: 1; }
     .pwr-hall-total .pwr-sc { font-variant-numeric: tabular-nums; color: #e0648a; }
     .pwr-hall-total .pwr-sc small { font-size: 11px; color: #b89; font-weight: normal; }
+    #pwr-hall-photo { margin-top: 12px; text-align: center; }
+    #pwr-hall-photo img { width: 140px; height: 140px; object-fit: cover; border-radius: 14px;
+        border: 3px solid #ffd194; box-shadow: 0 4px 12px rgba(255,170,120,0.4); }
+    #pwr-hall-photo .cap { font-size: 12px; color: #d88; font-weight: bold; margin-top: 6px; }
 
     canvas { display: none; }
 
@@ -6912,6 +6916,20 @@
         return pwrCalc({ r, g, b, brightness, saturation, colorfulness });
     }
 
+    // 保存用の小さなサムネイル（正方形120px・低画質JPEG）を作る
+    function pwrMakeThumb(img) {
+        try {
+            const c = document.createElement("canvas");
+            const S = 120; c.width = S; c.height = S;
+            const cx = c.getContext("2d");
+            // 中央を正方形に切り出して描く
+            const iw = img.naturalWidth || img.width, ih = img.naturalHeight || img.height;
+            const side = Math.min(iw, ih);
+            cx.drawImage(img, (iw-side)/2, (ih-side)/2, side, side, 0, 0, S, S);
+            return c.toDataURL("image/jpeg", 0.6);
+        } catch (e) { return null; }
+    }
+
     function pwrCalc(feat) {
         const { r, g, b, brightness, saturation, colorfulness } = feat;
         const R=r/255, G=g/255, B=b/255;
@@ -7079,20 +7097,28 @@
             bestEl.innerText = "自己ベスト " + prevBest + " / 400";
         }
         document.getElementById("pwr-result").classList.add("show");
-        pwrUpdateHall(stats);
+        const thumb = pwrMakeThumb(img);
+        pwrUpdateHall(stats, thumb);
     };
 
     // ===== 殿堂（力ごとの最高点）=====
     const KEY = "pwr_hall";
     function loadHall() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e){ return {}; } }
     function saveHall(h) { try { localStorage.setItem(KEY, JSON.stringify(h)); } catch(e){} }
-    function pwrUpdateHall(stats) {
+    function pwrUpdateHall(stats, thumb) {
         const h = loadHall();
         [["kindness","💗 やさしさ"],["lucky","🍀 ラッキー"],["positive","☀️ 前向き"],["healing","🌿 癒やし"]].forEach(([k]) => {
             if (!h[k] || stats[k] > h[k]) h[k] = stats[k];
         });
-        // 総合点（400点満点）の最高記録
-        if (!h.total || stats.total > h.total) h.total = stats.total;
+        // 総合点（400点満点）の最高記録。更新時はその写真サムネイルも保存
+        if (!h.total || stats.total > h.total) {
+            h.total = stats.total;
+            if (thumb) {
+                h.thumb = thumb;
+                try { localStorage.setItem(KEY, JSON.stringify(h)); }
+                catch (e) { delete h.thumb; }   // 容量オーバー時は写真をあきらめ点数だけ残す
+            }
+        }
         saveHall(h); pwrRenderHall();
     }
     function pwrRenderHall() {
@@ -7107,6 +7133,11 @@
         // 総合点（400点満点）の最高記録を目立たせて追加
         html += '<div class="pwr-hall-total"><span class="pwr-ic">🏆</span><span class="pwr-nm">総合スコア</span>' +
                 '<span class="pwr-sc">' + (h.total!=null?h.total:"―") + ' <small>/ 400</small></span></div>';
+        // 総合1位の写真を貼り付け（参考用）
+        if (h.thumb) {
+            html += '<div id="pwr-hall-photo"><img src="' + h.thumb + '" alt="ベスト写真">' +
+                    '<div class="cap">👑 いまの1位の写真</div></div>';
+        }
         box.innerHTML = html;
     }
     pwrRenderHall();
