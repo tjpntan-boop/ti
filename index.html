@@ -947,6 +947,18 @@
         }
         #play-bcb-btn:hover { background: #112016; border-color: #39ff5e; }
         #play-bcb-btn .hassaku-sub { font-size: 10px; font-weight: normal; letter-spacing: 0; opacity: 0.8; color: #5aa86a; }
+        #play-pwr-btn {
+            margin-top: 10px;
+            background: #2a1a22; color: #ffc0d4;
+            border: 1px solid #7a3a52; border-radius: 8px; padding: 9px 22px;
+            font-size: 15px; font-weight: bold; cursor: pointer; z-index: 1010; letter-spacing: 1px;
+            display: flex; flex-direction: column; align-items: center; gap: 2px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+            transition: background 0.15s, border-color 0.15s;
+            font-family: inherit;
+        }
+        #play-pwr-btn:hover { background: #3a222e; border-color: #ff7a96; }
+        #play-pwr-btn .hassaku-sub { font-size: 10px; font-weight: normal; letter-spacing: 0; opacity: 0.8; color: #c98aa8; }
 
         /* タイトルに常設する「ブラウザで開く手順」案内ボックス */
         #open-guide {
@@ -1582,6 +1594,157 @@
     #bcb-clear { display: block; margin: 14px auto 0; font-family: inherit; font-size: 10px;
         color: #6a8a70; background: none; border: none; text-decoration: underline; cursor: pointer; }
 
+
+/* ===== 🌸 フォト・パワー診断（組み込みCSS）===== */
+
+    /* 🌸 フォト・パワー診断 オーバーレイ */
+    #pwr-game-wrap {
+        display: none; position: fixed; inset: 0; z-index: 5000;
+        overflow-y: auto; overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        background: linear-gradient(160deg, #fff4ec, #ffe9f2 60%, #eaf3ff);
+    }
+    #pwr-back-btn {
+        display: block; margin: 10px auto 36px;
+        font-family: -apple-system, "Hiragino Maru Gothic ProN", sans-serif;
+        font-size: 14px; font-weight: bold;
+        background: #fff; color: #d77;
+        border: 2px solid #f0c8d4; border-radius: 12px;
+        padding: 11px 30px; cursor: pointer;
+        position: relative; z-index: 6;
+        box-shadow: 0 3px 8px rgba(255,170,190,0.25);
+    }
+    #pwr-back-btn:active { background: #ffeef3; }
+
+    #pwr-wrap {
+        --bg1: #fff4ec;
+        --bg2: #ffe9f2;
+        --bg3: #eaf3ff;
+        --ink: #5a4a48;
+        --soft: #fffaf6;
+        --kind: #ff8fa3;
+        --lucky: #ffc94d;
+        --positive: #ff9a52;
+        --healing: #6fc7a8;
+        --line: #f0d8d0;
+        font-family: -apple-system, "Hiragino Maru Gothic ProN", "Hiragino Sans", sans-serif;
+    }
+    #pwr-game-wrap, #pwr-game-wrap * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        #pwr-wrap {
+        position: relative; min-height: 100%; overflow-x: hidden;
+        background:
+            radial-gradient(circle at 15% 10%, var(--bg2), transparent 45%),
+            radial-gradient(circle at 85% 20%, var(--bg3), transparent 45%),
+            linear-gradient(160deg, var(--bg1), var(--bg2) 60%, var(--bg3));
+        color: var(--ink);
+        padding: 18px 16px 50px;
+        user-select: none; -webkit-user-select: none;
+    }
+    /* ふわふわ浮かぶ光の粒 */
+    .pwr-dot { position: fixed; border-radius: 50%; pointer-events: none !important; opacity: 0.5;
+        background: radial-gradient(circle at 35% 30%, #fff, rgba(255,220,230,0.4)); animation: pwr-float linear infinite; z-index: 0; }
+    @keyframes pwr-float { 0% { transform: translateY(20px); opacity: 0; } 20% { opacity: 0.6; } 100% { transform: translateY(-110vh); opacity: 0; } }
+
+    #pwr-head { text-align: center; position: relative; z-index: 2; margin-bottom: 14px; }
+    #pwr-title { font-size: 25px; font-weight: bold; margin: 0; color: #ff7a96;
+        text-shadow: 0 2px 6px rgba(255,150,170,0.3); letter-spacing: 1px; }
+    #pwr-sub { font-size: 12px; color: #b89; margin-top: 4px; letter-spacing: 1px; }
+
+    /* 写真エリア */
+    #pwr-photo-zone {
+        position: relative; z-index: 2; max-width: 380px; margin: 0 auto;
+        background: var(--soft); border-radius: 20px; padding: 16px;
+        box-shadow: 0 8px 26px rgba(255,170,190,0.25); border: 1px solid var(--line);
+    }
+    #pwr-preview {
+        width: 100%; aspect-ratio: 1/1; border-radius: 14px; overflow: hidden;
+        background: linear-gradient(135deg, #ffe9f2, #eaf3ff);
+        display: flex; align-items: center; justify-content: center;
+        border: 2px dashed #f0c8d4; position: relative;
+    }
+    #pwr-preview img { width: 100%; height: 100%; object-fit: cover; }
+    #pwr-preview-hint { color: #c9a; font-size: 14px; text-align: center; padding: 20px; line-height: 1.6; }
+    #pwr-preview-emoji { font-size: 44px; display: block; margin-bottom: 8px; }
+    #pwr-video { width: 100%; height: 100%; object-fit: cover; display: none; }
+
+    .pwr-btn-row { display: flex; gap: 10px; margin-top: 14px; }
+    .pwr-btn {
+        flex: 1; font-family: inherit; font-size: 15px; font-weight: bold;
+        padding: 13px; border-radius: 12px; cursor: pointer; border: none;
+        transition: transform 0.05s, filter 0.1s;
+    }
+    .pwr-btn:active { transform: translateY(2px); }
+    #pwr-album-btn { background: linear-gradient(#ffd0dd, #ff9fb5); color: #7a3a48; }
+    #pwr-camera-btn { background: linear-gradient(#cfe9ff, #8fc4ff); color: #2a4a6a; }
+    #pwr-shoot-btn { display: none; width: 100%; margin-top: 12px; font-family: inherit;
+        font-size: 17px; font-weight: bold; padding: 14px; border-radius: 12px; border: none; cursor: pointer;
+        background: linear-gradient(#b4f0d0, #5fc99a); color: #14503a; }
+    #pwr-cam-status { font-size: 11px; color: #b89; text-align: center; margin-top: 8px; min-height: 14px; }
+
+    #pwr-diagnose-btn {
+        width: 100%; margin-top: 14px; font-family: inherit;
+        font-size: 19px; font-weight: bold; letter-spacing: 2px;
+        padding: 16px; border-radius: 14px; cursor: pointer; border: none;
+        background: linear-gradient(135deg, #ffb3c8, #ffd194); color: #6a3a48;
+        box-shadow: 0 5px 0 #e89aae; display: none;
+        transition: transform 0.05s, box-shadow 0.05s;
+    }
+    #pwr-diagnose-btn.show { display: block; }
+    #pwr-diagnose-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #e89aae; }
+
+    /* 結果 */
+    #pwr-result { position: relative; z-index: 2; max-width: 380px; margin: 16px auto 0; display: none; }
+    #pwr-result.show { display: block; animation: pwr-in 0.5s ease-out; }
+    @keyframes pwr-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    #pwr-card {
+        background: var(--soft); border-radius: 20px; padding: 20px 18px;
+        box-shadow: 0 10px 30px rgba(255,170,190,0.3); border: 1px solid var(--line);
+    }
+    #pwr-type-label { text-align: center; font-size: 13px; color: #b89; letter-spacing: 2px; }
+    #pwr-type { text-align: center; font-size: 30px; font-weight: bold; margin: 4px 0 2px;
+        text-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    #pwr-type-emoji { text-align: center; font-size: 48px; margin: 4px 0; }
+    #pwr-type-comment { text-align: center; font-size: 13px; color: #8a6a68; line-height: 1.6;
+        background: rgba(255,235,240,0.7); border-radius: 12px; padding: 10px 12px; margin: 10px 0 16px; }
+
+    .pwr-stat { margin-bottom: 12px; }
+    .pwr-stat-top { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; font-weight: bold; }
+    .pwr-stat-val { font-variant-numeric: tabular-nums; }
+    .pwr-bar { height: 14px; background: #f3ecec; border-radius: 8px; overflow: hidden; }
+    .pwr-bar-fill { height: 100%; width: 0; border-radius: 8px; transition: width 0.9s cubic-bezier(.2,.8,.2,1); }
+    .pwr-k .pwr-bar-fill { background: linear-gradient(90deg, #ffb3c2, var(--kind)); }
+    .pwr-k .pwr-stat-top { color: var(--kind); }
+    .pwr-l .pwr-bar-fill { background: linear-gradient(90deg, #ffe39a, var(--lucky)); }
+    .pwr-l .pwr-stat-top { color: #e0a420; }
+    .pwr-p .pwr-bar-fill { background: linear-gradient(90deg, #ffc49a, var(--positive)); }
+    .pwr-p .pwr-stat-top { color: var(--positive); }
+    .pwr-h .pwr-bar-fill { background: linear-gradient(90deg, #a8e0cc, var(--healing)); }
+    .pwr-h .pwr-stat-top { color: #3a9a78; }
+
+    /* 殿堂（思い出に残った写真の最高記録）*/
+    #pwr-hall { position: relative; z-index: 2; max-width: 380px; margin: 18px auto 0;
+        background: var(--soft); border-radius: 16px; padding: 14px 16px; border: 1px solid var(--line); }
+    #pwr-hall-title { text-align: center; font-size: 13px; color: #b89; letter-spacing: 1px;
+        border-bottom: 1px dashed var(--line); padding-bottom: 8px; margin-bottom: 8px; }
+    .pwr-hall-row { display: flex; align-items: center; gap: 8px; font-size: 13px; padding: 4px 0; }
+    .pwr-hall-row .pwr-ic { font-size: 18px; }
+    .pwr-hall-row .pwr-nm { flex: 1; }
+    .pwr-hall-row .pwr-sc { font-weight: bold; font-variant-numeric: tabular-nums; }
+    .pwr-hall-row.pwr-empty { justify-content: center; color: #c9b; font-size: 12px; }
+    #pwr-total-row { text-align: center; font-size: 17px; font-weight: bold; color: #e0648a;
+        margin: 6px 0 12px; padding: 10px; border-radius: 12px; background: rgba(255,235,240,0.7);
+        font-variant-numeric: tabular-nums; }
+    #pwr-total-row small { font-size: 12px; color: #b89; font-weight: normal; }
+    #pwr-total-row #pwr-total-best { display: block; font-size: 11px; color: #c98ba0; font-weight: normal; margin-top: 2px; }
+    .pwr-hall-total { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: bold;
+        margin-top: 8px; padding-top: 10px; border-top: 1px dashed var(--line); color: #d77; }
+    .pwr-hall-total .pwr-ic { font-size: 20px; }
+    .pwr-hall-total .pwr-nm { flex: 1; }
+    .pwr-hall-total .pwr-sc { font-variant-numeric: tabular-nums; color: #e0648a; }
+    .pwr-hall-total .pwr-sc small { font-size: 11px; color: #b89; font-weight: normal; }
+
+    canvas { display: none; }
+
 </style>
 
 <script src="https://unpkg.com/@zxing/library@0.21.3/umd/index.min.js"></script>
@@ -1619,6 +1782,7 @@
             <button id="play-hassaku-btn" onclick="playHassakuGame(event)">🍊 八朔じじい<span class="hassaku-sub">ちくわに飽きたあなたにおすすめのミニゲーム</span></button>
             <button id="play-byo-btn" onclick="playByoMania(event)">⏱ ８秒マニア<span class="hassaku-sub">腹時計でピタリ8.0000秒を狙え</span></button>
             <button id="play-bcb-btn" onclick="playBcb(event)">📷 バーコード戦闘力<span class="hassaku-sub">家じゅうのバーコードで最強と最弱を探せ</span></button>
+            <button id="play-pwr-btn" onclick="playPwr(event)">🌸 フォト・パワー診断<span class="hassaku-sub">写真にひそむ４つの力を測ろう</span></button>
         </div>
         <div id="open-guide">
             <div class="og-title">⚠️ 音が出ない / タップできない時は</div>
@@ -1816,6 +1980,59 @@
 </div>
     <button id="bcb-back-btn" onclick="bcbToTitle(event)">↩ タイトルに戻る</button>
 </div>
+
+<!-- 🌸 フォト・パワー診断（組み込み）-->
+<div id="pwr-game-wrap">
+<div id="pwr-wrap">
+    <div id="pwr-head">
+        <h1 id="pwr-title">フォト・パワー診断</h1>
+        <div id="pwr-sub">― 写真にひそむ４つの力 ―</div>
+    </div>
+
+    <div id="pwr-photo-zone">
+        <div id="pwr-preview">
+            <video id="pwr-video" playsinline muted></video>
+            <div id="pwr-preview-hint"><span id="pwr-preview-emoji">📷</span>写真をえらぶか、カメラで撮ってね</div>
+        </div>
+        <div class="pwr-btn-row">
+            <button id="pwr-album-btn" class="pwr-btn" onclick="pwrPickAlbum()">🖼 アルバム</button>
+            <button id="pwr-camera-btn" class="pwr-btn" onclick="pwrStartCamera()">📷 カメラ</button>
+        </div>
+        <button id="pwr-shoot-btn" onclick="pwrShoot()">この瞬間を撮る！</button>
+        <div id="pwr-cam-status"></div>
+        <button id="pwr-diagnose-btn" onclick="pwrDiagnose()">✨ 力を診断する ✨</button>
+        <input id="pwr-file" type="file" accept="image/*" style="display:none">
+    </div>
+
+    <div id="pwr-result">
+        <div id="pwr-card">
+            <div id="pwr-type-label">あなたの写真は…</div>
+            <div id="pwr-type-emoji"></div>
+            <div id="pwr-type"></div>
+            <div id="pwr-type-comment"></div>
+            <div class="pwr-stat pwr-k"><div class="pwr-stat-top"><span>💗 やさしさの力</span><span class="pwr-stat-val" id="pwr-v-k">0</span></div><div class="pwr-bar"><div class="pwr-bar-fill" id="pwr-b-k"></div></div></div>
+            <div class="pwr-stat pwr-l"><div class="pwr-stat-top"><span>🍀 ラッキー力</span><span class="pwr-stat-val" id="pwr-v-l">0</span></div><div class="pwr-bar"><div class="pwr-bar-fill" id="pwr-b-l"></div></div></div>
+            <div class="pwr-stat pwr-p"><div class="pwr-stat-top"><span>☀️ 前向きな力</span><span class="pwr-stat-val" id="pwr-v-p">0</span></div><div class="pwr-bar"><div class="pwr-bar-fill" id="pwr-b-p"></div></div></div>
+            <div class="pwr-stat pwr-h"><div class="pwr-stat-top"><span>🌿 癒やしの力</span><span class="pwr-stat-val" id="pwr-v-h">0</span></div><div class="pwr-bar"><div class="pwr-bar-fill" id="pwr-b-h"></div></div></div>
+            <div id="pwr-total-row">🏆 総合スコア <span id="pwr-total-val">0</span> <small>/ 400</small><span id="pwr-total-best"></span></div>
+            <div class="pwr-btn-row" style="margin-top:6px;">
+                <button class="pwr-btn" onclick="pwrPickAlbum()">🖼 別の写真を選ぶ</button>
+                <button class="pwr-btn" onclick="pwrResultCamera()">📷 カメラで撮る</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="pwr-hall">
+        <div id="pwr-hall-title">🏅 これまでの最高記録（力ごと）</div>
+        <div id="pwr-hall-list"></div>
+    </div>
+
+    <canvas id="pwr-canvas"></canvas>
+</div>
+    <button id="pwr-back-btn" onclick="pwrToTitle(event)">↩ タイトルに戻る</button>
+</div>
+
+
 
 
 
@@ -6632,6 +6849,273 @@
         if (e) e.stopPropagation();
         try { window.bcbStopCamera(); } catch (e2) {}   // カメラが起動中なら止める
         document.getElementById("bcb-game-wrap").style.display = "none";
+        if (typeof goToTitle === "function") goToTitle();
+    };
+
+})();
+
+
+
+(function() {
+    const TYPES = {
+        kindness: { name: "やさしさタイプ", emoji: "💗", key: "やさしさ",
+            comment: "見る人の心をほっとあたためる、やさしさにあふれた一枚。あなたの撮る写真には思いやりがにじんでいます。" },
+        lucky:    { name: "ラッキータイプ", emoji: "🍀", key: "ラッキー",
+            comment: "金運アップ！幸せを呼び込みそうなきらめきの一枚。いいことが起こる予感がします。" },
+        positive: { name: "前向きタイプ", emoji: "☀️", key: "前向き",
+            comment: "見ているだけで元気が湧いてくる、明るくポジティブな一枚。あなたのエネルギーが伝わります。" },
+        healing:  { name: "癒やしタイプ", emoji: "🌿", key: "癒やし",
+            comment: "心がすうっと落ち着く、癒やしに満ちた一枚。疲れた人にそっと寄りそう優しさがあります。" },
+    };
+
+    let pwrCurrentStats = null;
+    let pwrCamReader = null, pwrCamStream = null, pwrCamActive = false;
+
+    // ふわふわ粒
+    (function dots() {
+        const wrap = document.getElementById("pwr-wrap");
+        for (let i = 0; i < 12; i++) {
+            const d = document.createElement("div");
+            d.className = "pwr-dot";
+            const s = 6 + Math.random()*16;
+            d.style.width = s+"px"; d.style.height = s+"px";
+            d.style.left = (3 + Math.random()*88)+"%";   // 右端で切れないよう内側に
+            d.style.bottom = "-20px";
+            d.style.animationDuration = (9+Math.random()*8)+"s";
+            d.style.animationDelay = (-Math.random()*12)+"s";
+            wrap.appendChild(d);
+        }
+    })();
+
+    // ===== 画像の特徴を測る =====
+    function pwrAnalyze(img) {
+        const canvas = document.getElementById("pwr-canvas");
+        const size = 64; canvas.width = size; canvas.height = size;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, size, size);
+        const data = ctx.getImageData(0, 0, size, size).data;
+        let rs=0,gs=0,bs=0, n=size*size;
+        let briSum=0, satSum=0;
+        const hues = new Set();
+        for (let i=0;i<data.length;i+=4) {
+            const r=data[i], g=data[i+1], b=data[i+2];
+            rs+=r; gs+=g; bs+=b;
+            const mx=Math.max(r,g,b), mn=Math.min(r,g,b);
+            briSum += mx/255;
+            satSum += mx===0?0:(mx-mn)/mx;
+            hues.add(Math.round(((r>>4)<<8)|((g>>4)<<4)|(b>>4)));  // 粗いカラーバケツ
+        }
+        const r=rs/n, g=gs/n, b=bs/n;
+        const brightness = briSum/n;
+        const saturation = satSum/n;
+        const colorfulness = Math.min(1, hues.size / 200);  // 色の種類の豊かさ
+        return pwrCalc({ r, g, b, brightness, saturation, colorfulness });
+    }
+
+    function pwrCalc(feat) {
+        const { r, g, b, brightness, saturation, colorfulness } = feat;
+        const R=r/255, G=g/255, B=b/255;
+        // 各特徴量を0-1で表す
+        const warmth = (R - B + 1) / 2;              // 0=寒色 1=暖色
+        const greenish = (G - (R+B)/2 + 1) / 2;      // 緑みの強さ
+        const yellowish = (Math.min(R,G) - B + 1) / 2; // 黄みの強さ
+        // 理想値centerにどれだけ近いか（山型）。極端な色より「ちょうど良い」が高得点。
+        const near = (val, center, width) => Math.exp(-Math.pow((val-center)/width, 2));
+        const kindness = near(warmth,0.62,0.22)*0.45 + near(brightness,0.6,0.28)*0.3 + near(saturation,0.5,0.3)*0.25;
+        const lucky    = near(yellowish,0.6,0.2)*0.45 + near(brightness,0.7,0.25)*0.3 + near(saturation,0.6,0.3)*0.25;
+        const positive = near(brightness,0.72,0.24)*0.4 + near(saturation,0.55,0.3)*0.3 + near(colorfulness,0.6,0.3)*0.3;
+        const healing  = near(greenish,0.6,0.22)*0.45 + near(saturation,0.4,0.3)*0.3 + near(brightness,0.55,0.3)*0.25;
+        // 0-1 を 40-100 に。バランスが理想に近いほど100へ。満点は理想ぴったりのみ＝超激レア。
+        const adj = (v) => Math.round(40 + Math.min(1, v) * 60);
+        const stats = { kindness:adj(kindness), lucky:adj(lucky), positive:adj(positive), healing:adj(healing) };
+        const top = Object.entries(stats).sort((a,b)=>b[1]-a[1])[0][0];
+        stats.top = top;
+        stats.total = stats.kindness+stats.lucky+stats.positive+stats.healing;
+        return stats;
+    }
+
+    // ===== アルバムから =====
+    window.pwrPickAlbum = function() {
+        pwrStopCamera();
+        const f = document.getElementById("pwr-file");
+        f.value = "";   // 同じ写真を選び直しても change が発火するように
+        f.click();
+    };
+    document.getElementById("pwr-file").addEventListener("change", (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => pwrShowImage(ev.target.result);
+        reader.readAsDataURL(file);
+    });
+
+    function pwrShowImage(dataUrl) {
+        const prev = document.getElementById("pwr-preview");
+        prev.innerHTML = '<img id="pwr-img" alt="">';
+        const img = document.getElementById("pwr-img");
+        img.onload = () => {
+            document.getElementById("pwr-diagnose-btn").classList.add("show");
+        };
+        img.src = dataUrl;
+        document.getElementById("pwr-result").classList.remove("show");
+        // 選んだ写真と診断ボタンが見えるよう、上の写真エリアへスクロール
+        const zone = document.getElementById("pwr-photo-zone");
+        if (zone) zone.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    // ===== カメラ =====
+    window.pwrStartCamera = function() {
+        const status = document.getElementById("pwr-cam-status");
+        if (location.protocol !== "https:" && location.hostname !== "localhost") {
+            status.innerText = "カメラはhttpsページでのみ使えます。アルバムをお使いください。";
+            return;
+        }
+        // 診断後などでvideoが無い（imgに差し替わっている）場合は作り直す
+        if (!document.getElementById("pwr-video")) {
+            const prev = document.getElementById("pwr-preview");
+            prev.innerHTML = '<video id="pwr-video" playsinline muted></video><div id="pwr-preview-hint"><span id="pwr-preview-emoji">📷</span>写真をえらぶか、カメラで撮ってね</div>';
+        }
+        const video = document.getElementById("pwr-video");
+        const hint = document.getElementById("pwr-preview-hint");
+        const constraints = { video: { facingMode: "environment" }, audio: false };
+        navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+            pwrCamStream = stream; pwrCamActive = true;
+            video.srcObject = stream; video.style.display = "block";
+            if (hint) hint.style.display = "none";
+            const img = document.getElementById("pwr-img"); if (img) img.style.display = "none";
+            video.play();
+            document.getElementById("pwr-shoot-btn").style.display = "block";
+            document.getElementById("pwr-diagnose-btn").classList.remove("show");
+            status.innerText = "撮りたいものを画面に入れて「撮る」を押してね";
+        }).catch((e) => {
+            if (e && (e.name === "NotAllowedError" || e.name === "PermissionDeniedError")) {
+                status.innerHTML = "カメラがブロックされています。<br>アドレスバーの🔒（iPhoneは「ぁあ」）から許可してください。アルバムでも遊べます。";
+            } else {
+                status.innerText = "カメラを起動できませんでした。アルバムをお使いください。";
+            }
+        });
+    };
+
+    // 結果カードの「カメラで撮る」：上のプレビューにカメラを出してスクロール
+    window.pwrResultCamera = function() {
+        document.getElementById("pwr-result").classList.remove("show");
+        const prev = document.getElementById("pwr-preview");
+        if (!document.getElementById("pwr-video")) {
+            prev.innerHTML = '<video id="pwr-video" playsinline muted></video><div id="pwr-preview-hint"><span id="pwr-preview-emoji">📷</span>写真をえらぶか、カメラで撮ってね</div>';
+        }
+        const zone = document.getElementById("pwr-photo-zone");
+        if (zone) zone.scrollIntoView({ behavior: "smooth", block: "start" });
+        window.pwrStartCamera();
+    };
+
+    window.pwrShoot = function() {
+        const video = document.getElementById("pwr-video");
+        const canvas = document.getElementById("pwr-canvas");
+        const w = video.videoWidth || 640, h = video.videoHeight || 640;
+        const side = Math.min(w, h);
+        canvas.width = side; canvas.height = side;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(video, (w-side)/2, (h-side)/2, side, side, 0, 0, side, side);
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
+        pwrStopCamera();
+        pwrShowImage(dataUrl);
+        document.getElementById("pwr-cam-status").innerText = "";
+    };
+
+    function pwrStopCamera() {
+        pwrCamActive = false;
+        if (pwrCamStream) { pwrCamStream.getTracks().forEach(t => t.stop()); pwrCamStream = null; }
+        const video = document.getElementById("pwr-video");
+        if (video) { video.style.display = "none"; video.srcObject = null; }
+        const shoot = document.getElementById("pwr-shoot-btn");
+        if (shoot) shoot.style.display = "none";
+    }
+    window.pwrStopCameraExt = pwrStopCamera;
+
+    // ===== 診断 =====
+    window.pwrDiagnose = function() {
+        const img = document.getElementById("pwr-img");
+        if (!img || !img.complete) return;
+        const stats = pwrAnalyze(img);
+        pwrCurrentStats = stats;
+        const t = TYPES[stats.top];
+        document.getElementById("pwr-type-emoji").innerText = t.emoji;
+        document.getElementById("pwr-type").innerText = t.name;
+        document.getElementById("pwr-type").style.color = getComputedStyle(document.getElementById("pwr-wrap")).getPropertyValue(
+            stats.top==="kindness"?"--kind":stats.top==="lucky"?"--lucky":stats.top==="positive"?"--positive":"--healing");
+        document.getElementById("pwr-type-comment").innerText = t.comment;
+        const set = (k, key) => {
+            document.getElementById("pwr-v-"+k).innerText = stats[key];
+            setTimeout(() => { document.getElementById("pwr-b-"+k).style.width = stats[key]+"%"; }, 60);
+        };
+        document.getElementById("pwr-b-k").style.width="0"; document.getElementById("pwr-b-l").style.width="0";
+        document.getElementById("pwr-b-p").style.width="0"; document.getElementById("pwr-b-h").style.width="0";
+        set("k","kindness"); set("l","lucky"); set("p","positive"); set("h","healing");
+        // 総合点（400点満点）の表示と自己ベスト判定
+        const prevBest = (loadHall().total) || 0;
+        const totalEl = document.getElementById("pwr-total-val");
+        const bestEl = document.getElementById("pwr-total-best");
+        // 総合点をカウントアップ演出
+        let cur = 0; const target = stats.total; const stepv = Math.max(1, Math.round(target/24));
+        const tick = () => { cur += stepv; if (cur >= target) { totalEl.innerText = target; return; } totalEl.innerText = cur; requestAnimationFrame(tick); };
+        requestAnimationFrame(tick);
+        if (stats.total > prevBest) {
+            bestEl.innerText = "✨ 自己ベスト更新！ ✨";
+        } else {
+            bestEl.innerText = "自己ベスト " + prevBest + " / 400";
+        }
+        document.getElementById("pwr-result").classList.add("show");
+        pwrUpdateHall(stats);
+    };
+
+    // ===== 殿堂（力ごとの最高点）=====
+    const KEY = "pwr_hall";
+    function loadHall() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e){ return {}; } }
+    function saveHall(h) { try { localStorage.setItem(KEY, JSON.stringify(h)); } catch(e){} }
+    function pwrUpdateHall(stats) {
+        const h = loadHall();
+        [["kindness","💗 やさしさ"],["lucky","🍀 ラッキー"],["positive","☀️ 前向き"],["healing","🌿 癒やし"]].forEach(([k]) => {
+            if (!h[k] || stats[k] > h[k]) h[k] = stats[k];
+        });
+        // 総合点（400点満点）の最高記録
+        if (!h.total || stats.total > h.total) h.total = stats.total;
+        saveHall(h); pwrRenderHall();
+    }
+    function pwrRenderHall() {
+        const h = loadHall();
+        const rows = [["kindness","💗","やさしさの力"],["lucky","🍀","ラッキー力"],["positive","☀️","前向きな力"],["healing","🌿","癒やしの力"]];
+        const box = document.getElementById("pwr-hall-list");
+        const any = rows.some(([k]) => h[k] != null) || h.total != null;
+        if (!any) { box.innerHTML = '<div class="pwr-hall-row pwr-empty">まだ記録なし。写真を診断してみてね</div>'; return; }
+        let html = rows.map(([k,ic,nm]) =>
+            '<div class="pwr-hall-row"><span class="pwr-ic">'+ic+'</span><span class="pwr-nm">'+nm+'</span><span class="pwr-sc">'+(h[k]!=null?h[k]:"―")+'</span></div>'
+        ).join("");
+        // 総合点（400点満点）の最高記録を目立たせて追加
+        html += '<div class="pwr-hall-total"><span class="pwr-ic">🏆</span><span class="pwr-nm">総合スコア</span>' +
+                '<span class="pwr-sc">' + (h.total!=null?h.total:"―") + ' <small>/ 400</small></span></div>';
+        box.innerHTML = html;
+    }
+    pwrRenderHall();
+
+    // ===== 起動・終了（本編タイトルから呼ぶ）=====
+    window.playPwr = function(e) {
+        if (e) e.stopPropagation();
+        if (typeof isAudioStarted !== "undefined") isAudioStarted = true;
+        try { if (typeof titleInterval !== "undefined" && titleInterval) { clearInterval(titleInterval); titleInterval = null; } } catch (e2) {}
+        try { if (typeof bpmInterval !== "undefined" && bpmInterval) { clearInterval(bpmInterval); bpmInterval = null; } } catch (e2) {}
+        try { if (typeof currentBgmMode !== "undefined") currentBgmMode = null; } catch (e2) {}
+        try { if (typeof stopBGM === "function") stopBGM(); } catch (e2) {}
+        document.getElementById("title-screen").style.display = "none";
+        if (typeof gameState !== "undefined") gameState = "PHOTOPOWER";
+        document.getElementById("pwr-game-wrap").style.display = "block";
+        pwrRenderHall();
+        window.scrollTo(0, 0);
+    };
+
+    window.pwrToTitle = function(e) {
+        if (e) e.stopPropagation();
+        try { pwrStopCamera(); } catch (e2) {}   // カメラ起動中なら止める
+        document.getElementById("pwr-game-wrap").style.display = "none";
         if (typeof goToTitle === "function") goToTitle();
     };
 
