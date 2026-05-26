@@ -1662,10 +1662,10 @@
         display: flex; align-items: center; justify-content: center;
         border: 2px dashed #f0c8d4; position: relative;
     }
-    #pwr-preview img { width: 100%; height: 100%; object-fit: cover; }
+    #pwr-preview img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
     #pwr-preview-hint { color: #c9a; font-size: 14px; text-align: center; padding: 20px; line-height: 1.6; }
     #pwr-preview-emoji { font-size: 44px; display: block; margin-bottom: 8px; }
-    #pwr-video { width: 100%; height: 100%; object-fit: cover; display: none; }
+    #pwr-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: none; background: #000; }
 
     .pwr-btn-row { display: flex; gap: 10px; margin-top: 14px; }
     .pwr-btn {
@@ -1991,7 +1991,7 @@
 
     <div id="pwr-photo-zone">
         <div id="pwr-preview">
-            <video id="pwr-video" playsinline muted></video>
+            <video id="pwr-video" playsinline muted autoplay></video>
             <div id="pwr-preview-hint"><span id="pwr-preview-emoji">📷</span>写真をえらぶか、カメラで撮ってね</div>
         </div>
         <div class="pwr-btn-row">
@@ -6973,25 +6973,39 @@
         // 診断後などでvideoが無い（imgに差し替わっている）場合は作り直す
         if (!document.getElementById("pwr-video")) {
             const prev = document.getElementById("pwr-preview");
-            prev.innerHTML = '<video id="pwr-video" playsinline muted></video><div id="pwr-preview-hint"><span id="pwr-preview-emoji">📷</span>写真をえらぶか、カメラで撮ってね</div>';
+            prev.innerHTML = '<video id="pwr-video" playsinline muted autoplay></video><div id="pwr-preview-hint"><span id="pwr-preview-emoji">📷</span>写真をえらぶか、カメラで撮ってね</div>';
         }
         const video = document.getElementById("pwr-video");
         const hint = document.getElementById("pwr-preview-hint");
-        const constraints = { video: { facingMode: "environment" }, audio: false };
+        // 背面カメラ「優先」（厳密指定だと一部端末で映像が来ないので ideal にする）
+        const constraints = { video: { facingMode: { ideal: "environment" } }, audio: false };
+        status.innerText = "カメラを起動中…";
         navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
             pwrCamStream = stream; pwrCamActive = true;
             video.srcObject = stream; video.style.display = "block";
             if (hint) hint.style.display = "none";
             const img = document.getElementById("pwr-img"); if (img) img.style.display = "none";
-            video.play();
             document.getElementById("pwr-shoot-btn").style.display = "block";
             document.getElementById("pwr-diagnose-btn").classList.remove("show");
+            // 映像の準備ができてから再生（Androidで真っ暗になるのを防ぐ）
+            const tryPlay = () => {
+                const pr = video.play();
+                if (pr && pr.catch) pr.catch(() => {
+                    status.innerText = "画面をタップすると映像が始まります";
+                    const once = () => { video.play().catch(()=>{}); video.removeEventListener("click", once); };
+                    video.addEventListener("click", once);
+                });
+            };
+            if (video.readyState >= 2) tryPlay();
+            else video.addEventListener("loadedmetadata", tryPlay, { once: true });
             status.innerText = "撮りたいものを画面に入れて「撮る」を押してね";
         }).catch((e) => {
             if (e && (e.name === "NotAllowedError" || e.name === "PermissionDeniedError")) {
                 status.innerHTML = "カメラがブロックされています。<br>アドレスバーの🔒（iPhoneは「ぁあ」）から許可してください。アルバムでも遊べます。";
+            } else if (e && e.name === "NotFoundError") {
+                status.innerText = "カメラが見つかりませんでした。アルバムをお使いください。";
             } else {
-                status.innerText = "カメラを起動できませんでした。アルバムをお使いください。";
+                status.innerText = "カメラを起動できませんでした（" + (e && e.name ? e.name : "不明") + "）。アルバムをお使いください。";
             }
         });
     };
@@ -7001,7 +7015,7 @@
         document.getElementById("pwr-result").classList.remove("show");
         const prev = document.getElementById("pwr-preview");
         if (!document.getElementById("pwr-video")) {
-            prev.innerHTML = '<video id="pwr-video" playsinline muted></video><div id="pwr-preview-hint"><span id="pwr-preview-emoji">📷</span>写真をえらぶか、カメラで撮ってね</div>';
+            prev.innerHTML = '<video id="pwr-video" playsinline muted autoplay></video><div id="pwr-preview-hint"><span id="pwr-preview-emoji">📷</span>写真をえらぶか、カメラで撮ってね</div>';
         }
         const zone = document.getElementById("pwr-photo-zone");
         if (zone) zone.scrollIntoView({ behavior: "smooth", block: "start" });
