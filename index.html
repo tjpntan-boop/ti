@@ -6424,27 +6424,56 @@
         bcbEnsureAudio();
         const cam = document.getElementById("bcb-camera");
         const status = document.getElementById("bcb-cam-status");
+        const view = document.getElementById("bcb-cam-view");
 
         // ライブラリの読み込み確認
         if (typeof ZXing === "undefined" || !ZXing.BrowserMultiFormatReader) {
-            status.innerText = "読み取り機能を読み込めませんでした。手入力をお使いください。";
+            view.style.display = "none";
+            status.innerHTML = "読み取り機能を読み込めませんでした。<br>手入力をお使いください。";
             cam.classList.add("show");
             return;
         }
         // HTTPS確認（file:// やHTTPだとカメラは動かない）
         if (location.protocol !== "https:" && location.hostname !== "localhost") {
+            view.style.display = "none";
+            status.innerHTML = "⚠ カメラはhttpsの公開ページ（github.ioなど）でのみ使えます。<br>手入力をお使いください。";
             cam.classList.add("show");
-            status.innerText = "⚠ カメラはhttps公開ページでのみ使えます。手入力をお使いください。";
             return;
         }
 
         cam.classList.add("show");
-        status.innerText = "カメラを起動中…";
 
+        // 🔒 カメラ権限が「拒否」のまま残っていないか先に確認（対応ブラウザのみ）
+        const proceed = () => bcbOpenCamera(cam, status, view);
+        if (navigator.permissions && navigator.permissions.query) {
+            navigator.permissions.query({ name: "camera" }).then((p) => {
+                if (p.state === "denied") {
+                    bcbShowBlockedMessage(status, view);
+                } else {
+                    proceed();
+                }
+            }).catch(() => proceed());   // permissions APIが使えない端末はそのまま試す
+        } else {
+            proceed();
+        }
+    };
+
+    // カメラがブロックされているときの案内（真っ暗な枠は出さない）
+    function bcbShowBlockedMessage(status, view) {
+        view.style.display = "none";
+        status.innerHTML =
+            "📷 カメラがブロックされています。<br>" +
+            "アドレスバーの<b>鍵🔒マーク</b>（iPhoneは「ぁあ」）から<br>" +
+            "カメラを<b>「許可」</b>に変えて、ページを再読み込みしてください。<br>" +
+            "<span style='color:#ffb22e'>※ 手入力ならそのまま遊べます。</span>";
+    }
+
+    function bcbOpenCamera(cam, status, view) {
+        view.style.display = "";   // 念のため枠を表示
+        status.innerText = "カメラを起動中…";
         if (!bcbCodeReader) bcbCodeReader = new ZXing.BrowserMultiFormatReader();
         bcbCamActive = true;
 
-        // 背面カメラを優先
         bcbCodeReader.listVideoInputDevices().then((devices) => {
             let deviceId = undefined;
             if (devices && devices.length) {
@@ -6453,7 +6482,6 @@
             }
             startDecode(deviceId);
         }).catch(() => {
-            // デバイス列挙に失敗しても、環境カメラ指定で試す
             startDecode(undefined);
         });
 
@@ -6465,32 +6493,34 @@
                     const code = (result.getText ? result.getText() : ("" + result)).replace(/[^0-9]/g, "");
                     if (code.length >= 8) {
                         status.innerText = "✓ 読み取り成功！";
-                        // 軽くバイブ
                         if (navigator.vibrate) navigator.vibrate(60);
                         bcbStopCamera();
                         document.getElementById("bcb-input").value = code;
                         window.bcbScan();
                     }
                 }
-                // errは「まだ見つからない」だけのことが多いので無視
             }).then(() => {
                 if (bcbCamActive) status.innerText = "バーコードを枠に合わせてください…";
             }).catch((e) => {
                 bcbCamActive = false;
                 if (e && (e.name === "NotAllowedError" || e.name === "PermissionDeniedError")) {
-                    status.innerText = "カメラへのアクセスが許可されませんでした。設定をご確認ください。";
+                    bcbShowBlockedMessage(status, view);   // ブロック時は枠を隠して案内
                 } else {
-                    status.innerText = "カメラを起動できませんでした。手入力をお使いください。";
+                    view.style.display = "none";
+                    status.innerHTML = "カメラを起動できませんでした。<br>手入力をお使いください。";
                 }
             });
         }
-    };
+    }
 
     window.bcbStopCamera = function() {
         bcbCamActive = false;
         try { if (bcbCodeReader && bcbCodeReader.reset) bcbCodeReader.reset(); } catch (e) {}
         const cam = document.getElementById("bcb-camera");
         cam.classList.remove("show");
+        // 次回のために枠の表示状態を戻す
+        const view = document.getElementById("bcb-cam-view");
+        if (view) view.style.display = "";
     };
 
     // ===== 測定 =====
