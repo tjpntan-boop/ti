@@ -17,9 +17,15 @@
         #title-screen {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background-color: #000; z-index: 1000;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            overflow: hidden;
+            overflow-y: auto; overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
             transition: background-color 0.05s ease;
+        }
+        /* 実コンテンツのラッパー：短いと中央、長いと上下にあふれてスクロール */
+        #title-content {
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            min-height: 100%; width: 100%;
+            padding: 80px 0 60px; box-sizing: border-box;
         }
         
         /* 🩸 上からドロドロと血が流れるイラスト演出 🩸 */
@@ -1596,6 +1602,7 @@
 
     <div id="title-screen">
         <div class="blood-curtain"></div>
+        <div id="title-content">
         <div id="tap-notice" onclick="beginTitleAudio(event)">▶ タップして音を出す</div>
         <div class="famicom-title">８番ちくわ</div>
         <div id="version-label">Ver 1.9.0</div>
@@ -1624,6 +1631,7 @@
                 <div class="og-os">🍎 iPhone の人</div>
                 <div class="og-step">画面<b>右下の矢印アイコン</b>→<br><b>「Safariで開く」</b>を押す</div>
             </div>
+        </div>
         </div>
     </div>
 
