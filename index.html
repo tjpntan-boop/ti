@@ -929,6 +929,18 @@
         }
         #play-byo-btn:hover { background: #2a1616; border-color: #b93a3a; }
         #play-byo-btn .hassaku-sub { font-size: 10px; font-weight: normal; letter-spacing: 0; opacity: 0.8; color: #c98a7a; }
+        #play-bcb-btn {
+            margin-top: 10px;
+            background: #0a160d; color: #7ce89a;
+            border: 1px solid #1c7a30; border-radius: 8px; padding: 9px 22px;
+            font-size: 15px; font-weight: bold; cursor: pointer; z-index: 1010; letter-spacing: 1px;
+            display: flex; flex-direction: column; align-items: center; gap: 2px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+            transition: background 0.15s, border-color 0.15s;
+            font-family: inherit;
+        }
+        #play-bcb-btn:hover { background: #112016; border-color: #39ff5e; }
+        #play-bcb-btn .hassaku-sub { font-size: 10px; font-weight: normal; letter-spacing: 0; opacity: 0.8; color: #5aa86a; }
 
         /* タイトルに常設する「ブラウザで開く手順」案内ボックス */
         #open-guide {
@@ -1362,7 +1374,211 @@
     #byo-toast .byo-t-gap { font-size: 13px; color: #ffe9c2; margin-top: 2px; }
     #byo-toast .byo-t-judge { font-size: 14px; color: var(--acid); margin-top: 4px; }
 
+
+/* ===== 📷 バーコード戦闘力（組み込みCSS）===== */
+
+    /* 📷 バーコード戦闘力 オーバーレイ */
+    #bcb-game-wrap {
+        display: none; position: fixed; inset: 0; z-index: 5000;
+        overflow-y: auto; overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        background: #0a0e0a;
+    }
+    #bcb-back-btn {
+        display: block; margin: 18px auto 30px;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 14px; font-weight: bold;
+        background: transparent; color: #39ff5e;
+        border: 2px solid #1c7a30; border-radius: 10px;
+        padding: 11px 30px; cursor: pointer;
+        position: relative; z-index: 6;
+    }
+    #bcb-back-btn:active { background: rgba(57,255,94,0.1); }
+
+    #bcb-wrap {
+        --bg: #0a0e0a;
+        --panel: #11160f;
+        --scan: #39ff5e;
+        --scan-dim: #1c7a30;
+        --amber: #ffb22e;
+        --red: #ff3b30;
+        --grid: rgba(57,255,94,0.08);
+        --txt: #c8f5d0;
+        font-family: 'Courier New', Courier, monospace;
+    }
+    #bcb-game-wrap, #bcb-game-wrap * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        #bcb-wrap {
+        position: relative; min-height: 100%; overflow-x: hidden;
+        background:
+            linear-gradient(rgba(10,14,10,0.92), rgba(10,14,10,0.92)),
+            repeating-linear-gradient(0deg, var(--grid) 0 1px, transparent 1px 26px),
+            repeating-linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 26px),
+            var(--bg);
+        color: var(--txt);
+        padding: 16px 14px 40px;
+        user-select: none; -webkit-user-select: none;
+    }
+    /* 走るスキャンライン */
+    #bcb-wrap::before {
+        content: ""; position: fixed; left: 0; right: 0; height: 3px;
+        background: linear-gradient(90deg, transparent, var(--scan), transparent);
+        opacity: 0.5; z-index: 0; pointer-events: none;
+        animation: bcb-scanmove 4s linear infinite;
+    }
+    @keyframes bcb-scanmove { 0% { top: 0; } 100% { top: 100%; } }
+
+    #bcb-head { text-align: center; position: relative; z-index: 2; margin-bottom: 14px; }
+    #bcb-title {
+        font-size: 26px; font-weight: bold; letter-spacing: 2px; margin: 0;
+        color: var(--scan); text-shadow: 0 0 12px rgba(57,255,94,0.6);
+    }
+    #bcb-sub { font-size: 11px; color: var(--scan-dim); letter-spacing: 3px; margin-top: 3px; }
+
+    /* 測定器パネル */
+    #bcb-device {
+        position: relative; z-index: 2; max-width: 400px; margin: 0 auto;
+        background: var(--panel);
+        border: 2px solid var(--scan-dim);
+        border-radius: 12px; padding: 16px;
+        box-shadow: 0 0 24px rgba(57,255,94,0.15), inset 0 0 40px rgba(0,0,0,0.6);
+    }
+    .bcb-led {
+        display: inline-block; width: 9px; height: 9px; border-radius: 50%;
+        background: var(--red); box-shadow: 0 0 8px var(--red);
+        animation: bcb-blink 1.2s steps(1) infinite; margin-right: 6px; vertical-align: middle;
+    }
+    @keyframes bcb-blink { 0%,100% { opacity: 1; } 50% { opacity: 0.25; } }
+    #bcb-device-label { font-size: 11px; color: var(--amber); letter-spacing: 2px; margin-bottom: 12px; }
+
+    /* バーコード装飾 */
+    #bcb-barcode {
+        height: 54px; display: flex; align-items: stretch; gap: 2px;
+        padding: 8px; background: #f4f4ec; border-radius: 4px; margin-bottom: 4px;
+        overflow: hidden;
+    }
+    #bcb-barcode .bar { background: #111; }
+    #bcb-barcode-num { text-align: center; font-size: 13px; color: #111; background: #f4f4ec;
+        border-radius: 0 0 4px 4px; padding: 2px; letter-spacing: 3px; margin-bottom: 14px; min-height: 20px; }
+
+    /* 入力 */
+    #bcb-input {
+        width: 100%; font-family: inherit; font-size: 22px; text-align: center;
+        letter-spacing: 4px; padding: 12px; border-radius: 8px;
+        background: #050805; color: var(--scan); border: 2px solid var(--scan-dim);
+        outline: none;
+    }
+    #bcb-input::placeholder { color: #2a5a35; letter-spacing: 2px; font-size: 15px; }
+    #bcb-input:focus { border-color: var(--scan); box-shadow: 0 0 14px rgba(57,255,94,0.3); }
+    #bcb-hint { font-size: 10px; color: var(--scan-dim); text-align: center; margin-top: 6px; letter-spacing: 1px; }
+
+    #bcb-scan-btn {
+        width: 100%; margin-top: 14px; font-family: inherit;
+        font-size: 20px; font-weight: bold; letter-spacing: 3px;
+        padding: 15px; border-radius: 8px; cursor: pointer;
+        background: linear-gradient(#39ff5e, #1c9a3a); color: #042008;
+        border: none; box-shadow: 0 4px 0 #0d5020;
+        transition: transform 0.05s, box-shadow 0.05s;
+    }
+    #bcb-scan-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #0d5020; }
+
+    #bcb-cam-btn {
+        width: 100%; margin-top: 10px; font-family: inherit;
+        font-size: 15px; font-weight: bold; letter-spacing: 2px;
+        padding: 12px; border-radius: 8px; cursor: pointer;
+        background: transparent; color: var(--scan);
+        border: 2px solid var(--scan-dim);
+        transition: background 0.15s, border-color 0.15s;
+    }
+    #bcb-cam-btn:active, #bcb-cam-btn:hover { background: rgba(57,255,94,0.08); border-color: var(--scan); }
+
+    /* カメラパネル */
+    #bcb-camera { display: none; margin-top: 14px; }
+    #bcb-camera.show { display: block; animation: bcb-resultIn 0.3s ease-out; }
+    #bcb-cam-view {
+        position: relative; width: 100%; aspect-ratio: 4 / 3;
+        background: #000; border-radius: 8px; overflow: hidden;
+        border: 2px solid var(--scan-dim);
+    }
+    #bcb-video { width: 100%; height: 100%; object-fit: cover; display: block; }
+    #bcb-cam-frame {
+        position: absolute; left: 8%; right: 8%; top: 32%; bottom: 32%;
+        border: 2px solid var(--scan); border-radius: 6px;
+        box-shadow: 0 0 0 2000px rgba(0,0,0,0.45);
+        pointer-events: none;
+    }
+    #bcb-cam-laser {
+        position: absolute; left: 8%; right: 8%; height: 2px;
+        background: var(--red); box-shadow: 0 0 8px var(--red);
+        top: 32%; pointer-events: none;
+        animation: bcb-laser 1.6s ease-in-out infinite alternate;
+    }
+    @keyframes bcb-laser { 0% { top: 33%; } 100% { top: 66%; } }
+    #bcb-cam-status { font-size: 12px; color: var(--amber); text-align: center; margin-top: 8px; letter-spacing: 1px; min-height: 18px; }
+    #bcb-cam-stop {
+        width: 100%; margin-top: 10px; font-family: inherit;
+        font-size: 14px; font-weight: bold; padding: 10px; border-radius: 8px;
+        background: #2a0a08; color: #ff7a6a; border: 1px solid #7a2420; cursor: pointer;
+    }
+
+    /* 測定結果 */
+    #bcb-result {
+        position: relative; z-index: 2; max-width: 400px; margin: 16px auto 0;
+        display: none;
+    }
+    #bcb-result.show { display: block; animation: bcb-resultIn 0.4s ease-out; }
+    @keyframes bcb-resultIn { from { opacity: 0; transform: translateY(12px) scale(0.96); } to { opacity: 1; transform: none; } }
+
+    #bcb-card {
+        background: linear-gradient(160deg, #14210f, #0a0e0a);
+        border: 2px solid var(--scan); border-radius: 12px; padding: 18px;
+        box-shadow: 0 0 30px rgba(57,255,94,0.25);
+    }
+    #bcb-stars { text-align: center; font-size: 22px; letter-spacing: 4px; color: var(--amber);
+        text-shadow: 0 0 10px rgba(255,178,46,0.6); min-height: 26px; }
+    #bcb-power-label { text-align: center; font-size: 12px; color: var(--scan-dim); letter-spacing: 3px; margin-top: 8px; }
+    #bcb-power {
+        text-align: center; font-size: 60px; font-weight: bold; line-height: 1;
+        color: var(--scan); text-shadow: 0 0 24px rgba(57,255,94,0.8);
+        font-variant-numeric: tabular-nums; margin: 2px 0 4px;
+    }
+    #bcb-awaken {
+        text-align: center; font-size: 15px; font-weight: bold; color: var(--amber);
+        letter-spacing: 2px; min-height: 20px;
+        animation: bcb-awakenGlow 0.6s ease-in-out infinite alternate;
+    }
+    @keyframes bcb-awakenGlow { 0% { opacity: 0.6; } 100% { opacity: 1; text-shadow: 0 0 14px rgba(255,178,46,0.9); } }
+
+    .bcb-stats { margin-top: 14px; display: grid; gap: 8px; }
+    .bcb-stat-row { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+    .bcb-stat-row .bcb-name { width: 56px; color: var(--amber); letter-spacing: 1px; }
+    .bcb-stat-row .bcb-barwrap { flex: 1; height: 12px; background: #05120a; border: 1px solid var(--scan-dim); border-radius: 6px; overflow: hidden; }
+    .bcb-stat-row .bcb-barfill { height: 100%; background: linear-gradient(90deg, var(--scan-dim), var(--scan)); width: 0; transition: width 0.6s ease-out; }
+    .bcb-stat-row .bcb-val { width: 40px; text-align: right; color: var(--scan); font-variant-numeric: tabular-nums; }
+
+    #bcb-verdict { text-align: center; margin-top: 14px; font-size: 13px; min-height: 18px; }
+    #bcb-verdict .bcb-strong { color: var(--scan); font-weight: bold; }
+    #bcb-verdict .weak { color: var(--red); font-weight: bold; }
+
+    /* ランキング2列 */
+    #bcb-ranks { position: relative; z-index: 2; max-width: 400px; margin: 18px auto 0; display: grid; gap: 14px; }
+    .bcb-rank-box { background: var(--panel); border: 1px solid var(--scan-dim); border-radius: 10px; padding: 12px 14px; }
+    .bcb-rank-box.weak { border-color: #7a2420; }
+    .bcb-rank-title { font-size: 13px; letter-spacing: 1px; text-align: center; padding-bottom: 8px; margin-bottom: 8px; border-bottom: 1px dashed var(--scan-dim); }
+    .bcb-rank-box.bcb-strong .bcb-rank-title { color: var(--scan); }
+    .bcb-rank-box.weak .bcb-rank-title { color: var(--red); border-bottom-color: #7a2420; }
+    .bcb-rrow { display: flex; align-items: baseline; gap: 8px; font-size: 14px; padding: 3px 0; }
+    .bcb-rrow .bcb-pos { width: 28px; font-weight: bold; }
+    .bcb-rank-box.bcb-strong .bcb-rrow .bcb-pos { color: var(--amber); }
+    .bcb-rank-box.weak .bcb-rrow .bcb-pos { color: #ff7a6a; }
+    .bcb-rrow .bcb-pw { flex: 1; font-variant-numeric: tabular-nums; letter-spacing: 1px; }
+    .bcb-rrow .bcb-cd { font-size: 10px; opacity: 0.6; }
+    .bcb-rrow.bcb-empty { opacity: 0.4; font-size: 11px; justify-content: center; }
+    #bcb-clear { display: block; margin: 14px auto 0; font-family: inherit; font-size: 10px;
+        color: #6a8a70; background: none; border: none; text-decoration: underline; cursor: pointer; }
+
 </style>
+
+<script src="https://unpkg.com/@zxing/library@0.21.3/umd/index.min.js"></script>
 </head>
 <body>
 
@@ -1395,6 +1611,7 @@
             <div id="omake-divider"><span>― おまけ ―</span></div>
             <button id="play-hassaku-btn" onclick="playHassakuGame(event)">🍊 八朔じじい<span class="hassaku-sub">ちくわに飽きたあなたにおすすめのミニゲーム</span></button>
             <button id="play-byo-btn" onclick="playByoMania(event)">⏱ ８秒マニア<span class="hassaku-sub">腹時計でピタリ8.0000秒を狙え</span></button>
+            <button id="play-bcb-btn" onclick="playBcb(event)">📷 バーコード戦闘力<span class="hassaku-sub">家じゅうのバーコードで最強と最弱を探せ</span></button>
         </div>
         <div id="open-guide">
             <div class="og-title">⚠️ 音が出ない / タップできない時は</div>
@@ -1531,6 +1748,68 @@
 </div>
     <button id="byo-back-btn" onclick="byoToTitle(event)">↩ タイトルに戻る</button>
 </div>
+
+<!-- 📷 バーコード戦闘力（組み込み）-->
+<div id="bcb-game-wrap">
+<div id="bcb-wrap">
+    <div id="bcb-head">
+        <h1 id="bcb-title">バーコード戦闘力</h1>
+        <div id="bcb-sub">SCAN · MEASURE · CONQUER</div>
+    </div>
+
+    <div id="bcb-device">
+        <div id="bcb-device-label"><span class="bcb-led"></span>戦闘力測定装置 v8.0</div>
+        <div id="bcb-barcode"></div>
+        <div id="bcb-barcode-num">― ― ― ― ― ― ―</div>
+        <input id="bcb-input" type="tel" inputmode="numeric" maxlength="13" placeholder="バーコードの数字を入力">
+        <div id="bcb-hint">商品の裏のバーコード下の数字（8〜13桁）を入力</div>
+        <button id="bcb-scan-btn" onclick="bcbScan()">⚡ 測 定 ⚡</button>
+        <button id="bcb-cam-btn" onclick="bcbStartCamera()">📷 カメラで読み取る</button>
+
+        <!-- カメラパネル -->
+        <div id="bcb-camera">
+            <div id="bcb-cam-view">
+                <video id="bcb-video" playsinline muted></video>
+                <div id="bcb-cam-frame"></div>
+                <div id="bcb-cam-laser"></div>
+            </div>
+            <div id="bcb-cam-status">バーコードを枠に合わせてください…</div>
+            <button id="bcb-cam-stop" onclick="bcbStopCamera()">✕ カメラを閉じる</button>
+        </div>
+    </div>
+
+    <div id="bcb-result">
+        <div id="bcb-card">
+            <div id="bcb-stars"></div>
+            <div id="bcb-power-label">― 戦闘力 ―</div>
+            <div id="bcb-power">0</div>
+            <div id="bcb-awaken"></div>
+            <div class="bcb-stats">
+                <div class="bcb-stat-row"><span class="bcb-name">攻撃</span><span class="bcb-barwrap"><span class="bcb-barfill" id="bcb-bar-atk"></span></span><span class="bcb-val" id="bcb-val-atk">0</span></div>
+                <div class="bcb-stat-row"><span class="bcb-name">防御</span><span class="bcb-barwrap"><span class="bcb-barfill" id="bcb-bar-def"></span></span><span class="bcb-val" id="bcb-val-def">0</span></div>
+                <div class="bcb-stat-row"><span class="bcb-name">素早さ</span><span class="bcb-barwrap"><span class="bcb-barfill" id="bcb-bar-spd"></span></span><span class="bcb-val" id="bcb-val-spd">0</span></div>
+                <div class="bcb-stat-row"><span class="bcb-name">運</span><span class="bcb-barwrap"><span class="bcb-barfill" id="bcb-bar-luck"></span></span><span class="bcb-val" id="bcb-val-luck">0</span></div>
+            </div>
+            <div id="bcb-verdict"></div>
+        </div>
+    </div>
+
+    <div id="bcb-ranks">
+        <div class="bcb-rank-box bcb-strong">
+            <div class="bcb-rank-title">👑 最強ベスト3</div>
+            <div id="bcb-rank-strong"></div>
+        </div>
+        <div class="bcb-rank-box weak">
+            <div class="bcb-rank-title">💀 最弱ワースト3</div>
+            <div id="bcb-rank-weak"></div>
+        </div>
+        <button id="bcb-clear" onclick="bcbClear()">記録をリセット</button>
+    </div>
+</div>
+    <button id="bcb-back-btn" onclick="bcbToTitle(event)">↩ タイトルに戻る</button>
+</div>
+
+
 
 
 
@@ -6056,6 +6335,268 @@
     window.byo_setMode = byo_setMode;
     window.byo_clearRanking = byo_clearRanking;
     window.byo_closeCard = byo_closeCard;
+})();
+
+
+
+(function() {
+    let bcbAudio = null;
+    function bcbEnsureAudio() {
+        if (!bcbAudio) { try { bcbAudio = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return; } }
+        if (bcbAudio.state === "suspended") bcbAudio.resume();
+    }
+    function bcbTone(freq, dur, type = "square", vol = 0.05, when = 0) {
+        if (!bcbAudio) return;
+        const t = bcbAudio.currentTime + when;
+        const o = bcbAudio.createOscillator(), g = bcbAudio.createGain();
+        o.type = type; o.frequency.setValueAtTime(freq, t);
+        g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(vol, t + 0.01);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+        o.connect(g); g.connect(bcbAudio.destination);
+        o.start(t); o.stop(t + dur + 0.02);
+    }
+    function bcbSndScan() { bcbTone(1200, 0.05, "square", 0.05); bcbTone(1800, 0.05, "square", 0.04, 0.06); }
+    function bcbSndResult(power) {
+        // 戦闘力が高いほど高らかに
+        const notes = power >= 3200 ? [523,659,784,1047,1319] : power >= 2000 ? [523,659,784] : [440,554];
+        notes.forEach((f,i)=>bcbTone(f,0.14,"square",0.05,i*0.08));
+    }
+    function bcbSndAwaken() { bcbTone(300,0.4,"sawtooth",0.05); bcbTone(900,0.5,"square",0.04,0.15); }
+
+    // ===== 戦闘力計算（再現性あり）=====
+    function bcbCalc(code) {
+        const digits = code.split('').map(Number).filter(n => !isNaN(n));
+        const sum = digits.reduce((a,b)=>a+b,0);
+        let hash = 7;
+        for (let i = 0; i < code.length; i++) hash = (hash * 31 + code.charCodeAt(i)) % 1000000007;
+        const seeded = (salt) => {
+            let x = (hash ^ (salt * 2654435761)) >>> 0;
+            x = ((x ^ (x >>> 15)) * 2246822519) >>> 0;
+            x = ((x ^ (x >>> 13)) * 3266489917) >>> 0;
+            return ((x ^ (x >>> 16)) >>> 0) / 4294967295;
+        };
+        const atk = 10 + Math.floor(seeded(1) * 990);
+        const def = 10 + Math.floor(seeded(2) * 990);
+        const spd = 10 + Math.floor(seeded(3) * 990);
+        const luck = 10 + Math.floor(seeded(4) * 990);
+        let power = atk + def + spd + luck;
+        let awaken = false;
+        const tail = code.slice(-3);
+        if (tail.length === 3 && tail[0] === tail[1] && tail[1] === tail[2]) awaken = true;
+        if (sum % 10 === 8) awaken = true;
+        if (awaken) power = Math.floor(power * 1.5);
+        let star;
+        if (power >= 3200) star = 5; else if (power >= 2600) star = 4;
+        else if (power >= 1900) star = 3; else if (power >= 1200) star = 2; else star = 1;
+        return { atk, def, spd, luck, power, awaken, star };
+    }
+
+    // バーコード装飾を描く
+    function bcbDrawBarcode(code) {
+        const box = document.getElementById("bcb-barcode");
+        box.innerHTML = "";
+        const seed = code || "00000000";
+        for (let i = 0; i < 43; i++) {
+            const bar = document.createElement("div");
+            bar.className = "bar";
+            const c = seed.charCodeAt(i % seed.length) || 50;
+            const w = 1 + ((c + i) % 4);
+            bar.style.width = w + "px";
+            bar.style.opacity = ((c + i) % 5 === 0) ? "0" : "1";
+            box.appendChild(bar);
+        }
+    }
+    bcbDrawBarcode("");
+
+    // ===== 📷 カメラ読み取り（ZXing）=====
+    let bcbCodeReader = null;
+    let bcbCamActive = false;
+
+    window.bcbStartCamera = function() {
+        bcbEnsureAudio();
+        const cam = document.getElementById("bcb-camera");
+        const status = document.getElementById("bcb-cam-status");
+
+        // ライブラリの読み込み確認
+        if (typeof ZXing === "undefined" || !ZXing.BrowserMultiFormatReader) {
+            status.innerText = "読み取り機能を読み込めませんでした。手入力をお使いください。";
+            cam.classList.add("show");
+            return;
+        }
+        // HTTPS確認（file:// やHTTPだとカメラは動かない）
+        if (location.protocol !== "https:" && location.hostname !== "localhost") {
+            cam.classList.add("show");
+            status.innerText = "⚠ カメラはhttps公開ページでのみ使えます。手入力をお使いください。";
+            return;
+        }
+
+        cam.classList.add("show");
+        status.innerText = "カメラを起動中…";
+
+        if (!bcbCodeReader) bcbCodeReader = new ZXing.BrowserMultiFormatReader();
+        bcbCamActive = true;
+
+        // 背面カメラを優先
+        bcbCodeReader.listVideoInputDevices().then((devices) => {
+            let deviceId = undefined;
+            if (devices && devices.length) {
+                const back = devices.find(d => /back|rear|environment|背面/i.test(d.label));
+                deviceId = (back || devices[devices.length - 1]).deviceId;
+            }
+            startDecode(deviceId);
+        }).catch(() => {
+            // デバイス列挙に失敗しても、環境カメラ指定で試す
+            startDecode(undefined);
+        });
+
+        function startDecode(deviceId) {
+            const video = document.getElementById("bcb-video");
+            bcbCodeReader.decodeFromVideoDevice(deviceId, video, (result, err) => {
+                if (!bcbCamActive) return;
+                if (result) {
+                    const code = (result.getText ? result.getText() : ("" + result)).replace(/[^0-9]/g, "");
+                    if (code.length >= 8) {
+                        status.innerText = "✓ 読み取り成功！";
+                        // 軽くバイブ
+                        if (navigator.vibrate) navigator.vibrate(60);
+                        bcbStopCamera();
+                        document.getElementById("bcb-input").value = code;
+                        window.bcbScan();
+                    }
+                }
+                // errは「まだ見つからない」だけのことが多いので無視
+            }).then(() => {
+                if (bcbCamActive) status.innerText = "バーコードを枠に合わせてください…";
+            }).catch((e) => {
+                bcbCamActive = false;
+                if (e && (e.name === "NotAllowedError" || e.name === "PermissionDeniedError")) {
+                    status.innerText = "カメラへのアクセスが許可されませんでした。設定をご確認ください。";
+                } else {
+                    status.innerText = "カメラを起動できませんでした。手入力をお使いください。";
+                }
+            });
+        }
+    };
+
+    window.bcbStopCamera = function() {
+        bcbCamActive = false;
+        try { if (bcbCodeReader && bcbCodeReader.reset) bcbCodeReader.reset(); } catch (e) {}
+        const cam = document.getElementById("bcb-camera");
+        cam.classList.remove("show");
+    };
+
+    // ===== 測定 =====
+    window.bcbScan = function() {
+        bcbEnsureAudio();
+        const input = document.getElementById("bcb-input");
+        const code = (input.value || "").replace(/[^0-9]/g, "");
+        if (code.length < 8) {
+            input.style.borderColor = "#ff3b30";
+            document.getElementById("bcb-hint").innerText = "⚠ 8桁以上の数字を入力してください";
+            document.getElementById("bcb-hint").style.color = "#ff3b30";
+            return;
+        }
+        document.getElementById("bcb-hint").innerText = "商品の裏のバーコード下の数字（8〜13桁）を入力";
+        document.getElementById("bcb-hint").style.color = "";
+        input.style.borderColor = "";
+        bcbSndScan();
+        bcbDrawBarcode(code);
+        document.getElementById("bcb-barcode-num").innerText = code;
+
+        const s = bcbCalc(code);
+        bcbShowResult(code, s);
+        bcbRecord(code, s);
+        setTimeout(() => { bcbSndResult(s.power); if (s.awaken) bcbSndAwaken(); }, 250);
+    };
+
+    function bcbShowResult(code, s) {
+        document.getElementById("bcb-stars").innerText = "★".repeat(s.star) + "☆".repeat(5 - s.star);
+        document.getElementById("bcb-power").innerText = "0";
+        document.getElementById("bcb-awaken").innerText = s.awaken ? "⚡ 覚醒！ 1.5倍 ⚡" : "";
+        // ステータスバー
+        const setStat = (key, v) => {
+            document.getElementById("bcb-val-" + key).innerText = v;
+            document.getElementById("bcb-bar-" + key).style.width = Math.min(100, v / 999 * 100) + "%";
+        };
+        setStat("atk", s.atk); setStat("def", s.def); setStat("spd", s.spd); setStat("luck", s.luck);
+        // 判定コメント
+        const v = document.getElementById("bcb-verdict");
+        if (s.power >= 3200) v.innerHTML = '<span class="bcb-strong">伝説級。家宝にすべし。</span>';
+        else if (s.power >= 2600) v.innerHTML = '<span class="bcb-strong">強い。かなりの逸品だ。</span>';
+        else if (s.power >= 1900) v.innerHTML = 'まずまずの戦闘力。';
+        else if (s.power >= 1200) v.innerHTML = '平凡。まだ上を探せる。';
+        else v.innerHTML = '<span class="weak">弱い…が、最弱の称号もまた一興。</span>';
+        document.getElementById("bcb-result").classList.add("show");
+        // 戦闘力カウントアップ演出
+        let cur = 0; const target = s.power;
+        const step = Math.max(1, Math.floor(target / 28));
+        const el = document.getElementById("bcb-power");
+        const tick = () => {
+            cur += step;
+            if (cur >= target) { cur = target; el.innerText = cur; return; }
+            el.innerText = cur;
+            requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+    }
+
+    // ===== ランキング（最強・最弱）=====
+    const KEY = "bcb_records";
+    function bcbLoad() { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { return []; } }
+    function bcbSave(list) { try { localStorage.setItem(KEY, JSON.stringify(list)); } catch (e) {} }
+    function bcbRecord(code, s) {
+        let list = bcbLoad();
+        // 同じバーコードは1件だけ（重複登録を防ぐ）
+        list = list.filter(e => e.code !== code);
+        list.push({ code, power: s.power, star: s.star, awaken: s.awaken });
+        bcbSave(list);
+        bcbRenderRanks();
+    }
+    function bcbRenderRanks() {
+        const list = bcbLoad();
+        const strong = [...list].sort((a,b)=>b.power-a.power).slice(0,3);
+        const weak = [...list].sort((a,b)=>a.power-b.power).slice(0,3);
+        const row = (e, i) => '<div class="bcb-rrow"><span class="bcb-pos">' + (i+1) + '</span>' +
+            '<span class="bcb-pw">' + e.power + (e.awaken ? ' ⚡' : '') + ' <span class="bcb-cd">' + e.code + '</span></span></div>';
+        const sBox = document.getElementById("bcb-rank-strong");
+        const wBox = document.getElementById("bcb-rank-weak");
+        sBox.innerHTML = strong.length ? strong.map(row).join("") : '<div class="bcb-rrow bcb-empty">まだ測定なし</div>';
+        wBox.innerHTML = weak.length ? weak.map(row).join("") : '<div class="bcb-rrow bcb-empty">まだ測定なし</div>';
+    }
+    window.bcbClear = function() {
+        if (!confirm("測定した記録をすべて消しますか？\nこの操作は元に戻せません。")) return;
+        bcbSave([]); bcbRenderRanks();
+    };
+
+    // Enterキーで測定
+    document.getElementById("bcb-input").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") window.bcbScan();
+    });
+
+    bcbRenderRanks();
+
+    // ===== 起動・終了（本編タイトルから呼ぶ）=====
+    window.playBcb = function(e) {
+        if (e) e.stopPropagation();
+        bcbEnsureAudio();
+        if (typeof isAudioStarted !== "undefined") isAudioStarted = true;
+        try { if (typeof titleInterval !== "undefined" && titleInterval) { clearInterval(titleInterval); titleInterval = null; } } catch (e2) {}
+        try { if (typeof bpmInterval !== "undefined" && bpmInterval) { clearInterval(bpmInterval); bpmInterval = null; } } catch (e2) {}
+        try { if (typeof currentBgmMode !== "undefined") currentBgmMode = null; } catch (e2) {}
+        try { if (typeof stopBGM === "function") stopBGM(); } catch (e2) {}
+        document.getElementById("title-screen").style.display = "none";
+        if (typeof gameState !== "undefined") gameState = "BARCODE";
+        document.getElementById("bcb-game-wrap").style.display = "block";
+        bcbRenderRanks();
+    };
+
+    window.bcbToTitle = function(e) {
+        if (e) e.stopPropagation();
+        try { window.bcbStopCamera(); } catch (e2) {}   // カメラが起動中なら止める
+        document.getElementById("bcb-game-wrap").style.display = "none";
+        if (typeof goToTitle === "function") goToTitle();
+    };
+
 })();
 
 </script>
