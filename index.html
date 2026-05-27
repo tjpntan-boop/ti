@@ -1875,6 +1875,9 @@
     #ijw-result-detail { font-size:13px; color:#c0ccd8; margin-bottom:5px; line-height:1.6; }
     #ijw-result-best { font-size:13px; color:#b0bcc8; margin-bottom:10px; }
     #ijw-result-ranks { width:100%; max-width:300px; margin:0 auto 12px; }
+    #ijw-result-back { margin-top:12px; font-family:inherit; font-size:14px; font-weight:bold;
+        background:transparent; color:#8a96a4; border:1px solid #46535f; border-radius:10px; padding:9px 24px; cursor:pointer; }
+    #ijw-result-back:active { background:rgba(255,255,255,0.06); }
     .ijw-rank-row { display:flex; justify-content:space-between; align-items:center; font-size:13px;
         padding:5px 12px; border-radius:8px; margin-bottom:3px; background:rgba(255,255,255,0.05); color:#8a96a4; }
     .ijw-rank-row.cleared { color:#e8eef4; background:rgba(255,255,255,0.1); }
@@ -1916,7 +1919,7 @@
         <div id="title-content">
         <div id="tap-notice" onclick="beginTitleAudio(event)">▶ タップして音を出す</div>
         <div class="famicom-title">８番ちくわ</div>
-        <div id="version-label">Ver 1.9.0</div>
+        <div id="version-label">Ver 2.0.0</div>
         <button id="start-btn" class="start-btn" onclick="startGame(event)" style="display:none;">ちくわを覗く...</button>
         <button id="play-chase-btn" onclick="playChaseStandalone(event)" style="display:none;">🏃 ちくわにげで遊ぶ</button>
         <button id="play-shin-btn" onclick="playShinChikuwa(event)" style="display:none;">🔥 真・8番ちくわ 🔥</button>
@@ -2233,6 +2236,7 @@
             <div id="ijw-result-best"></div>
             <div id="ijw-result-ranks"></div>
             <button class="ijw-start-btn" onclick="ijwStart()">もう一度</button>
+            <button id="ijw-result-back" onclick="ijwToTitle(event)">↩ タイトルに戻る</button>
         </div>
     </div>
     <div id="ijw-controls" class="ijw-hidden">
