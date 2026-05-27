@@ -1822,7 +1822,7 @@
     #ijw-gauge-label { font-size:11px; color:#b0bcc8; margin-bottom:3px; letter-spacing:1px; }
     #ijw-gauge-bar { height:16px; background:#0c1118; border-radius:9px; overflow:hidden; border:1px solid #4a5666; }
     #ijw-gauge-fill { height:100%; width:0; border-radius:9px; transition:width 0.2s,background 0.3s; background:var(--gauge1); }
-    #ijw-scene { position:relative; z-index:3; width:100%; aspect-ratio:4/4.4; max-height:62vh;
+    #ijw-scene { position:relative; z-index:3; width:100%; aspect-ratio:4/4.8; max-height:68vh;
         background:linear-gradient(180deg,#16202c 0%,#1c2734 56%,#2e3845 56%,#38434f 100%);
         border-radius:14px; overflow:hidden; border:2px solid #46535f; box-shadow:inset 0 0 40px rgba(0,0,0,0.5); }
     #ijw-signboard { position:absolute; top:8px; left:50%; transform:translateX(-50%);
@@ -1863,19 +1863,20 @@
     #ijw-hint { position:relative; z-index:5; text-align:center; font-size:11px; color:#8a96a4; margin-top:8px; line-height:1.5; }
     .ijw-overlay { position:absolute; inset:0; z-index:20; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:22px; background:rgba(10,16,24,0.93); overflow-y:auto; }
     /* 結果は一画面に収めてスクロール不要に。万一長くても上から見えるよう余白は控えめ。*/
-    #ijw-result { justify-content:center; padding-top:24px; padding-bottom:24px; }
+    /* 結果は枠(シーン)の中ではなく画面全体に出す。これで枠の高さに縛られず上が切れない。*/
+    #ijw-result { position:fixed; inset:0; z-index:5100; justify-content:flex-start; padding-top:24px; padding-bottom:24px; overflow-y:auto; -webkit-overflow-scrolling:touch; }
     .ijw-overlay h1 { font-size:27px; color:var(--accent); margin:0 0 6px; text-shadow:0 2px 8px rgba(255,200,60,0.4); }
     .ijw-overlay .ijw-sub { font-size:13px; color:#c0ccd8; line-height:1.7; margin-bottom:18px; }
-    .ijw-overlay .ijw-big { font-size:52px; margin:8px 0; }
-    .ijw-start-btn { font-family:inherit; font-size:20px; font-weight:bold; padding:15px 44px; border-radius:12px; border:none; cursor:pointer; background:linear-gradient(#ffd86b,#f0a020); color:#3a2800; box-shadow:0 4px 0 #b87010; }
+    .ijw-overlay .ijw-big { font-size:42px; margin:3px 0; }
+    .ijw-start-btn { font-family:inherit; font-size:19px; font-weight:bold; padding:13px 40px; border-radius:12px; border:none; cursor:pointer; background:linear-gradient(#ffd86b,#f0a020); color:#3a2800; box-shadow:0 4px 0 #b87010; }
     .ijw-start-btn:active { transform:translateY(3px); }
-    #ijw-result-score { font-size:46px; font-weight:bold; color:var(--accent); font-variant-numeric:tabular-nums; margin:6px 0; }
-    #ijw-result-rank { font-size:22px; font-weight:bold; margin:6px 0 8px; }
-    #ijw-result-detail { font-size:14px; color:#c0ccd8; margin-bottom:8px; line-height:1.7; }
-    #ijw-result-best { font-size:14px; color:#b0bcc8; margin-bottom:16px; }
-    #ijw-result-ranks { width:100%; max-width:300px; margin:0 auto 18px; }
+    #ijw-result-score { font-size:40px; font-weight:bold; color:var(--accent); font-variant-numeric:tabular-nums; margin:3px 0; }
+    #ijw-result-rank { font-size:20px; font-weight:bold; margin:3px 0 5px; }
+    #ijw-result-detail { font-size:13px; color:#c0ccd8; margin-bottom:5px; line-height:1.6; }
+    #ijw-result-best { font-size:13px; color:#b0bcc8; margin-bottom:10px; }
+    #ijw-result-ranks { width:100%; max-width:300px; margin:0 auto 12px; }
     .ijw-rank-row { display:flex; justify-content:space-between; align-items:center; font-size:13px;
-        padding:7px 12px; border-radius:8px; margin-bottom:4px; background:rgba(255,255,255,0.05); color:#8a96a4; }
+        padding:5px 12px; border-radius:8px; margin-bottom:3px; background:rgba(255,255,255,0.05); color:#8a96a4; }
     .ijw-rank-row.cleared { color:#e8eef4; background:rgba(255,255,255,0.1); }
     .ijw-rank-row.current { background:var(--accent); color:#3a2800; font-weight:bold; box-shadow:0 0 10px rgba(255,216,107,0.5); }
     .ijw-rank-row .ijw-nm { text-align:left; }
