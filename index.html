@@ -1864,7 +1864,7 @@
     .ijw-overlay { position:absolute; inset:0; z-index:20; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:22px; background:rgba(10,16,24,0.93); overflow-y:auto; }
     /* 結果は一画面に収めてスクロール不要に。万一長くても上から見えるよう余白は控えめ。*/
     /* 結果は枠(シーン)の中ではなく画面全体に出す。これで枠の高さに縛られず上が切れない。*/
-    #ijw-result { position:fixed; inset:0; z-index:5100; justify-content:flex-start; padding-top:24px; padding-bottom:24px; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+    #ijw-result { position:fixed; inset:0; z-index:5100; justify-content:flex-start; padding-top:24px; padding-bottom:24px; overflow-y:auto; -webkit-overflow-scrolling:touch; background:#0e1620; }
     .ijw-overlay h1 { font-size:27px; color:var(--accent); margin:0 0 6px; text-shadow:0 2px 8px rgba(255,200,60,0.4); }
     .ijw-overlay .ijw-sub { font-size:13px; color:#c0ccd8; line-height:1.7; margin-bottom:18px; }
     .ijw-overlay .ijw-big { font-size:42px; margin:3px 0; }
@@ -7722,6 +7722,8 @@
         document.getElementById("ijw-result-ranks").innerHTML = listHtml;
         document.getElementById("ijw-controls").classList.add("ijw-hidden");
         document.getElementById("ijw-hint").classList.add("ijw-hidden");
+        document.getElementById("ijw-hud").classList.add("ijw-hidden");
+        document.getElementById("ijw-gauge-wrap").classList.add("ijw-hidden");
         document.getElementById("ijw-result").classList.remove("ijw-hidden");
     }
 
@@ -7736,6 +7738,8 @@
         document.getElementById("ijw-start").classList.add("ijw-hidden");
         document.getElementById("ijw-controls").classList.remove("ijw-hidden");
         document.getElementById("ijw-hint").classList.remove("ijw-hidden");
+        document.getElementById("ijw-hud").classList.remove("ijw-hidden");
+        document.getElementById("ijw-gauge-wrap").classList.remove("ijw-hidden");
         document.getElementById("ijw-result").classList.add("ijw-hidden");
         fill();
         clearInterval(tickInt); clearInterval(secInt);
@@ -7800,6 +7804,8 @@
         document.getElementById("ijw-result").classList.add("ijw-hidden");
         document.getElementById("ijw-controls").classList.add("ijw-hidden");
         document.getElementById("ijw-hint").classList.add("ijw-hidden");
+        document.getElementById("ijw-hud").classList.add("ijw-hidden");
+        document.getElementById("ijw-gauge-wrap").classList.add("ijw-hidden");
         window.scrollTo(0, 0);
     };
 
