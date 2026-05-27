@@ -1962,7 +1962,6 @@
         <div class="famicom-title">８番ちくわ</div>
         <div id="version-label">Ver 2.0.0</div>
         <button id="start-btn" class="start-btn" onclick="startGame(event)" style="display:none;">ちくわを覗く...</button>
-        <button id="play-chase-btn" onclick="playChaseStandalone(event)" style="display:none;">🏃 ちくわにげで遊ぶ</button>
         <button id="title-badge-btn" class="badge-link-btn" onclick="openBadgeScreen('title')" style="display:none;">🏅 称号コレクション</button>
         <button id="reset-record-btn" onclick="resetDiscoveryRecord(event)" style="display:none;">🗑 異変の記録をリセット</button>
 
@@ -4500,7 +4499,11 @@
         gameState = "TITLE";
 
         // タイトル画面を再表示
-        document.getElementById("title-screen").style.display = "flex";
+        const titleScreen = document.getElementById("title-screen");
+        titleScreen.style.display = "flex";
+        // スクロール位置を先頭に戻す（ミニゲームを遊んだ後でも上から見えるように）
+        titleScreen.scrollTop = 0;
+        try { window.scrollTo(0, 0); } catch(e) {}
         // 一度音を出した後にタイトルへ戻ったら、ボタンは出しっぱなし・タップ案内は隠す
         const tapNotice = document.getElementById("tap-notice");
         if (tapNotice) tapNotice.style.display = isAudioStarted ? "none" : "block";
@@ -4915,12 +4918,9 @@
         }
     }
 
-    // 🏃 ちくわにげボタンの表示更新（称号取得済みなら表示）
+    // 🏃 ちくわにげはおまけ一覧から常時遊べるので、トップのボタンは廃止
     function updateChaseButton() {
-        const btn = document.getElementById("play-chase-btn");
-        // 音を出した後（isAudioStarted）かつ称号ありのときだけ表示
-        if (btn) btn.style.display = (isAudioStarted && hasChaseTitle) ? "block" : "none";
-        // チクワノイド・チクビウスはおまけ一覧から常時遊べるので、旧・隠しボタンは使わない
+        // チクワノイド・チクビウス・ちくわにげはおまけ一覧から常時遊べるので、旧・隠しボタンは使わない
         // 🍊 おまけ：八朔じじい（音が出た後はいつでも遊べる。本編とは別枠のオプションゲーム）
         const omakeSection = document.getElementById("omake-section");
         if (omakeSection) omakeSection.style.display = isAudioStarted ? "flex" : "none";
