@@ -1862,20 +1862,20 @@
     #ijw-open-btn { background:linear-gradient(#5ec98a,#2a9a5a); color:#0a2a18; box-shadow:0 4px 0 #1a6038; }
     #ijw-hint { position:relative; z-index:5; text-align:center; font-size:11px; color:#8a96a4; margin-top:8px; line-height:1.5; }
     .ijw-overlay { position:absolute; inset:0; z-index:20; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:22px; background:rgba(10,16,24,0.93); overflow-y:auto; }
-    /* 結果は中身が長いので上揃え＋上下余白（中央寄せだと長いとき上が切れるため）*/
-    #ijw-result { justify-content:flex-start; padding-top:30px; padding-bottom:30px; }
+    /* 結果は一画面に収めてスクロール不要に。万一長くても上から見えるよう余白は控えめ。*/
+    #ijw-result { justify-content:center; padding-top:16px; padding-bottom:16px; gap:0; }
     .ijw-overlay h1 { font-size:27px; color:var(--accent); margin:0 0 6px; text-shadow:0 2px 8px rgba(255,200,60,0.4); }
     .ijw-overlay .ijw-sub { font-size:13px; color:#c0ccd8; line-height:1.7; margin-bottom:18px; }
-    .ijw-overlay .ijw-big { font-size:48px; margin:6px 0; }
-    .ijw-start-btn { font-family:inherit; font-size:19px; font-weight:bold; padding:14px 40px; border-radius:12px; border:none; cursor:pointer; background:linear-gradient(#ffd86b,#f0a020); color:#3a2800; box-shadow:0 4px 0 #b87010; }
+    .ijw-overlay .ijw-big { font-size:40px; margin:2px 0; }
+    .ijw-start-btn { font-family:inherit; font-size:18px; font-weight:bold; padding:12px 38px; border-radius:12px; border:none; cursor:pointer; background:linear-gradient(#ffd86b,#f0a020); color:#3a2800; box-shadow:0 4px 0 #b87010; }
     .ijw-start-btn:active { transform:translateY(3px); }
-    #ijw-result-score { font-size:42px; font-weight:bold; color:var(--accent); font-variant-numeric:tabular-nums; }
-    #ijw-result-rank { font-size:20px; font-weight:bold; margin:4px 0 6px; }
-    #ijw-result-detail { font-size:13px; color:#c0ccd8; margin-bottom:6px; line-height:1.6; }
-    #ijw-result-best { font-size:13px; color:#b0bcc8; margin-bottom:12px; }
-    #ijw-result-ranks { width:100%; max-width:280px; margin:0 auto 16px; }
+    #ijw-result-score { font-size:38px; font-weight:bold; color:var(--accent); font-variant-numeric:tabular-nums; margin:2px 0; }
+    #ijw-result-rank { font-size:19px; font-weight:bold; margin:2px 0 4px; }
+    #ijw-result-detail { font-size:12px; color:#c0ccd8; margin-bottom:4px; line-height:1.5; }
+    #ijw-result-best { font-size:12px; color:#b0bcc8; margin-bottom:8px; }
+    #ijw-result-ranks { width:100%; max-width:280px; margin:0 auto 10px; }
     .ijw-rank-row { display:flex; justify-content:space-between; align-items:center; font-size:12px;
-        padding:5px 10px; border-radius:8px; margin-bottom:3px; background:rgba(255,255,255,0.05); color:#8a96a4; }
+        padding:4px 10px; border-radius:7px; margin-bottom:2px; background:rgba(255,255,255,0.05); color:#8a96a4; }
     .ijw-rank-row.cleared { color:#e8eef4; background:rgba(255,255,255,0.1); }
     .ijw-rank-row.current { background:var(--accent); color:#3a2800; font-weight:bold; box-shadow:0 0 10px rgba(255,216,107,0.5); }
     .ijw-rank-row .ijw-nm { text-align:left; }
