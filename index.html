@@ -282,7 +282,7 @@
             100% { opacity: 0; transform: translate(-50%, -50%) scale(1.0); }
         }
 
-        /* 🔥 真・8番ちくわ（ちくわアルカノイド） */
+        /* 🔥 チクワノイド（ちくわアルカノイド） */
         #shin-game {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: #0a0a14; z-index: 3000; display: none; overflow: hidden;
@@ -680,6 +680,11 @@
             background: linear-gradient(135deg, #1a0a4a, #4a1a91, #9b30ff);
             text-shadow: 0 0 10px #b050ff; box-shadow: 0 0 14px rgba(0,200,255,0.5);
         }
+        #complete-badge.unlocked {
+            color: #fff; border-color: #ffd700;
+            background: linear-gradient(135deg, #6a4a00, #c1272d, #ff6a00, #ffd700);
+            text-shadow: 0 0 12px #ffae00; box-shadow: 0 0 18px rgba(255,180,0,0.7);
+        }
 
         /* 🌈 0.5%超レア：画面が割れて虹色ちくわ登場 */
         #rainbow-event {
@@ -797,7 +802,7 @@
         #hidden-beam.unlocked { color: #fff; border-color: #00e5ff; background: linear-gradient(135deg, #1a0a4a, #4a1a91, #9b30ff); text-shadow: 0 0 8px #b050ff; }
         .hidden-game .hg-sub { display: block; margin-top: 6px; font-size: 12px; font-weight: normal; opacity: 0.85; letter-spacing: normal; }
 
-        /* 🔓 真・8番ちくわ 解放メッセージ */
+        /* 🔓 チクワノイド 解放メッセージ */
         #shin-unlock-msg {
             flex-shrink: 0; margin: 4px 0 16px; padding: 16px 18px; max-width: 360px;
             border-radius: 14px; text-align: center; font-weight: bold; line-height: 1.5;
@@ -971,6 +976,30 @@
         }
         #play-ijw-btn:hover { background: #24303f; border-color: #e0604a; }
         #play-ijw-btn .hassaku-sub { font-size: 10px; font-weight: normal; letter-spacing: 0; opacity: 0.8; color: #c0a8a0; }
+        #play-noid-btn {
+            margin-top: 10px;
+            background: #0a0a16; color: #7fdcff;
+            border: 1px solid #5a5a8a; border-radius: 8px; padding: 9px 22px;
+            font-size: 15px; font-weight: bold; cursor: pointer; z-index: 1010; letter-spacing: 1px;
+            display: flex; flex-direction: column; align-items: center; gap: 2px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+            transition: background 0.15s, border-color 0.15s;
+            font-family: inherit;
+        }
+        #play-noid-btn:hover { background: #14142a; border-color: #7fdcff; }
+        #play-noid-btn .hassaku-sub { font-size: 10px; font-weight: normal; letter-spacing: 0; opacity: 0.8; color: #8a9ac0; }
+        #play-beam-omake-btn {
+            margin-top: 10px;
+            background: #100a1e; color: #c89aff;
+            border: 1px solid #6a4a9a; border-radius: 8px; padding: 9px 22px;
+            font-size: 15px; font-weight: bold; cursor: pointer; z-index: 1010; letter-spacing: 1px;
+            display: flex; flex-direction: column; align-items: center; gap: 2px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+            transition: background 0.15s, border-color 0.15s;
+            font-family: inherit;
+        }
+        #play-beam-omake-btn:hover { background: #1c1230; border-color: #b050ff; }
+        #play-beam-omake-btn .hassaku-sub { font-size: 10px; font-weight: normal; letter-spacing: 0; opacity: 0.8; color: #a890c0; }
 
         /* タイトルに常設する「ブラウザで開く手順」案内ボックス */
         #open-guide {
@@ -1922,8 +1951,6 @@
         <div id="version-label">Ver 2.0.0</div>
         <button id="start-btn" class="start-btn" onclick="startGame(event)" style="display:none;">ちくわを覗く...</button>
         <button id="play-chase-btn" onclick="playChaseStandalone(event)" style="display:none;">🏃 ちくわにげで遊ぶ</button>
-        <button id="play-shin-btn" onclick="playShinChikuwa(event)" style="display:none;">🔥 真・8番ちくわ 🔥</button>
-        <button id="play-beam-btn" onclick="playBeamGame(event)" style="display:none;">🔫 チクビウス 🔫</button>
         <button id="title-badge-btn" class="badge-link-btn" onclick="openBadgeScreen('title')" style="display:none;">🏅 称号コレクション</button>
         <button id="reset-record-btn" onclick="resetDiscoveryRecord(event)" style="display:none;">🗑 異変の記録をリセット</button>
 
@@ -1935,6 +1962,8 @@
             <button id="play-bcb-btn" onclick="playBcb(event)">📷 バーコード戦闘力<span class="hassaku-sub">家じゅうのバーコードで最強と最弱を探せ</span></button>
             <button id="play-pwr-btn" onclick="playPwr(event)">🌱 ４つのタネ<span class="hassaku-sub">写真の力で４つのタネを集め、花を咲かせよう</span></button>
             <button id="play-ijw-btn" onclick="playIjw(event)">🚪 じらじらし<span class="hassaku-sub">じらし好きの車掌になってお客さんをじらせ</span></button>
+            <button id="play-noid-btn" onclick="playShinChikuwa(event)">🧱 チクワノイド<span class="hassaku-sub">ちくわのボールでおでんブロックを崩せ</span></button>
+            <button id="play-beam-omake-btn" onclick="playBeamGame(event)">🔫 チクビウス<span class="hassaku-sub">ちくわ戦闘機でおでん軍団を撃ち抜け</span></button>
         </div>
         <div id="open-guide">
             <div class="og-title">⚠️ 音が出ない / タップできない時は</div>
@@ -2291,7 +2320,6 @@
             ドス黒い呪いは消え去り、あなたの胃袋とちくわ界に再び平和な練り物の香りが戻ったのです。<br><br>
             <strong>【ちくわ界は守られた！】</strong>
         </div>
-        <div id="shin-unlock-msg" style="display:none;">🔓 真・8番ちくわ 解放！！ 🔓<br><span>全異変を見破った猛者よ、タイトルの新たな扉を開け。</span></div>
         <button class="start-btn badge-link-btn" style="opacity:1; margin-top:10px; flex-shrink:0;" onclick="openBadgeScreen('clear')">🏅 称号コレクションを見る</button>
         <button class="start-btn" style="opacity:1; margin-top:24px; background:#fff; color:#4477aa; border:3px solid #4477aa; flex-shrink:0;" onclick="restartGame(event)">もう一度食う</button>
         <button class="start-btn" style="opacity:1; margin-top:15px; margin-bottom:40px; background:transparent; color:#fff; border:2px solid #fff; font-size:16px; padding:10px 30px; flex-shrink:0;" onclick="goToTitle(event)">↩ タイトルに戻る</button>
@@ -2300,19 +2328,13 @@
     <div id="badge-screen">
         <div class="badge-screen-title">🏅 称号コレクション</div>
         <div id="badge-collection">
-            <div class="badge-head">― 称号 <span id="badge-progress">0 / 7</span> ―</div>
+            <div class="badge-head">― 称号 <span id="badge-progress">0 / 6</span> ―</div>
             <div id="god-badge" class="collect-badge locked">？？？</div>
             <div id="rainbow-badge" class="collect-badge locked">？？？</div>
             <div id="survivor-badge" class="collect-badge locked">？？？</div>
             <div id="chase-badge" class="collect-badge locked">？？？</div>
             <div id="marty-badge" class="collect-badge locked">？？？</div>
-            <div id="shinmaster-badge" class="collect-badge locked">？？？</div>
-            <div id="beammaster-badge" class="collect-badge locked">？？？</div>
-        </div>
-        <div id="hidden-games-area">
-            <div class="badge-head">― 隠しゲーム ―</div>
-            <div id="hidden-shin" class="hidden-game locked">？？？</div>
-            <div id="hidden-beam" class="hidden-game locked">？？？</div>
+            <div id="complete-badge" class="collect-badge locked">？？？</div>
         </div>
         <button class="start-btn" style="opacity:1; margin-top:24px; margin-bottom:40px; background:transparent; color:#fff; border:2px solid #fff; font-size:16px; padding:10px 30px; flex-shrink:0;" onclick="closeBadgeScreen()">↩ 閉じる</button>
     </div>
@@ -2408,7 +2430,7 @@
     <div id="shin-game">
         <div id="shin-hud">
             <span id="shin-lives">🍢🍢🍢</span>
-            <span id="shin-title-label">真・8番ちくわ</span>
+            <span id="shin-title-label">チクワノイド</span>
         </div>
         <canvas id="shin-canvas"></canvas>
         <div id="shin-overlay">
@@ -2528,44 +2550,14 @@
     }
     let martyDoneThisGame = false; // 🕒 1ゲームにつき1回だけ発動する制御
 
-    // 🔓 真・8番ちくわの解放（全異変コンプリートで解放）
-    const SHIN_UNLOCK_KEY = "chikuwa_shin_unlocked";
-    let hasShinUnlocked = loadShinUnlocked();
-    function loadShinUnlocked() {
-        try { return localStorage.getItem(SHIN_UNLOCK_KEY) === "1"; } catch(e) { return false; }
+    // 🏆 異変コンプリート称号（全異変発見で永久保存）
+    const COMPLETE_KEY = "chikuwa_complete";
+    let hasComplete = loadComplete();
+    function loadComplete() {
+        try { return localStorage.getItem(COMPLETE_KEY) === "1"; } catch(e) { return false; }
     }
-    function saveShinUnlocked() {
-        try { localStorage.setItem(SHIN_UNLOCK_KEY, "1"); } catch(e) {}
-    }
-
-    // 🏆 真・ちくわマスターの称号（ちくわアルカノイドをクリアで永久保存）
-    const SHIN_MASTER_KEY = "chikuwa_shin_master";
-    let hasShinMaster = loadShinMaster();
-    function loadShinMaster() {
-        try { return localStorage.getItem(SHIN_MASTER_KEY) === "1"; } catch(e) { return false; }
-    }
-    function saveShinMaster() {
-        try { localStorage.setItem(SHIN_MASTER_KEY, "1"); } catch(e) {}
-    }
-
-    // 🔫 8番チクビー（シューティング）の解放（アルカノイドクリアで解放）
-    const BEAM_UNLOCK_KEY = "chikuwa_beam_unlocked";
-    let hasBeamUnlocked = loadBeamUnlocked();
-    function loadBeamUnlocked() {
-        try { return localStorage.getItem(BEAM_UNLOCK_KEY) === "1"; } catch(e) { return false; }
-    }
-    function saveBeamUnlocked() {
-        try { localStorage.setItem(BEAM_UNLOCK_KEY, "1"); } catch(e) {}
-    }
-
-    // 🏅 チクビーマスターの称号（8番チクビーをクリアで永久保存）
-    const BEAM_MASTER_KEY = "chikuwa_beam_master";
-    let hasBeamMaster = loadBeamMaster();
-    function loadBeamMaster() {
-        try { return localStorage.getItem(BEAM_MASTER_KEY) === "1"; } catch(e) { return false; }
-    }
-    function saveBeamMaster() {
-        try { localStorage.setItem(BEAM_MASTER_KEY, "1"); } catch(e) {}
+    function saveComplete() {
+        try { localStorage.setItem(COMPLETE_KEY, "1"); } catch(e) {}
     }
 
     // 🏅 クリア画面の称号コレクションを更新（未獲得は？？？表示）
@@ -2592,29 +2584,8 @@
         }
     }
 
-    // 隠しゲーム欄の表示更新（未解放は？？？）
-    function updateHiddenGames() {
-        const shin = document.getElementById("hidden-shin");
-        const beam = document.getElementById("hidden-beam");
-        if (shin) {
-            if (hasShinUnlocked) {
-                shin.classList.remove("locked"); shin.classList.add("unlocked");
-                shin.innerHTML = "🔥 真・8番ちくわ<span class='hg-sub'>全異変コンプリートで解放</span>";
-            } else {
-                shin.classList.add("locked"); shin.classList.remove("unlocked");
-                shin.innerHTML = "？？？<span class='hg-sub'>全ての異変を見破ると…？</span>";
-            }
-        }
-        if (beam) {
-            if (hasBeamUnlocked) {
-                beam.classList.remove("locked"); beam.classList.add("unlocked");
-                beam.innerHTML = "🔫 チクビウス<span class='hg-sub'>真・8番ちくわ制覇で解放</span>";
-            } else {
-                beam.classList.add("locked"); beam.classList.remove("unlocked");
-                beam.innerHTML = "？？？<span class='hg-sub'>さらにその先に…？</span>";
-            }
-        }
-    }
+    // 隠しゲーム欄は廃止（チクワノイド・チクビウスはおまけから常時遊べる）
+    function updateHiddenGames() {}
 
     function updateBadgeCollection() {
         const god = document.getElementById("god-badge");
@@ -2668,31 +2639,20 @@
             }
         }
 
-        const shinM = document.getElementById("shinmaster-badge");
-        if (shinM) {
-            if (hasShinMaster) {
-                shinM.classList.remove("locked"); shinM.classList.add("unlocked");
-                shinM.innerHTML = "🏆 真・ちくわマスター 🏆<span class='badge-rate'>真・8番ちくわ制覇</span>";
+        const completeB = document.getElementById("complete-badge");
+        if (completeB) {
+            if (hasComplete) {
+                completeB.classList.remove("locked"); completeB.classList.add("unlocked");
+                completeB.innerHTML = "🏆 全異変コンプリート 🏆<span class='badge-rate'>全ての異変を見破った証</span>";
             } else {
-                shinM.classList.add("locked"); shinM.classList.remove("unlocked");
-                shinM.textContent = "？？？";
+                completeB.classList.add("locked"); completeB.classList.remove("unlocked");
+                completeB.textContent = "？？？";
             }
         }
 
-        const beamM = document.getElementById("beammaster-badge");
-        if (beamM) {
-            if (hasBeamMaster) {
-                beamM.classList.remove("locked"); beamM.classList.add("unlocked");
-                beamM.innerHTML = "🔫 チクビウスマスター 🔫<span class='badge-rate'>チクビウス制覇</span>";
-            } else {
-                beamM.classList.add("locked"); beamM.classList.remove("unlocked");
-                beamM.textContent = "？？？";
-            }
-        }
-
-        const got = (hasGodTitle ? 1 : 0) + (hasRainbowWitness ? 1 : 0) + (hasPlanetSurvivor ? 1 : 0) + (hasChaseTitle ? 1 : 0) + (hasMartyTitle ? 1 : 0) + (hasShinMaster ? 1 : 0) + (hasBeamMaster ? 1 : 0);
+        const got = (hasGodTitle ? 1 : 0) + (hasRainbowWitness ? 1 : 0) + (hasPlanetSurvivor ? 1 : 0) + (hasChaseTitle ? 1 : 0) + (hasMartyTitle ? 1 : 0) + (hasComplete ? 1 : 0);
         const prog = document.getElementById("badge-progress");
-        if (prog) prog.textContent = got + " / 7";
+        if (prog) prog.textContent = got + " / 6";
     }
 
     // 通算記録に異変を追加（重複なし）して保存・表示更新する
@@ -2710,18 +2670,16 @@
         if (!tracker) return;
         const count = discoveredAnomalies.length;
         if (count >= TOTAL_ANOMALY_COUNT) {
-            if (hasShinUnlocked) {
-                // すでに解放済み
-                tracker.innerText = `🏆 異変コンプリート！ ${count} / ${TOTAL_ANOMALY_COUNT}`;
-                tracker.style.cursor = "default";
-                tracker.onclick = null;
-            } else {
-                // 未解放：タップで「真・8番ちくわ」解放
-                tracker.innerText = `🏆 コンプリート！ タップで解放✨`;
-                tracker.style.cursor = "pointer";
-                tracker.style.pointerEvents = "auto";
-                tracker.onclick = unlockShinChikuwa;
+            // 全異変コンプリート → 称号を獲得（初回のみ演出）
+            if (!hasComplete) {
+                hasComplete = true;
+                saveComplete();
+                if (isAudioStarted && audioCtx) { try { playLucky(); } catch(e){} }
+                showOverlay("🏆 全異変コンプリート！ 🏆\n\n全ての異変を見破った証として\n【全異変コンプリート】の称号を獲得！\n\n🏅 称号コレクションに追加されたぞ。", () => {});
             }
+            tracker.innerText = `🏆 異変コンプリート！ ${count} / ${TOTAL_ANOMALY_COUNT}`;
+            tracker.style.cursor = "default";
+            tracker.onclick = null;
             tracker.style.color = "#ffd700";
             tracker.style.borderColor = "#ffd700";
         } else {
@@ -2731,19 +2689,6 @@
             tracker.style.cursor = "default";
             tracker.onclick = null;
         }
-    }
-
-    // 🔓 異変カウンターをタップして「真・8番ちくわ」を解放
-    function unlockShinChikuwa() {
-        if (hasShinUnlocked) return;
-        hasShinUnlocked = true;
-        saveShinUnlocked();
-        updateAnomalyTracker();
-        if (isAudioStarted && audioCtx) playLucky();
-        showOverlay("🔓 真・8番ちくわ 解放！！\n\nタイトルに新たな扉が現れた。\nやり込んだ猛者への挑戦状だ。", () => {
-            // タイトルに戻ってボタンを見せる
-            goToTitle();
-        });
     }
 
     // 🗑 通算の異変記録をリセットする（確認あり）
@@ -3837,7 +3782,7 @@
         }, 16000);
     }
 
-    // ===== 🔥 真・8番ちくわ（ちくわアルカノイド）=====
+    // ===== 🔥 チクワノイド（ちくわアルカノイド）=====
     let shinCtx = null, shinCanvas = null;
     let shinReq = null;          // requestAnimationFrame id
     let shinW = 0, shinH = 0;
@@ -3897,7 +3842,7 @@
         // オーバーレイで開始を促す
         shinRunning = false;
         drawShin(); // スタート前の盤面を描いておく
-        showShinOverlay("🔥 真・8番ちくわ 🔥\n\nちくわのボールで\nおでんブロックを全部崩せ！\n\nパドルを指で動かして\nちくわを落とすな。", "スタート");
+        showShinOverlay("🔥 チクワノイド 🔥\n\nちくわのボールで\nおでんブロックを全部崩せ！\n\nパドルを指で動かして\nちくわを落とすな。", "スタート");
     }
 
     function setupShinLevel() {
@@ -4024,18 +3969,9 @@
         // クリア判定
         if (shinBricks.every(br => !br.alive)) {
             shinRunning = false;
-            const isNew = !hasShinMaster;
-            hasShinMaster = true;
-            saveShinMaster();
-            // 🔓 アルカノイドクリアで「8番チクビー」を解放
-            const beamIsNew = !hasBeamUnlocked;
-            hasBeamUnlocked = true;
-            saveBeamUnlocked();
             playClearBGM();
             shinOverlayMode = "clear";
-            showShinOverlay(isNew
-                ? "🏆 真・クリア！ 🏆\n\nおでんブロックを完全制覇！\n【真・ちくわマスター】の称号を得た！\n\n🔓 さらに「チクビウス」解放！"
-                : "🏆 真・クリア！ 🏆\n\nさすが真・ちくわマスター！\n\n🔓 「チクビウス」で遊べる！", "タイトルに戻る");
+            showShinOverlay("🏆 クリア！ 🏆\n\nおでんブロックを完全制覇！\nおみごと！", "タイトルに戻る");
             return;
         }
 
@@ -4306,17 +4242,13 @@
             beamShots = beamShots.filter(sh => !sh.hit);
             // ボス撃破
             if (b.hp <= 0) {
-                const isNew = !hasBeamMaster;
-                hasBeamMaster = true; saveBeamMaster();
                 // すぐには画面を切り替えず、撃破の余韻（爆発演出）に入る
                 beamVictory = true;
                 beamVictoryFrame = 0;
                 beamBossShots = [];   // ボスの弾は消す
                 beamEnemies = [];     // 雑魚も消す
                 // あとで出すクリアメッセージを保存しておく
-                beamPendingClear = isNew
-                    ? "🏆 撃破！ 🏆\n\n巨大ちくわボスを倒した！\nチクビーの平和は守られた！\n\n【チクビウスマスター】の称号を得た！"
-                    : "🏆 撃破！ 🏆\n\nチクビーの平和は\n再び守られた！\n\nさすがチクビウスマスター！";
+                beamPendingClear = "🏆 撃破！ 🏆\n\n巨大ちくわボスを倒した！\nチクビーの平和は守られた！\n\nおみごと！";
                 playClearBGM();
                 drawBeam();
                 beamReq = requestAnimationFrame(beamLoop);
@@ -4948,9 +4880,6 @@
                 if (currentChikuwa < 0) {
                     gameState = "CLEAR";
                     updateBadgeCollection();
-                    // 🔓 全異変コンプリート済みなら「真・8番ちくわ解放」を表示
-                    const shinMsg = document.getElementById("shin-unlock-msg");
-                    if (shinMsg) shinMsg.style.display = hasShinUnlocked ? "block" : "none";
                     document.getElementById("ed-screen").style.display = "flex";
                     playClearBGM();
                     return;
@@ -4978,12 +4907,7 @@
         const btn = document.getElementById("play-chase-btn");
         // 音を出した後（isAudioStarted）かつ称号ありのときだけ表示
         if (btn) btn.style.display = (isAudioStarted && hasChaseTitle) ? "block" : "none";
-        // 🔥 真・8番ちくわボタン（解放済み＆音ありで表示）
-        const shinBtn = document.getElementById("play-shin-btn");
-        if (shinBtn) shinBtn.style.display = (isAudioStarted && hasShinUnlocked) ? "block" : "none";
-        // 🔫 チクビウスボタン（解放済み＆音ありで表示）
-        const beamBtn = document.getElementById("play-beam-btn");
-        if (beamBtn) beamBtn.style.display = (isAudioStarted && hasBeamUnlocked) ? "block" : "none";
+        // チクワノイド・チクビウスはおまけ一覧から常時遊べるので、旧・隠しボタンは使わない
         // 🍊 おまけ：八朔じじい（音が出た後はいつでも遊べる。本編とは別枠のオプションゲーム）
         const omakeSection = document.getElementById("omake-section");
         if (omakeSection) omakeSection.style.display = isAudioStarted ? "flex" : "none";
