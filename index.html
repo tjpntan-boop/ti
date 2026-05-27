@@ -959,6 +959,18 @@
         }
         #play-pwr-btn:hover { background: #3a222e; border-color: #ff7a96; }
         #play-pwr-btn .hassaku-sub { font-size: 10px; font-weight: normal; letter-spacing: 0; opacity: 0.8; color: #c98aa8; }
+        #play-ijw-btn {
+            margin-top: 10px;
+            background: #1a2330; color: #ffd86b;
+            border: 1px solid #c83c3c; border-radius: 8px; padding: 9px 22px;
+            font-size: 15px; font-weight: bold; cursor: pointer; z-index: 1010; letter-spacing: 1px;
+            display: flex; flex-direction: column; align-items: center; gap: 2px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+            transition: background 0.15s, border-color 0.15s;
+            font-family: inherit;
+        }
+        #play-ijw-btn:hover { background: #24303f; border-color: #e0604a; }
+        #play-ijw-btn .hassaku-sub { font-size: 10px; font-weight: normal; letter-spacing: 0; opacity: 0.8; color: #c0a8a0; }
 
         /* タイトルに常設する「ブラウザで開く手順」案内ボックス */
         #open-guide {
@@ -1770,6 +1782,114 @@
 
     canvas { display: none; }
 
+
+/* ===== 🚪 じらじらし（組み込みCSS）===== */
+
+    /* 🚪 じらじらし オーバーレイ */
+    #ijw-game-wrap {
+        display: none; position: fixed; inset: 0; z-index: 5000;
+        overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch;
+        background: linear-gradient(180deg,#0e1620 0%,#1a2330 55%,#2a3441 100%);
+    }
+    #ijw-back-btn {
+        display: block; margin: 4px auto 30px;
+        font-family: "Hiragino Maru Gothic ProN", sans-serif; font-size: 14px; font-weight: bold;
+        background: #2a3441; color: #ffd86b; border: 2px solid #46535f; border-radius: 12px;
+        padding: 11px 30px; cursor: pointer; position: relative; z-index: 6;
+    }
+    #ijw-back-btn:active { background: #38434f; }
+
+    #ijw-wrap {
+        --train:#c83c3c; --train-dark:#8a2020; --cream:#f0e6d2;
+        --gauge1:#5ec98a; --gauge2:#f0c020; --gauge3:#e0402a;
+        --ink:#f0e6d2; --accent:#ffd86b;
+        font-family:"Hiragino Maru Gothic ProN","Hiragino Sans",sans-serif;
+    }
+    #ijw-game-wrap, #ijw-game-wrap #ijw-game-wrap, #ijw-game-wrap * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+    
+    #ijw-wrap { position:relative; min-height:100%; overflow:hidden;
+        background:linear-gradient(180deg,#0e1620 0%,#1a2330 55%,#2a3441 100%);
+        color:var(--ink); user-select:none; -webkit-user-select:none; padding:12px 14px 20px; }
+    #ijw-hud { position:relative; z-index:5; display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px; }
+    #ijw-score-box { font-size:12px; letter-spacing:1px; line-height:1.4; }
+    #ijw-score { font-size:24px; font-weight:bold; color:var(--accent); font-variant-numeric:tabular-nums; }
+    #ijw-detail { font-size:11px; color:#b0bcc8; }
+    #ijw-combo { font-size:12px; color:#ff9a52; font-weight:bold; min-height:15px; }
+    #ijw-timer-box { text-align:right; font-size:12px; }
+    #ijw-timer { font-size:24px; font-weight:bold; font-variant-numeric:tabular-nums; }
+    #ijw-timer.warn { color:var(--gauge3); }
+    #ijw-gauge-wrap { position:relative; z-index:5; margin-bottom:10px; }
+    #ijw-gauge-label { font-size:11px; color:#b0bcc8; margin-bottom:3px; letter-spacing:1px; }
+    #ijw-gauge-bar { height:16px; background:#0c1118; border-radius:9px; overflow:hidden; border:1px solid #4a5666; }
+    #ijw-gauge-fill { height:100%; width:0; border-radius:9px; transition:width 0.2s,background 0.3s; background:var(--gauge1); }
+    #ijw-scene { position:relative; z-index:3; width:100%; aspect-ratio:4/3.6; max-height:56vh;
+        background:linear-gradient(180deg,#16202c 0%,#1c2734 56%,#2e3845 56%,#38434f 100%);
+        border-radius:14px; overflow:hidden; border:2px solid #46535f; box-shadow:inset 0 0 40px rgba(0,0,0,0.5); }
+    #ijw-signboard { position:absolute; top:8px; left:50%; transform:translateX(-50%);
+        background:var(--cream); color:#2a3441; font-size:11px; font-weight:bold; padding:2px 14px; border-radius:4px; letter-spacing:2px; z-index:6; }
+    #ijw-train { position:absolute; top:32px; left:0; width:100%; height:42%;
+        background:linear-gradient(180deg,var(--train) 0%,var(--train-dark) 100%); border-bottom:5px solid #5a1414; }
+    #ijw-train::before { content:""; position:absolute; top:11px; left:0; width:100%; height:8px; background:rgba(255,255,255,0.15); }
+    .ijw-window { position:absolute; top:20px; width:15%; height:38%; background:#2a3a4a; border:2px solid #6a2222; border-radius:3px; box-shadow:inset 0 0 8px rgba(120,180,220,0.3); }
+    #ijw-door-frame { position:absolute; bottom:0; left:50%; transform:translateX(-50%); width:28%; height:84%; z-index:2; background:#10161e; }
+    #ijw-door-frame .ijw-door { position:absolute; top:0; width:50%; height:100%; background:linear-gradient(180deg,#d8d2c4,#b0a890); border:2px solid #6a2222; transition:transform 0.22s cubic-bezier(.4,0,.2,1); }
+    /* 乗車ライン：これより奥(上)に来た客は乗り込む。手前なら弾ける。 */
+    #ijw-boardline { position:absolute; left:0; width:100%; bottom:33%; z-index:1; pointer-events:none; }
+    #ijw-bl-bar { width:100%; height:0; border-top:3px dashed #ffd86b; opacity:0.65; box-shadow:0 0 6px rgba(255,216,107,0.4); }
+    #ijw-bl-label { position:absolute; bottom:3px; left:50%; transform:translateX(-50%); font-size:10px; letter-spacing:1px;
+        color:#ffd86b; opacity:0.8; white-space:nowrap; font-weight:bold; text-shadow:0 1px 3px rgba(0,0,0,0.6); }
+    #ijw-door-l { left:0; } #ijw-door-r { right:0; }
+    .ijw-open #ijw-door-l { transform:translateX(-99%); }
+    .ijw-open #ijw-door-r { transform:translateX(99%); }
+    .ijw-door::after { content:""; position:absolute; top:32%; width:60%; height:26%; left:20%; background:rgba(120,160,200,0.25); border-radius:2px; }
+    .ijw-person { position:absolute; font-size:34px; z-index:4; line-height:1;
+        transition:left 0.12s linear, bottom 0.12s linear, opacity 0.4s, transform 0.2s; }
+    .ijw-person.boarding { opacity:0; transform:translateY(-20px) scale(0.5); }
+    .ijw-person.bounced { transition:left 0.32s cubic-bezier(.5,-0.3,.6,1), bottom 0.32s ease-out, transform 0.2s; }
+    .ijw-person.boss { font-size:54px; filter:drop-shadow(0 0 8px rgba(255,216,107,0.9)); z-index:5; }
+    .ijw-person.boss::after { content:"社長"; position:absolute; top:-14px; left:50%; transform:translateX(-50%);
+        font-size:10px; font-weight:bold; color:#3a2800; background:var(--accent); padding:0 5px; border-radius:6px; white-space:nowrap; }
+    .ijw-person.bear { font-size:54px; filter:drop-shadow(0 0 8px rgba(224,64,42,0.9)); z-index:5; }
+    .ijw-person.bear::after { content:"乗せるな"; position:absolute; top:-14px; left:50%; transform:translateX(-50%);
+        font-size:10px; font-weight:bold; color:#fff; background:#e0402a; padding:0 5px; border-radius:6px; white-space:nowrap; }
+    .ijw-bub { position:absolute; bottom:62%; z-index:6; font-size:11px; font-weight:bold;
+        background:#fff; color:#c83c3c; padding:1px 7px; border-radius:10px; white-space:nowrap; opacity:0; transition:opacity 0.2s; pointer-events:none; }
+    .ijw-bub.show { opacity:1; }
+    #ijw-controls { position:relative; z-index:5; display:flex; gap:12px; margin-top:12px; }
+    .ijw-btn { flex:1; font-family:inherit; font-size:20px; font-weight:bold; padding:20px 0; border-radius:12px; cursor:pointer; border:none; letter-spacing:1px; transition:transform 0.05s; }
+    .ijw-btn:active { transform:translateY(3px); }
+    #ijw-close-btn { background:linear-gradient(#e0604a,#b83020); color:#fff; box-shadow:0 4px 0 #7a1810; }
+    #ijw-open-btn { background:linear-gradient(#5ec98a,#2a9a5a); color:#0a2a18; box-shadow:0 4px 0 #1a6038; }
+    #ijw-hint { position:relative; z-index:5; text-align:center; font-size:11px; color:#8a96a4; margin-top:8px; line-height:1.5; }
+    .ijw-overlay { position:absolute; inset:0; z-index:20; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:22px; background:rgba(10,16,24,0.93); overflow-y:auto; }
+    .ijw-overlay h1 { font-size:27px; color:var(--accent); margin:0 0 6px; text-shadow:0 2px 8px rgba(255,200,60,0.4); }
+    .ijw-overlay .ijw-sub { font-size:13px; color:#c0ccd8; line-height:1.7; margin-bottom:18px; }
+    .ijw-overlay .ijw-big { font-size:48px; margin:6px 0; }
+    .ijw-start-btn { font-family:inherit; font-size:19px; font-weight:bold; padding:14px 40px; border-radius:12px; border:none; cursor:pointer; background:linear-gradient(#ffd86b,#f0a020); color:#3a2800; box-shadow:0 4px 0 #b87010; }
+    .ijw-start-btn:active { transform:translateY(3px); }
+    #ijw-result-score { font-size:42px; font-weight:bold; color:var(--accent); font-variant-numeric:tabular-nums; }
+    #ijw-result-rank { font-size:20px; font-weight:bold; margin:4px 0 6px; }
+    #ijw-result-detail { font-size:13px; color:#c0ccd8; margin-bottom:6px; line-height:1.6; }
+    #ijw-result-best { font-size:13px; color:#b0bcc8; margin-bottom:12px; }
+    #ijw-result-ranks { width:100%; max-width:280px; margin:0 auto 16px; }
+    .ijw-rank-row { display:flex; justify-content:space-between; align-items:center; font-size:12px;
+        padding:5px 10px; border-radius:8px; margin-bottom:3px; background:rgba(255,255,255,0.05); color:#8a96a4; }
+    .ijw-rank-row.cleared { color:#e8eef4; background:rgba(255,255,255,0.1); }
+    .ijw-rank-row.current { background:var(--accent); color:#3a2800; font-weight:bold; box-shadow:0 0 10px rgba(255,216,107,0.5); }
+    .ijw-rank-row .ijw-nm { text-align:left; }
+    .ijw-rank-row .ijw-pt { font-variant-numeric:tabular-nums; opacity:0.85; }
+    .ijw-hidden { display:none !important; }
+    #ijw-bossflash { position:absolute; top:46%; left:50%; transform:translate(-50%,-50%) scale(0.8); z-index:16;
+        background:rgba(200,60,40,0.92); color:#fff; font-size:15px; font-weight:bold; padding:8px 16px; border-radius:10px;
+        white-space:nowrap; opacity:0; pointer-events:none; box-shadow:0 4px 14px rgba(0,0,0,0.5); text-align:center; }
+    #ijw-bossflash.show { animation:ijw-bossflash 1.3s ease-out; }
+    @keyframes ijw-bossflash { 0%{opacity:0;transform:translate(-50%,-50%) scale(0.6);} 15%{opacity:1;transform:translate(-50%,-50%) scale(1.08);} 75%{opacity:1;transform:translate(-50%,-50%) scale(1);} 100%{opacity:0;transform:translate(-50%,-60%) scale(1);} }
+    #ijw-countdown { position:absolute; inset:0; z-index:15; display:flex; align-items:center; justify-content:center;
+        font-size:110px; font-weight:bold; color:var(--accent); pointer-events:none;
+        text-shadow:0 0 20px rgba(255,200,60,0.7), 0 4px 12px rgba(0,0,0,0.6); opacity:0; }
+    #ijw-countdown.pop { animation:ijw-cd 0.9s ease-out; }
+    @keyframes ijw-cd { 0%{opacity:0;transform:scale(0.3);} 25%{opacity:1;transform:scale(1.1);} 70%{opacity:1;transform:scale(1);} 100%{opacity:0;transform:scale(1.3);} }
+
 </style>
 
 <script src="https://unpkg.com/@zxing/library@0.21.3/umd/index.min.js"></script>
@@ -1808,6 +1928,7 @@
             <button id="play-byo-btn" onclick="playByoMania(event)">⏱ ８秒マニア<span class="hassaku-sub">腹時計でピタリ8.0000秒を狙え</span></button>
             <button id="play-bcb-btn" onclick="playBcb(event)">📷 バーコード戦闘力<span class="hassaku-sub">家じゅうのバーコードで最強と最弱を探せ</span></button>
             <button id="play-pwr-btn" onclick="playPwr(event)">🌱 ４つのタネ<span class="hassaku-sub">写真の力で４つのタネを集め、花を咲かせよう</span></button>
+            <button id="play-ijw-btn" onclick="playIjw(event)">🚪 じらじらし<span class="hassaku-sub">じらし好きの車掌になってお客さんをじらせ</span></button>
         </div>
         <div id="open-guide">
             <div class="og-title">⚠️ 音が出ない / タップできない時は</div>
@@ -2064,6 +2185,63 @@
 </div>
     <button id="pwr-back-btn" onclick="pwrToTitle(event)">↩ タイトルに戻る</button>
 </div>
+
+<!-- 🚪 じらじらし（組み込み）-->
+<div id="ijw-game-wrap">
+<div id="ijw-wrap">
+    <div id="ijw-hud">
+        <div id="ijw-score-box">スコア <span id="ijw-score">0</span>
+            <div id="ijw-detail">🚃乗車得点 <span id="ijw-boarded">0</span> / 😈じらし度 <span id="ijw-tease">0</span></div>
+            <div id="ijw-combo"></div>
+        </div>
+        <div id="ijw-timer-box">発車まで<br><span id="ijw-timer">30</span>秒</div>
+    </div>
+    <div id="ijw-gauge-wrap">
+        <div id="ijw-gauge-label">😖 みんなのガマンゲージ（満タンで怒ってOUT！）</div>
+        <div id="ijw-gauge-bar"><div id="ijw-gauge-fill"></div></div>
+    </div>
+    <div id="ijw-scene">
+        <div id="ijw-signboard">じらし駅</div>
+        <div id="ijw-train">
+            <div class="ijw-window" style="left:5%"></div>
+            <div class="ijw-window" style="left:22%"></div>
+            <div class="ijw-window" style="right:22%"></div>
+            <div class="ijw-window" style="right:5%"></div>
+            <div id="ijw-door-frame">
+                <div class="ijw-door" id="ijw-door-l"></div>
+                <div class="ijw-door" id="ijw-door-r"></div>
+            </div>
+        </div>
+        <div id="ijw-boardline">
+            <div id="ijw-bl-bar"></div>
+            <div id="ijw-bl-label">⚠ これより奥は乗車ゾーン（弾けない）</div>
+        </div>
+        <div id="ijw-countdown"></div>
+        <div id="ijw-start" class="ijw-overlay">
+            <h1>じらじらし</h1>
+            <div class="ijw-sub">― 電車編 ―<br><br>じらしが大好きな車掌になって、<br>乗ろうとするお客さんを<br><b>ドアを閉めてじらそう。</b><br>開けると勝手に乗っていく。<br>閉めて追い返すと「じらし度」アップ！<br><br>でもじらしすぎるとゲージ満タンで<br><b>怒らせてOUT…</b><br>30秒でなるべく乗せて、上手にじらせ。</div>
+            <button class="ijw-start-btn" onclick="ijwStart()">車掌になる</button>
+        </div>
+        <div id="ijw-result" class="ijw-overlay ijw-hidden">
+            <div class="ijw-big" id="ijw-result-emoji">😈</div>
+            <div id="ijw-result-rank"></div>
+            <div id="ijw-result-score">0</div>
+            <div id="ijw-result-detail"></div>
+            <div id="ijw-result-best"></div>
+            <div id="ijw-result-ranks"></div>
+            <button class="ijw-start-btn" onclick="ijwStart()">もう一度</button>
+        </div>
+    </div>
+    <div id="ijw-controls" class="ijw-hidden">
+        <button class="ijw-btn" id="ijw-close-btn" onclick="ijwClose()">🚪 しめる</button>
+        <button class="ijw-btn" id="ijw-open-btn" onclick="ijwOpen()">🚪 あける</button>
+    </div>
+    <div id="ijw-hint" class="ijw-hidden">黄色い線の手前なら「しめる」で弾き返せる（じらし）！<br>線を越えると乗車ゾーン。上手にじらして、たくさん乗せよう。</div>
+</div>
+    <button id="ijw-back-btn" onclick="ijwToTitle(event)">↩ タイトルに戻る</button>
+</div>
+
+
 
 
 
@@ -7281,6 +7459,353 @@
         if (e) e.stopPropagation();
         try { pwrStopCamera(); } catch (e2) {}   // カメラ起動中なら止める
         document.getElementById("pwr-game-wrap").style.display = "none";
+        if (typeof goToTitle === "function") goToTitle();
+    };
+
+})();
+
+
+
+(function(){
+    var ijwAudio=null;
+    function beep(freq,dur,type,vol,when){ type=type||"square";vol=vol||0.05;when=when||0;
+        if(!ijwAudio)return; var t=ijwAudio.currentTime+when; var o=ijwAudio.createOscillator(),g=ijwAudio.createGain();
+        o.type=type;o.frequency.setValueAtTime(freq,t); g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(vol,t+0.01);g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+        o.connect(g);g.connect(ijwAudio.destination); o.start(t);o.stop(t+dur+0.02); }
+    function ensureAudio(){ if(!ijwAudio){try{ijwAudio=new(window.AudioContext||window.webkitAudioContext)();}catch(e){return;}} if(ijwAudio.state==="suspended")ijwAudio.resume(); }
+    function sndClose(){beep(680,0.07,"square",0.05);beep(480,0.09,"square",0.04,0.07);}
+    function sndOpen(){beep(560,0.08,"sine",0.04);}
+    function sndBoard(){beep(880,0.06,"sine",0.04);}
+    function sndBossBoard(){ beep(523,0.1,"sine",0.05); beep(659,0.1,"sine",0.05,0.1); beep(880,0.16,"sine",0.05,0.2); beep(1047,0.2,"sine",0.04,0.32); }
+    function sndAngry(){ beep(160,0.2,"sawtooth",0.06); beep(120,0.3,"sawtooth",0.06,0.18); }
+    function bossFlash(text){
+        var el=document.getElementById("ijw-bossflash");
+        if(!el){ el=document.createElement("div"); el.id="ijw-bossflash"; document.getElementById("ijw-scene").appendChild(el); }
+        el.innerText=text;
+        el.classList.remove("show"); void el.offsetWidth; el.classList.add("show");
+    }
+    function sndCry(){ beep(180,0.18,"square",0.06); beep(150,0.22,"square",0.06,0.16); beep(120,0.3,"sawtooth",0.06,0.34); }
+    function sndDepart(){beep(440,0.15,"square",0.05);beep(330,0.25,"square",0.05,0.15);}
+    // 汽笛（低めの音を二段で「ボーッ」）
+    function sndWhistle(){
+        if(!ijwAudio)return;
+        var t=ijwAudio.currentTime;
+        [[180,0],[150,0.0]].forEach(function(pair){
+            var o=ijwAudio.createOscillator(),g=ijwAudio.createGain();
+            o.type="sawtooth"; o.frequency.setValueAtTime(pair[0],t);
+            g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(0.05,t+0.05);
+            g.gain.setValueAtTime(0.05,t+0.6); g.gain.exponentialRampToValueAtTime(0.0001,t+0.9);
+            o.connect(g); g.connect(ijwAudio.destination); o.start(t); o.stop(t+0.95);
+        });
+    }
+    function sndTick(){ beep(880,0.08,"square",0.05); }   // カウントダウンのピッ
+
+    function scene(){return document.getElementById("ijw-scene");}
+    var state="idle", scoreTease=0, boarded=0, boardScore=0, gauge=0, timeLeft=30, combo=0, doorOpen=false;
+    var people=[], tickInt=null, secInt=null, idCounter=0;
+    var COLORS=["#e8d8a0","#a0c8e8","#e8a0b8","#a8e0b0","#d0b0e8","#e8c0a0"];
+
+    var FACES=["🧍","🙂","😀","🧑","🧍‍♀️","👦"];
+    function personFace(){ return FACES[Math.floor(Math.random()*FACES.length)]; }
+    function setScore(){
+        document.getElementById("ijw-score").innerText = boardScore + scoreTease;
+        document.getElementById("ijw-boarded").innerText = boardScore;
+        document.getElementById("ijw-tease").innerText = scoreTease;
+    }
+    function setCombo(){ document.getElementById("ijw-combo").innerText = combo>=2?("じらし "+combo+" 連続！"):""; }
+    function setGauge(v){ gauge=Math.max(0,Math.min(100,v)); var f=document.getElementById("ijw-gauge-fill"); f.style.width=gauge+"%";
+        f.style.background = gauge<45?"var(--gauge1)": gauge<75?"linear-gradient(90deg,var(--gauge1),var(--gauge2))":"linear-gradient(90deg,var(--gauge2),var(--gauge3))"; }
+    function setTimer(){ var el=document.getElementById("ijw-timer"); el.innerText=Math.ceil(timeLeft); if(timeLeft<=5)el.classList.add("warn"); else el.classList.remove("warn"); }
+
+    function sceneW(){return scene().clientWidth;}
+    function sceneH(){return scene().clientHeight;}
+    // pos 0=ホーム端 100=ドア中。横位置：端ではバラけ、ドアでは中央へ
+    function personLeft(p){
+        var w=sceneW(); var t=p.pos/100;
+        var awayX=0.08 + p.lane*0.14 + (p.laneOff||0);
+        var doorX=0.42 + (p.lane-1.5)*0.03 + (p.laneOff||0)*0.4;
+        return Math.round(w*(awayX+(doorX-awayX)*t));
+    }
+    // 縦位置：ホームでは下、ドアに近づくほど上がってドアの高さへ（斜めに入っていく）
+    function personBottom(p){
+        var h=sceneH(); var t=Math.max(0,p.pos)/100;
+        var awayY=0.06;   // ホームでの足元
+        var doorY=0.36;   // ドアの中の高さ
+        return Math.round(h*(awayY+(doorY-awayY)*t));
+    }
+    function layout(){ people.forEach(function(p){ if(p.el){
+        p.el.style.left=personLeft(p)+"px";
+        p.el.style.bottom=personBottom(p)+"px";
+        var b=p.el._bub; if(b){ b.style.left=personLeft(p)+"px"; }
+    } }); }
+
+    function spawnPerson(){
+        // 社長・クマは特別客。同時に1人まで。社長約12%、クマ約10%で登場。
+        var specialExists = people.some(function(p){return (p.boss||p.bear) && !p.boarding;});
+        var isBoss=false, isBear=false;
+        if(!specialExists){
+            var r=Math.random();
+            if(r < 0.12) isBoss=true;
+            else if(r < 0.22) isBear=true;   // 社長でなければクマを抽選
+        }
+        var face = isBoss?"🧔‍♂️" : isBear?"🐻" : personFace();
+        var p={id:idCounter++, pos:-(Math.random()*45), lane:Math.floor(Math.random()*4),
+               laneOff:(Math.random()-0.5)*0.08, speed:(isBoss||isBear)?(3+Math.random()*2):(3.5+Math.random()*3),
+               teaseLevel:0, boss:isBoss, bear:isBear, face:face, boarding:false};
+        var el=document.createElement("div"); el.className="ijw-person"+(isBoss?" boss":"")+(isBear?" bear":""); el.innerHTML=p.face;
+        scene().appendChild(el); p.el=el;
+        people.push(p);
+        if(isBoss){
+            bubble(p,"💼 社長だ！",1400);
+            try{ beep(330,0.12,"square",0.05); beep(440,0.14,"square",0.05,0.12); }catch(e){}
+        } else if(isBear){
+            bubble(p,"🐻 クマだ！乗せるな！",1400);
+            try{ beep(200,0.14,"sawtooth",0.05); beep(160,0.16,"sawtooth",0.05,0.13); }catch(e){}
+        }
+        layout();
+    }
+    function fill(){ while(people.filter(function(p){return !p.boarding;}).length<5) spawnPerson(); }
+
+    function bubble(p,text,ms){ ms=ms||700;
+        if(!p.el._bub){ var b=document.createElement("div"); b.className="ijw-bub"; scene().appendChild(b); p.el._bub=b; }
+        var b=p.el._bub; b.innerText=text; b.style.left=personLeft(p)+"px"; b.classList.add("show");
+        clearTimeout(b._t); b._t=setTimeout(function(){b.classList.remove("show");},ms); }
+
+    function tick(){
+        if(state!=="playing") return;
+        // だるまさんがころんだ式：ドアが開いている時だけ前進。閉まっていると止まる。
+        if(doorOpen){
+            people.forEach(function(p){
+                if(p.boarding) return;
+                if(p.pos < 105){
+                    var step = p.speed * (0.7 + Math.random()*0.6);   // 個別速度＋毎回の揺らぎ
+                    p.pos = Math.min(105, p.pos + step);
+                }
+            });
+            // 乗車：ドア中(>=100)に達した人
+            var bearBoarded=null;
+            people.forEach(function(p){
+                if(!p.boarding && p.pos>=100){
+                    if(p.bear){ bearBoarded=p; return; }   // クマが乗ったら後でOUT処理
+                    p.boarding=true; boarded++;
+                    if(p.boss){
+                        boardScore += 100;
+                        sndBossBoard();
+                        bossFlash("💼 社長を乗せた！ +100点");
+                    } else {
+                        boardScore += 10;
+                        sndBoard();
+                    }
+                    p.el.classList.add("boarding");
+                    (function(el,b){ setTimeout(function(){ el.remove(); if(b)b.remove(); },400); })(p.el, p.el._bub);
+                }
+            });
+            if(bearBoarded){ bearOut(bearBoarded); return; }   // クマを乗せた＝一発OUT
+            people = people.filter(function(p){return !p.boarding;});
+            setScore();
+        }
+        // 閉まっている時は誰も動かない（静止）
+        layout();
+        fill();
+    }
+
+    window.ijwOpen=function(){ if(state!=="playing")return; ensureAudio(); if(doorOpen)return;
+        doorOpen=true; scene().classList.add("ijw-open"); sndOpen(); combo=0; setCombo(); };
+
+    window.ijwClose=function(){ if(state!=="playing")return; ensureAudio();
+        var wasOpen=doorOpen; doorOpen=false; scene().classList.remove("ijw-open"); sndClose();
+        // 乗車ライン(pos90)より手前の客だけ弾き返せる＝じらし。ライン以降は乗車ゾーンで弾けない。
+        var near=people.filter(function(p){return !p.boarding && p.pos>=55 && p.pos<90;});
+        if(near.length>0){
+            combo++; setCombo();
+            scoreTease += near.length*(8+combo*5);
+            setGauge(gauge + (6+combo*4));
+            var bossInNear = false;
+            var bearInNear = false;
+            near.forEach(function(p){
+                p.pos=0; p.teaseLevel++;   // 弾かれて端まで戻る
+                if(p.boss){
+                    bossInNear = true;
+                    p.face="😡"; p.el.innerHTML="😡";
+                    bubble(p,"💢 社長を怒らせた！",1200);
+                } else if(p.bear){
+                    bearInNear = true;
+                    if(p.teaseLevel >= 2){
+                        // 2回追い返したら諦めて帰る
+                        p.bearLeaving = true;
+                        bubble(p,"🐻 もういい、帰る…",1300);
+                        p.el.classList.add("leaving");
+                        (function(el,b){ setTimeout(function(){ el.remove(); if(b)b.remove(); },500); })(p.el, p.el._bub);
+                    } else {
+                        bubble(p,"🐻 シッシッ！",1100);
+                    }
+                } else {
+                    var sad=["😟","😠","😣","😡"][Math.min(p.teaseLevel-1,3)];
+                    p.face=sad; p.el.innerHTML=sad;
+                    bubble(p,["むっ","えー","ひどい","う…"][Math.min(p.teaseLevel-1,3)],700);
+                }
+                p.el.classList.add("bounced");
+                (function(el){ setTimeout(function(){ el.classList.remove("bounced"); },340); })(p.el);
+            });
+            // クマを追い返したらボーナス得点（じらし大成功）
+            if(bearInNear){
+                scoreTease += 60;
+                sndBossBoard();
+                bossFlash("🐻 クマを追い返した！ +60点");
+            }
+            // 帰ることにしたクマを配列から除外
+            people = people.filter(function(p){return !p.bearLeaving;});
+            // 社長を弾いたらゲージ激増＆警告音
+            if(bossInNear){
+                setGauge(gauge + 35);
+                sndAngry();
+                bossFlash("💢 社長カンカン！ ゲージ急上昇！");
+            }
+            setScore(); layout();
+            if(gauge>=100){ cryOut(near[0]); return; }
+        }
+    };
+
+    function cryOut(victim){
+        state="over";
+        if(victim) bubble(victim,"もう許さん！💢",1500);
+        sndCry(); clearInterval(tickInt); clearInterval(secInt);
+        setTimeout(function(){showResult("angry");},1300);
+    }
+
+    function bearOut(bear){
+        state="over";
+        if(bear && bear.el){ bear.el.innerHTML="🐻"; }
+        bossFlash("🐻 クマを乗せてしまった！");
+        if(bear) bubble(bear,"ガオー！🐾",1500);
+        sndCry(); clearInterval(tickInt); clearInterval(secInt);
+        setTimeout(function(){showResult("bear");},1300);
+    }
+
+    function depart(){
+        state="over"; doorOpen=false; scene().classList.remove("ijw-open"); sndDepart();
+        clearInterval(tickInt); clearInterval(secInt);
+        setTimeout(function(){showResult(false);},700);
+    }
+
+    function showResult(reason){
+        state="over"; clearInterval(tickInt); clearInterval(secInt);
+        var total=boardScore+scoreTease;
+        var best=loadBest(); if(total>best) saveBest(total);
+        var isOut = (reason==="angry" || reason==="bear");
+        var rank,col,emoji;
+        var curRank = rankOf(total);
+        if(reason==="bear"){ emoji="🐻"; rank="クマを乗せてOUT！"; col="#e0604a"; }
+        else if(reason==="angry"){ emoji="😡"; rank="怒らせてしまった…OUT"; col="#e0604a"; }
+        else { emoji="🚃💨"; rank=curRank.name; col=curRank.col; }
+        document.getElementById("ijw-result-emoji").innerText=emoji;
+        var r=document.getElementById("ijw-result-rank"); r.innerText=rank; r.style.color=col;
+        document.getElementById("ijw-result-score").innerText=total;
+        document.getElementById("ijw-result-detail").innerText="🚃 乗車得点 "+boardScore+"点（"+boarded+"人）\n😈 じらし度 "+scoreTease+"点";
+        document.getElementById("ijw-result-best").innerText="自己ベスト "+Math.max(best,total)+"点";
+        // ランク一覧（上から高い順）。達成済み・今回のランク・未達を色分け
+        var bestEver = Math.max(best, total);
+        var curIsOut = isOut;
+        var listHtml = "";
+        for(var i=RANKS.length-1;i>=0;i--){
+            var rk=RANKS[i];
+            var cleared = bestEver >= rk.min;
+            var isCurrent = (!curIsOut && curRank.min===rk.min);
+            var cls = "ijw-rank-row" + (isCurrent?" current":(cleared?" cleared":""));
+            var ptText = rk.min===0 ? "0点〜" : (rk.min+"点〜");
+            var mark = isCurrent ? "▶ " : (cleared ? "✓ " : "🔒 ");
+            listHtml += '<div class="'+cls+'"><span class="ijw-nm">'+mark+rk.name+'</span><span class="ijw-pt">'+ptText+'</span></div>';
+        }
+        document.getElementById("ijw-result-ranks").innerHTML = listHtml;
+        document.getElementById("ijw-controls").classList.add("ijw-hidden");
+        document.getElementById("ijw-hint").classList.add("ijw-hidden");
+        document.getElementById("ijw-result").classList.remove("ijw-hidden");
+    }
+
+    window.ijwStart=function(){
+        ensureAudio(); state="playing";
+        scoreTease=0; boarded=0; boardScore=0; combo=0; setCombo(); setScore();
+        setGauge(0); timeLeft=30; setTimer();
+        doorOpen=true; scene().classList.add("ijw-open");   // 最初からドアは開いた状態でスタート
+        // 既存の人を消去
+        people.forEach(function(p){ if(p.el){ if(p.el._bub)p.el._bub.remove(); p.el.remove(); } });
+        people=[];
+        document.getElementById("ijw-start").classList.add("ijw-hidden");
+        document.getElementById("ijw-controls").classList.remove("ijw-hidden");
+        document.getElementById("ijw-hint").classList.remove("ijw-hidden");
+        document.getElementById("ijw-result").classList.add("ijw-hidden");
+        fill();
+        clearInterval(tickInt); clearInterval(secInt);
+        tickInt=setInterval(tick,120);
+        secInt=setInterval(function(){
+            if(state!=="playing")return;
+            var prevSec=Math.ceil(timeLeft);
+            timeLeft-=0.1;
+            var nowSec=Math.ceil(timeLeft);
+            if(Math.abs(timeLeft-Math.round(timeLeft))<0.05){
+                if(gauge>0) setGauge(gauge-1.2);   // 自然回復
+            }
+            // 秒が切り替わった瞬間に、残り5秒以下ならカウントダウン
+            if(nowSec<prevSec && nowSec>=1 && nowSec<=5){
+                showCountdown(nowSec);
+                if(nowSec===5) sndWhistle();   // 5秒前に汽笛
+                else sndTick();                // 4,3,2,1はピッ
+            }
+            setTimer();
+            if(timeLeft<=0){ depart(); }
+        },100);
+    };
+
+    function showCountdown(n){
+        var el=document.getElementById("ijw-countdown");
+        el.innerText=n;
+        el.classList.remove("pop"); void el.offsetWidth;   // アニメ再始動
+        el.classList.add("pop");
+    }
+
+    var BEST_KEY="ijw_best";
+    // ランク定義（min点以上で達成）。下から上へ。
+    var RANKS=[
+        {min:0,    name:"見習い車掌",          col:"#b0bcc8"},
+        {min:400,  name:"おしりじらし虫",      col:"#9ab0c8"},
+        {min:650,  name:"じらし上手",          col:"#7aa8ff"},
+        {min:850,  name:"じらし名人",          col:"#5ec98a"},
+        {min:1050, name:"じらし達人",          col:"#3ad0a0"},
+        {min:1300, name:"🏆 じらし黄門",        col:"#ffd86b"},
+        {min:1600, name:"👑 じらしの神",        col:"#ff8fd0"}
+    ];
+    function rankOf(total){ var r=RANKS[0]; for(var i=0;i<RANKS.length;i++){ if(total>=RANKS[i].min) r=RANKS[i]; } return r; }
+    function loadBest(){try{return parseInt(localStorage.getItem(BEST_KEY))||0;}catch(e){return 0;}}
+    function saveBest(v){try{localStorage.setItem(BEST_KEY,v);}catch(e){}}
+
+    // ===== 起動・終了（本編タイトルから呼ぶ）=====
+    window.playIjw = function(e) {
+        if (e) e.stopPropagation();
+        if (typeof isAudioStarted !== "undefined") isAudioStarted = true;
+        try { if (typeof titleInterval !== "undefined" && titleInterval) { clearInterval(titleInterval); titleInterval = null; } } catch (e2) {}
+        try { if (typeof bpmInterval !== "undefined" && bpmInterval) { clearInterval(bpmInterval); bpmInterval = null; } } catch (e2) {}
+        try { if (typeof currentBgmMode !== "undefined") currentBgmMode = null; } catch (e2) {}
+        try { if (typeof stopBGM === "function") stopBGM(); } catch (e2) {}
+        document.getElementById("title-screen").style.display = "none";
+        if (typeof gameState !== "undefined") gameState = "IJIWARU";
+        document.getElementById("ijw-game-wrap").style.display = "block";
+        // ゲームは止めてスタート画面から。前回の残りタイマーを掃除。
+        state = "idle";
+        try { clearInterval(tickInt); } catch(e2) {}
+        try { clearInterval(secInt); } catch(e2) {}
+        document.getElementById("ijw-start").classList.remove("ijw-hidden");
+        document.getElementById("ijw-result").classList.add("ijw-hidden");
+        document.getElementById("ijw-controls").classList.add("ijw-hidden");
+        document.getElementById("ijw-hint").classList.add("ijw-hidden");
+        window.scrollTo(0, 0);
+    };
+
+    window.ijwToTitle = function(e) {
+        if (e) e.stopPropagation();
+        state = "over";
+        try { clearInterval(tickInt); } catch(e2) {}
+        try { clearInterval(secInt); } catch(e2) {}
+        document.getElementById("ijw-game-wrap").style.display = "none";
         if (typeof goToTitle === "function") goToTitle();
     };
 
