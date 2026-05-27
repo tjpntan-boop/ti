@@ -1862,6 +1862,8 @@
     #ijw-open-btn { background:linear-gradient(#5ec98a,#2a9a5a); color:#0a2a18; box-shadow:0 4px 0 #1a6038; }
     #ijw-hint { position:relative; z-index:5; text-align:center; font-size:11px; color:#8a96a4; margin-top:8px; line-height:1.5; }
     .ijw-overlay { position:absolute; inset:0; z-index:20; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:22px; background:rgba(10,16,24,0.93); overflow-y:auto; }
+    /* 結果は中身が長いので上揃え＋上下余白（中央寄せだと長いとき上が切れるため）*/
+    #ijw-result { justify-content:flex-start; padding-top:30px; padding-bottom:30px; }
     .ijw-overlay h1 { font-size:27px; color:var(--accent); margin:0 0 6px; text-shadow:0 2px 8px rgba(255,200,60,0.4); }
     .ijw-overlay .ijw-sub { font-size:13px; color:#c0ccd8; line-height:1.7; margin-bottom:18px; }
     .ijw-overlay .ijw-big { font-size:48px; margin:6px 0; }
