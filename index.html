@@ -214,6 +214,26 @@
             content: "👁"; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%);
             font-size: 14px;
         }
+        /* 🏃 ちくわにげ 結果表示（おまけ単体プレイのときに使う） */
+        #chase-result {
+            display: none; position: absolute; inset: 0;
+            background: rgba(0,0,0,0.95); z-index: 100;
+            flex-direction: column; justify-content: center; align-items: center; text-align: center;
+            padding: 20px;
+        }
+        #chase-result.show { display: flex; }
+        #chase-result-text {
+            color: #fff; font-size: 22px; font-weight: bold; line-height: 1.7;
+            margin-bottom: 30px; white-space: pre-line;
+            text-shadow: 0 0 12px rgba(255,255,255,0.4);
+        }
+        #chase-result-btn {
+            font-family: inherit; font-size: 17px; font-weight: bold;
+            background: #2a3441; color: #ffd86b;
+            border: 2px solid #ffd86b; border-radius: 12px;
+            padding: 12px 32px; cursor: pointer;
+        }
+        #chase-result-btn:active { background: #38434f; }
 
         /* ⚡ バック・トゥ・ザ・ちくわ（タイムスリップ演出） */
         #timeslip-event {
@@ -2426,6 +2446,10 @@
         <div id="chase-timer">15</div>
         <div id="chase-player">🏃</div>
         <div id="chase-chikuwa"></div>
+        <div id="chase-result">
+            <div id="chase-result-text"></div>
+            <button id="chase-result-btn" onclick="chaseResultClose(event)">タイトルに戻る</button>
+        </div>
     </div>
 
     <div id="timeslip-event">
@@ -3533,6 +3557,9 @@
     function startChase() {
         gameState = "CHASE";
         chaseResolved = false;
+        // 前回の結果表示が残っていたら消す
+        const prevResult = document.getElementById("chase-result");
+        if (prevResult) prevResult.classList.remove("show");
         chaseLeft = 15;
 
         if (bpmInterval) { clearInterval(bpmInterval); bpmInterval = null; }
@@ -3606,12 +3633,12 @@
         chaseResolved = true;
         stopChaseLoops();
         playFailDoom();
-        document.getElementById("chase-game").style.display = "none";
         if (chaseStandalone) {
-            // 単体プレイ：本編に影響させずタイトルへ
+            // 単体プレイ：chase画面の中に結果表示（本編の画面が透けないように）
             chaseStandalone = false;
-            showOverlay("ちくわに捕まった……！\nまた挑戦しよう。", () => { goToTitle(); });
+            showChaseResult("ちくわに捕まった……！\nまた挑戦しよう。");
         } else {
+            document.getElementById("chase-game").style.display = "none";
             currentChikuwa = 8;
             showOverlay("ちくわに捕まった……！\n（お腹がリセットされ、最初から食い直しです）", () => { initStage(); });
         }
@@ -3623,15 +3650,17 @@
         chaseResolved = true;
         stopChaseLoops();
         playLucky();
-        document.getElementById("chase-game").style.display = "none";
         const isNew = !hasChaseTitle;
         hasChaseTitle = true;
         saveChaseTitle();
         if (chaseStandalone) {
-            // 単体プレイ：タイトルへ戻る
+            // 単体プレイ：chase画面の中に結果表示（本編の画面が透けないように）
             chaseStandalone = false;
-            showOverlay("逃げ切った……！\n見事に生き延びた！🏃", () => { goToTitle(); });
+            showChaseResult(isNew
+                ? "逃げ切った……！\n見事に生き延びた！🏃\n\n【ちくわにげ】の称号を得た！"
+                : "逃げ切った……！\n見事に生き延びた！🏃");
         } else {
+            document.getElementById("chase-game").style.display = "none";
             if (isAudioStarted && audioCtx) { playHorrorLoopBGM(); }
             showOverlay(isNew
                 ? "逃げ切った……！\n【ちくわにげ】の称号を得た！🏃"
@@ -3639,6 +3668,21 @@
                 () => { initStage(); });
         }
     }
+
+    // 🏃 ちくわにげ：おまけ単体プレイの結果表示（本編画面が透けないよう、chase-game内に表示）
+    function showChaseResult(text) {
+        const r = document.getElementById("chase-result");
+        const t = document.getElementById("chase-result-text");
+        if (t) t.innerText = text;
+        if (r) r.classList.add("show");
+    }
+    window.chaseResultClose = function(e) {
+        if (e) e.stopPropagation();
+        const r = document.getElementById("chase-result");
+        if (r) r.classList.remove("show");
+        document.getElementById("chase-game").style.display = "none";
+        goToTitle();
+    };
 
     // ===== ⚡ バック・トゥ・ザ・ちくわ（1%・タイムスリップ）=====
     // 加速してビューン！と時を超える音
