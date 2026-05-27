@@ -7242,8 +7242,8 @@
         } else {
             flower.innerHTML = "";
             const left = 4 - count;
-            if (count === 0) msg.innerText = "各力で100点を取ると、その力のタネがもらえる。\n４つの力が集まると…！？";
-            else msg.innerText = "あと "+left+" つの力で100点を取ると…\n４つのタネが集まって、何かが起こる…！？";
+            if (count === 0) msg.innerText = "各力で95点以上を取ると、その力のタネがもらえる。\n４つの力が集まると…！？";
+            else msg.innerText = "あと "+left+" つの力で95点以上を取ると…\n４つのタネが集まって、何かが起こる…！？";
         }
     }
 
@@ -7253,7 +7253,7 @@
         const before = SEED_DEFS.filter(d => s[d.k]).length;
         let newly = [];
         SEED_DEFS.forEach(d => {
-            if (stats[d.k] === 100 && !s[d.k]) { s[d.k] = true; newly.push(d); }
+            if (stats[d.k] >= 95 && !s[d.k]) { s[d.k] = true; newly.push(d); }
         });
         const after = before + newly.length;
         if (newly.length) pwrSaveSeeds(s);
