@@ -1595,9 +1595,9 @@
         color: #6a8a70; background: none; border: none; text-decoration: underline; cursor: pointer; }
 
 
-/* ===== 🌸 フォト・パワー診断（組み込みCSS）===== */
+/* ===== 🌱 ４つのタネ（組み込みCSS）===== */
 
-    /* 🌸 フォト・パワー診断 オーバーレイ */
+    /* 🌱 ４つのタネ オーバーレイ */
     #pwr-game-wrap {
         display: none; position: fixed; inset: 0; z-index: 5000;
         overflow-y: auto; overflow-x: hidden;
@@ -1736,6 +1736,7 @@
         font-variant-numeric: tabular-nums; }
     #pwr-total-row small { font-size: 12px; color: #b89; font-weight: normal; }
     #pwr-total-row #pwr-total-best { display: block; font-size: 11px; color: #c98ba0; font-weight: normal; margin-top: 2px; }
+    #pwr-card-sig { text-align: center; font-size: 11px; color: #c0a8b0; letter-spacing: 1px; margin-top: 12px; }
     .pwr-hall-total { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: bold;
         margin-top: 8px; padding-top: 10px; border-top: 1px dashed var(--line); color: #d77; }
     .pwr-hall-total .pwr-ic { font-size: 20px; }
@@ -1746,6 +1747,26 @@
     #pwr-hall-photo img { width: 140px; height: 140px; object-fit: cover; border-radius: 14px;
         border: 3px solid #ffd194; box-shadow: 0 4px 12px rgba(255,170,120,0.4); }
     #pwr-hall-photo .cap { font-size: 12px; color: #d88; font-weight: bold; margin-top: 6px; }
+
+    /* 🌱 タネのコレクション */
+    #pwr-seeds { position: relative; z-index: 2; max-width: 380px; margin: 16px auto 0;
+        background: var(--soft); border-radius: 16px; padding: 14px 16px; border: 1px solid var(--line); }
+    #pwr-seeds-title { text-align: center; font-size: 13px; color: #b89; letter-spacing: 1px;
+        border-bottom: 1px dashed var(--line); padding-bottom: 8px; margin-bottom: 10px; }
+    #pwr-seeds-row { display: flex; justify-content: space-around; align-items: flex-start; }
+    .pwr-seed { text-align: center; width: 22%; }
+    .pwr-seed svg { width: 100%; max-width: 56px; height: auto; }
+    .pwr-seed .lbl { font-size: 10px; margin-top: 2px; font-weight: bold; }
+    .pwr-seed.got .lbl { color: #7a5a58; }
+    .pwr-seed.locked .lbl { color: #c0b0a8; }
+    .pwr-seed.got svg { animation: pwr-seedPop 0.5s ease-out; }
+    @keyframes pwr-seedPop { 0% { transform: scale(0.3); opacity: 0; } 60% { transform: scale(1.15); } 100% { transform: scale(1); opacity: 1; } }
+    #pwr-seeds-msg { text-align: center; font-size: 12px; color: #c98ba0; margin-top: 10px; line-height: 1.6; font-weight: bold; }
+    #pwr-flower { text-align: center; }
+    #pwr-flower svg { width: 160px; height: auto; }
+    #pwr-flower.bloom svg { animation: pwr-bloom 1s ease-out; }
+    @keyframes pwr-bloom { 0% { transform: scale(0) rotate(-40deg); opacity: 0; } 70% { transform: scale(1.1) rotate(8deg); } 100% { transform: scale(1) rotate(0); opacity: 1; } }
+    #pwr-flower .bloom-msg { font-size: 14px; color: #e0648a; font-weight: bold; line-height: 1.7; margin-top: 4px; }
 
     canvas { display: none; }
 
@@ -1786,7 +1807,7 @@
             <button id="play-hassaku-btn" onclick="playHassakuGame(event)">🍊 八朔じじい<span class="hassaku-sub">ちくわに飽きたあなたにおすすめのミニゲーム</span></button>
             <button id="play-byo-btn" onclick="playByoMania(event)">⏱ ８秒マニア<span class="hassaku-sub">腹時計でピタリ8.0000秒を狙え</span></button>
             <button id="play-bcb-btn" onclick="playBcb(event)">📷 バーコード戦闘力<span class="hassaku-sub">家じゅうのバーコードで最強と最弱を探せ</span></button>
-            <button id="play-pwr-btn" onclick="playPwr(event)">🌸 フォト・パワー診断<span class="hassaku-sub">写真にひそむ４つの力を測ろう</span></button>
+            <button id="play-pwr-btn" onclick="playPwr(event)">🌱 ４つのタネ<span class="hassaku-sub">写真の力で４つのタネを集め、花を咲かせよう</span></button>
         </div>
         <div id="open-guide">
             <div class="og-title">⚠️ 音が出ない / タップできない時は</div>
@@ -1985,12 +2006,12 @@
     <button id="bcb-back-btn" onclick="bcbToTitle(event)">↩ タイトルに戻る</button>
 </div>
 
-<!-- 🌸 フォト・パワー診断（組み込み）-->
+<!-- 🌱 ４つのタネ（組み込み）-->
 <div id="pwr-game-wrap">
 <div id="pwr-wrap">
     <div id="pwr-head">
-        <h1 id="pwr-title">フォト・パワー診断</h1>
-        <div id="pwr-sub">― 写真にひそむ４つの力 ―</div>
+        <h1 id="pwr-title">４つのタネ</h1>
+        <div id="pwr-sub">― 写真にひそむ力で、しあわせの花を咲かせよう ―</div>
     </div>
 
     <div id="pwr-photo-zone">
@@ -2019,6 +2040,7 @@
             <div class="pwr-stat pwr-p"><div class="pwr-stat-top"><span>☀️ 前向きな力</span><span class="pwr-stat-val" id="pwr-v-p">0</span></div><div class="pwr-bar"><div class="pwr-bar-fill" id="pwr-b-p"></div></div></div>
             <div class="pwr-stat pwr-h"><div class="pwr-stat-top"><span>🌿 癒やしの力</span><span class="pwr-stat-val" id="pwr-v-h">0</span></div><div class="pwr-bar"><div class="pwr-bar-fill" id="pwr-b-h"></div></div></div>
             <div id="pwr-total-row">🏆 総合スコア <span id="pwr-total-val">0</span> <small>/ 400</small><span id="pwr-total-best"></span></div>
+            <div id="pwr-card-sig">🌱 ４つのタネ 〜 8番ちくわ 〜</div>
             <div class="pwr-btn-row" style="margin-top:6px;">
                 <button class="pwr-btn" onclick="pwrPickAlbum()">🖼 別の写真を選ぶ</button>
                 <button class="pwr-btn" onclick="pwrResultCamera()">📷 カメラで撮る</button>
@@ -2029,6 +2051,13 @@
     <div id="pwr-hall">
         <div id="pwr-hall-title">🏅 これまでの最高記録（力ごと）</div>
         <div id="pwr-hall-list"></div>
+    </div>
+
+    <div id="pwr-seeds">
+        <div id="pwr-seeds-title">🌱 ４つの力のタネ</div>
+        <div id="pwr-seeds-row"></div>
+        <div id="pwr-seeds-msg"></div>
+        <div id="pwr-flower"></div>
     </div>
 
     <canvas id="pwr-canvas"></canvas>
@@ -7099,6 +7128,14 @@
         document.getElementById("pwr-result").classList.add("show");
         const thumb = pwrMakeThumb(img);
         pwrUpdateHall(stats, thumb);
+        // 100点を取った力のタネを付与
+        const newSeeds = pwrGrantSeeds(stats);
+        const bestEl2 = document.getElementById("pwr-total-best");
+        if (newSeeds.length) {
+            const names = newSeeds.map(d => "🌱" + d.lbl + "のタネ").join("・");
+            bestEl2.innerHTML = (bestEl2.innerText ? bestEl2.innerText + "<br>" : "") +
+                '<span style="color:#3a9a78">' + names + " をGET！</span>";
+        }
     };
 
     // ===== 殿堂（力ごとの最高点）=====
@@ -7141,6 +7178,89 @@
         box.innerHTML = html;
     }
     pwrRenderHall();
+
+    // ===== 🌱 タネのコレクション =====
+    const SEED_KEY = "pwr_seeds";
+    const SEED_DEFS = [
+        { k:"kindness", lbl:"やさしさ", body:"#ff8fa3", line:"#e0648a", txt:"#d0607e" },
+        { k:"lucky",    lbl:"ラッキー", body:"#ffc94d", line:"#e0a420", txt:"#c89020" },
+        { k:"positive", lbl:"前向き",   body:"#ff9a52", line:"#e0742a", txt:"#d0742a" },
+        { k:"healing",  lbl:"癒やし",   body:"#6fc7a8", line:"#3a9a78", txt:"#2a9a78" },
+    ];
+    function pwrLoadSeeds() { try { return JSON.parse(localStorage.getItem(SEED_KEY)) || {}; } catch(e){ return {}; } }
+    function pwrSaveSeeds(s) { try { localStorage.setItem(SEED_KEY, JSON.stringify(s)); } catch(e){} }
+
+    function pwrSeedSVG(def, got) {
+        if (got) {
+            return '<svg viewBox="0 0 56 96" xmlns="http://www.w3.org/2000/svg">' +
+                '<ellipse cx="28" cy="56" rx="24" ry="32" fill="'+def.body+'" stroke="'+def.line+'" stroke-width="2"/>' +
+                '<ellipse cx="20" cy="46" rx="6" ry="10" fill="rgba(255,255,255,0.55)"/>' +
+                '<path d="M28,22 C12,20 10,42 28,42" fill="none" stroke="#5fb87a" stroke-width="3.5" stroke-linecap="round"/>' +
+                '<path d="M28,26 C40,22 46,36 32,38" fill="#7ed99a"/>' +
+                '</svg>';
+        }
+        return '<svg viewBox="0 0 56 96" xmlns="http://www.w3.org/2000/svg">' +
+            '<ellipse cx="28" cy="56" rx="24" ry="32" fill="#ece2dc" stroke="#d8c8c0" stroke-width="2"/>' +
+            '<text x="28" y="68" font-size="30" fill="#c0b0a8" text-anchor="middle" font-family="sans-serif" font-weight="bold">?</text>' +
+            '</svg>';
+    }
+
+    function pwrFlowerSVG() {
+        return '<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">' +
+            '<path d="M120,150 C118,180 122,200 120,224" stroke="#5fb87a" stroke-width="6" fill="none" stroke-linecap="round"/>' +
+            '<path d="M120,190 C100,182 88,190 84,200 C100,202 114,198 120,192" fill="#7ed99a"/>' +
+            '<path d="M120,205 C140,197 152,205 156,215 C140,217 126,213 120,207" fill="#7ed99a"/>' +
+            '<g transform="translate(120,110)">' +
+            '<ellipse cx="0" cy="-42" rx="22" ry="36" fill="#ff8fa3"/>' +
+            '<ellipse cx="40" cy="0" rx="36" ry="22" fill="#ffc94d"/>' +
+            '<ellipse cx="0" cy="42" rx="22" ry="36" fill="#ff9a52"/>' +
+            '<ellipse cx="-40" cy="0" rx="36" ry="22" fill="#6fc7a8"/>' +
+            '<ellipse cx="28" cy="-28" rx="20" ry="30" fill="#ffd194" opacity="0.85" transform="rotate(45 28 -28)"/>' +
+            '<ellipse cx="28" cy="28" rx="20" ry="30" fill="#ffb38f" opacity="0.85" transform="rotate(-45 28 28)"/>' +
+            '<ellipse cx="-28" cy="28" rx="20" ry="30" fill="#9ad9c0" opacity="0.85" transform="rotate(45 -28 28)"/>' +
+            '<ellipse cx="-28" cy="-28" rx="20" ry="30" fill="#ffb3c2" opacity="0.85" transform="rotate(-45 -28 -28)"/>' +
+            '<circle cx="0" cy="0" r="20" fill="#fff3c4" stroke="#f0c060" stroke-width="2"/>' +
+            '<circle cx="0" cy="0" r="11" fill="#ffd86b"/></g></svg>';
+    }
+
+    function pwrRenderSeeds(justBloomed) {
+        const s = pwrLoadSeeds();
+        const row = document.getElementById("pwr-seeds-row");
+        row.innerHTML = SEED_DEFS.map(d => {
+            const got = !!s[d.k];
+            return '<div class="pwr-seed '+(got?"got":"locked")+'">' + pwrSeedSVG(d, got) +
+                   '<div class="lbl">'+(got?d.lbl:"？？？")+'</div></div>';
+        }).join("");
+        const count = SEED_DEFS.filter(d => s[d.k]).length;
+        const msg = document.getElementById("pwr-seeds-msg");
+        const flower = document.getElementById("pwr-flower");
+        if (count >= 4) {
+            msg.innerText = "";
+            flower.innerHTML = pwrFlowerSVG() +
+                '<div class="bloom-msg">✨ ４つの力がそろった！ ✨<br>しあわせの花がさきました🌸</div>';
+            if (justBloomed) { flower.classList.add("bloom"); setTimeout(()=>flower.classList.remove("bloom"), 1100); }
+        } else {
+            flower.innerHTML = "";
+            const left = 4 - count;
+            if (count === 0) msg.innerText = "各力で100点を取ると、その力のタネがもらえる。\n４つの力が集まると…！？";
+            else msg.innerText = "あと "+left+" つの力で100点を取ると…\n４つのタネが集まって、何かが起こる…！？";
+        }
+    }
+
+    // 100点を取った力のタネを付与（新規取得した定義の配列を返す）
+    function pwrGrantSeeds(stats) {
+        const s = pwrLoadSeeds();
+        const before = SEED_DEFS.filter(d => s[d.k]).length;
+        let newly = [];
+        SEED_DEFS.forEach(d => {
+            if (stats[d.k] === 100 && !s[d.k]) { s[d.k] = true; newly.push(d); }
+        });
+        const after = before + newly.length;
+        if (newly.length) pwrSaveSeeds(s);
+        pwrRenderSeeds(before < 4 && after >= 4);   // 今回4つ目が揃ったら開花アニメ
+        return newly;
+    }
+    pwrRenderSeeds();
 
     // ===== 起動・終了（本編タイトルから呼ぶ）=====
     window.playPwr = function(e) {
