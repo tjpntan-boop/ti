@@ -4526,18 +4526,28 @@
         updateBeamLives();
         document.getElementById("beam-boss-hp").innerText = "";
 
-        // 操作（一度だけ登録）：縦位置を指/マウスに追従
+        // 操作（一度だけ登録）：相対ドラッグ。指を置いた位置から動かした分だけ機体が上下に動く
+        // → 画面のどこを触ってもよく、機体の上に指が乗らない（チクワノイド感覚）
         if (!beamCanvas._bound) {
             beamCanvas._bound = true;
-            const move = (clientY) => {
-                const rect = beamCanvas.getBoundingClientRect();
-                let y = clientY - rect.top;
-                y = Math.max(beamPlayer.h/2, Math.min(beamH - beamPlayer.h/2, y));
-                beamPlayer.y = y;
+            let dragY = null;       // 直前のポインタY（この差分で動かす）
+            const clampY = (y) => Math.max(beamPlayer.h/2, Math.min(beamH - beamPlayer.h/2, y));
+            const startDrag = (clientY) => { dragY = clientY; };
+            const moveDrag = (clientY) => {
+                if (dragY === null) { dragY = clientY; return; }
+                const dy = clientY - dragY;       // 指の移動量
+                dragY = clientY;
+                beamPlayer.y = clampY(beamPlayer.y + dy);
             };
-            beamCanvas.addEventListener("touchmove", (ev) => { ev.preventDefault(); if (ev.touches[0]) move(ev.touches[0].clientY); }, { passive:false });
-            beamCanvas.addEventListener("touchstart", (ev) => { if (ev.touches[0]) move(ev.touches[0].clientY); }, { passive:false });
-            beamCanvas.addEventListener("mousemove", (ev) => move(ev.clientY));
+            const endDrag = () => { dragY = null; };
+            beamCanvas.addEventListener("touchstart", (ev) => { if (ev.touches[0]) startDrag(ev.touches[0].clientY); }, { passive:false });
+            beamCanvas.addEventListener("touchmove", (ev) => { ev.preventDefault(); if (ev.touches[0]) moveDrag(ev.touches[0].clientY); }, { passive:false });
+            beamCanvas.addEventListener("touchend", endDrag);
+            beamCanvas.addEventListener("touchcancel", endDrag);
+            // マウス：押している間だけ相対ドラッグ
+            beamCanvas.addEventListener("mousedown", (ev) => startDrag(ev.clientY));
+            beamCanvas.addEventListener("mousemove", (ev) => { if (dragY !== null) moveDrag(ev.clientY); });
+            window.addEventListener("mouseup", endDrag);
         }
 
         beamRunning = false;
