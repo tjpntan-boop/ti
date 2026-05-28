@@ -1032,6 +1032,18 @@
         }
         #play-chase-omake-btn:hover { background: #2a1212; border-color: #ff7a3c; }
         #play-chase-omake-btn .hassaku-sub { font-size: 10px; font-weight: normal; letter-spacing: 0; opacity: 0.8; color: #c0a098; }
+        #play-ichamon-btn {
+            margin-top: 10px;
+            background: #2a0e14; color: #ff8aa0;
+            border: 1px solid #9a3a52; border-radius: 8px; padding: 9px 22px;
+            font-size: 15px; font-weight: bold; cursor: pointer; z-index: 1010; letter-spacing: 1px;
+            display: flex; flex-direction: column; align-items: center; gap: 2px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+            transition: background 0.15s, border-color 0.15s;
+            font-family: inherit;
+        }
+        #play-ichamon-btn:hover { background: #3a1620; border-color: #ff5a7a; }
+        #play-ichamon-btn .hassaku-sub { font-size: 10px; font-weight: normal; letter-spacing: 0; opacity: 0.8; color: #c08a98; }
 
         /* タイトルに常設する「ブラウザで開く手順」案内ボックス */
         #open-guide {
@@ -1957,7 +1969,373 @@
     #ijw-countdown.pop { animation:ijw-cd 0.9s ease-out; }
     @keyframes ijw-cd { 0%{opacity:0;transform:scale(0.3);} 25%{opacity:1;transform:scale(1.1);} 70%{opacity:1;transform:scale(1);} 100%{opacity:0;transform:scale(1.3);} }
 
-</style>
+
+        /* ===== 🔴 イチャモンスター（組み込み）===== */
+        #ichamon-wrap { display: none; position: fixed; inset: 0; z-index: 5200;
+            background: linear-gradient(170deg, #6ec6e8 0%, #a7d9ec 40%, #f3e9d6 100%);
+            overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        #ichamon-wrap.show { display: block; }
+        #ichamon-back-btn {
+            position: sticky; top: 8px; left: 8px; z-index: 5300; margin: 8px;
+            font-family: inherit; font-size: 14px; font-weight: 900; cursor: pointer;
+            padding: 9px 16px; border-radius: 20px; border: none;
+            background: #2a2438; color: #fff; box-shadow: 0 3px 0 #16101f;
+        }
+        #ichamon-back-btn:active { transform: translateY(2px); }
+
+    #ichamon-wrap {
+        --sky: #aee3f5;
+        --ground: #cde8a0;
+        --road: #d8c8a8;
+        --ink: #2a2438;
+        --paper: #fffdf5;
+        --accent: #e8506b;
+        --gold: #f5b921;
+        --panel: #ffffff;
+        --shadow: rgba(60,40,70,0.18);
+    }
+    #icm-wrap {
+        --sky: #aee3f5;
+        --ground: #cde8a0;
+        --road: #d8c8a8;
+        --ink: #2a2438;
+        --paper: #fffdf5;
+        --accent: #e8506b;
+        --gold: #f5b921;
+        --panel: #ffffff;
+        --shadow: rgba(60,40,70,0.18);
+        font-family: "Hiragino Maru Gothic ProN", "Hiragino Sans", sans-serif;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    #ichamon-wrap { font-family: "Hiragino Maru Gothic ProN", "Hiragino Sans", sans-serif; }
+    #icm-wrap {
+        position: relative; min-height: 100vh; overflow-x: hidden;
+        background: linear-gradient(170deg, #6ec6e8 0%, #a7d9ec 40%, #f3e9d6 100%);
+        color: var(--ink); user-select: none; -webkit-user-select: none;
+        padding: 14px 14px 30px; max-width: 480px; margin: 0 auto;
+    }
+    /* ヘッダー */
+    #icm-header { text-align: center; margin-bottom: 12px; }
+    #icm-logo { font-size: 23px; font-weight: 900; color: #fff; letter-spacing: 0px;
+        text-shadow: 2px 2px 0 var(--accent), 4px 4px 0 rgba(0,0,0,0.15); white-space: nowrap; }
+    #icm-logo span { color: var(--gold); }
+    #icm-sub { font-size: 11px; color: #3a5a6a; letter-spacing: 1px; margin-top: 2px; font-weight: bold; }
+    #icm-ballcount { display: inline-block; margin-top: 10px; background: #fff; color: var(--accent);
+        font-size: 14px; font-weight: 900; padding: 5px 16px; border-radius: 20px; letter-spacing: 1px;
+        box-shadow: 0 2px 6px var(--shadow); }
+    #icm-bgm-btn {
+        display: inline-block; margin-top: 10px; margin-left: 6px; font-family: inherit;
+        background: #fff; color: #7a7088; border: none; border-radius: 20px;
+        font-size: 13px; font-weight: 900; padding: 6px 14px; cursor: pointer;
+        box-shadow: 0 2px 6px var(--shadow); transition: transform 0.05s;
+    }
+    #icm-bgm-btn:active { transform: translateY(2px); }
+    #icm-bgm-btn.on { background: var(--gold); color: #5a3a00; }
+
+    .icm-panel {
+        background: var(--panel); border-radius: 16px; padding: 16px;
+        box-shadow: 0 4px 14px var(--shadow); margin-bottom: 14px;
+    }
+
+    /* 町並みフィールド */
+    #icm-field-screen { text-align: center; }
+    #icm-field-title { font-size: 15px; font-weight: 900; color: var(--ink); margin-bottom: 4px; }
+    #icm-field-hint { font-size: 12px; color: #7a7088; margin-bottom: 12px; font-weight: bold; }
+    #icm-town {
+        position: relative; width: 100%; aspect-ratio: 1/1; border-radius: 12px; overflow: hidden;
+        background: linear-gradient(180deg, #bfe6f5 0%, #bfe6f5 45%, #cfe8a0 45%, #bcd98a 100%);
+        border: 3px solid #fff; box-shadow: inset 0 0 20px rgba(0,0,0,0.08);
+        cursor: pointer;
+    }
+    /* 隠れているボール */
+    #icm-hidden-ball {
+        position: absolute; width: 26px; height: 26px; border-radius: 50%; cursor: pointer;
+        background: radial-gradient(circle at 35% 30%, #ff9aaa, var(--accent) 55%, #b8344a 92%);
+        border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.4); z-index: 6;
+        transition: transform 0.1s;
+    }
+    #icm-hidden-ball::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 2px; background: #5a1020; transform: translateY(-50%); }
+    #icm-hidden-ball::after { content: ""; position: absolute; left: 50%; top: 50%; width: 30%; height: 30%; background: #fff; border: 2px solid #5a1020; border-radius: 50%; transform: translate(-50%,-50%); }
+    #icm-hidden-ball.dragon {
+        background: radial-gradient(circle at 38% 32%, #ffe7a0, #ff9b1e 60%, #e06a00 95%);
+    }
+    #icm-hidden-ball.dragon::before { display: none; }
+    #icm-hidden-ball.dragon::after { content: "★"; background: none; border: none; width: auto; height: auto;
+        color: #b33000; font-size: 13px; line-height: 1; transform: translate(-50%,-50%); }
+    #icm-hidden-ball.found { animation: icm-found 0.5s ease-out; }
+    @keyframes icm-found { 0%{transform:scale(1)} 40%{transform:scale(1.6)} 100%{transform:scale(1.3)} }
+
+    #icm-search-btn {
+        margin-top: 14px; font-family: inherit; font-size: 18px; font-weight: 900; cursor: pointer;
+        padding: 14px 44px; border-radius: 12px; border: none; letter-spacing: 1px;
+        background: var(--accent); color: #fff; box-shadow: 0 4px 0 #b8344a;
+        transition: transform 0.05s;
+    }
+    #icm-search-btn:active { transform: translateY(3px); }
+
+    #icm-found-msg { font-size: 13px; font-weight: bold; color: var(--accent); margin-top: 10px; min-height: 18px; }
+
+    /* 結果（仲間にした） */
+    #icm-result { display: none; text-align: center; }
+    #icm-result-emoji { font-size: 64px; margin-bottom: 4px; }
+    #icm-result-title { font-size: 20px; font-weight: 900; color: var(--ink); margin-bottom: 6px; }
+    #icm-result-name { font-size: 16px; font-weight: 900; color: var(--accent); margin-bottom: 10px; }
+    #icm-result-ball { display: inline-block; background: var(--gold); color: #5a3a00; font-size: 13px;
+        font-weight: 900; padding: 7px 16px; border-radius: 20px; }
+    #icm-result-getrow { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 16px; }
+    #icm-result-balltip { font-size: 12px; font-weight: 900; color: var(--accent); animation: icm-tip-blink 1s ease-in-out infinite; }
+    @keyframes icm-tip-blink { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+    #icm-result-ballbtn {
+        position: relative; width: 64px; height: 64px; border-radius: 50%; cursor: pointer; flex-shrink: 0; margin-bottom: 14px;
+        background: radial-gradient(circle at 35% 30%, #ff9aaa, var(--accent) 55%, #b8344a 92%);
+        border: 3px solid #fff; box-shadow: 0 2px 6px var(--shadow); transition: transform 0.1s;
+    }
+    #icm-result-ballbtn:active { transform: scale(0.92); }
+    #icm-result-ballbtn::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 3px; background: #5a1020; transform: translateY(-50%); }
+    #icm-result-ballbtn::after { content: ""; position: absolute; left: 50%; top: 50%; width: 28%; height: 28%; background: #fff; border: 3px solid #5a1020; border-radius: 50%; transform: translate(-50%,-50%); }
+    #icm-result-new {
+        position: absolute; top: -10px; right: -8px; z-index: 3;
+        background: var(--gold); color: #5a3a00; font-size: 9px; font-weight: 900;
+        padding: 2px 5px; border-radius: 8px; border: 1.5px solid #fff;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.3); letter-spacing: 0.5px; display: none;
+    }
+    #icm-result-new.show { display: block; animation: icm-newpop 0.6s ease-out; }
+
+    /* コレクション */
+    #icm-collection-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    #icm-collection-title { font-size: 15px; font-weight: 900; color: var(--ink); }
+    #icm-collection-count { font-size: 12px; color: #7a7088; font-weight: bold; }
+    #icm-balls { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .icm-ball-slot { aspect-ratio: 1; border-radius: 50%; position: relative; display: flex; align-items: center; justify-content: center; }
+    .icm-ball-slot.got {
+        cursor: pointer;
+        background: radial-gradient(circle at 35% 30%, #ff9aaa, var(--accent) 55%, #b8344a 92%);
+        border: 3px solid #fff; box-shadow: 0 2px 6px var(--shadow); transition: transform 0.1s;
+    }
+    .icm-ball-slot.got:active { transform: scale(0.92); }
+    .icm-ball-slot.got::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 3px; background: #5a1020; transform: translateY(-50%); }
+    .icm-ball-slot.got::after { content: ""; width: 28%; height: 28%; background: #fff; border: 3px solid #5a1020; border-radius: 50%; z-index: 1; }
+    .icm-ball-slot.empty { background: rgba(120,100,140,0.1); border: 3px dashed rgba(120,100,140,0.3); }
+    .icm-ball-slot.empty span { font-size: 20px; color: rgba(120,100,140,0.4); font-weight: bold; }
+    .icm-ball-no { position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%);
+        font-size: 12px; font-weight: 900; color: #1a1626; white-space: nowrap;
+        background: #fff; padding: 2px 8px; border-radius: 9px; border: 2px solid #1a1626;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.35); z-index: 4; }
+    .icm-ball-no.dim { background: #fff; color: #8a7e98; border-color: #b5acc0; }
+    .icm-new { position: absolute; top: -8px; right: -6px; z-index: 3;
+        background: var(--gold); color: #5a3a00; font-size: 9px; font-weight: 900;
+        padding: 2px 5px; border-radius: 8px; border: 1.5px solid #fff;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.3); animation: icm-newpop 0.6s ease-out; letter-spacing: 0.5px; }
+    @keyframes icm-newpop { 0%{transform:scale(0);} 60%{transform:scale(1.25);} 100%{transform:scale(1);} }
+    #icm-balls { row-gap: 26px; }
+    /* 取っておく / 捨てる */
+    #icm-keep-choice { margin-bottom: 4px; }
+    #icm-keep-msg { font-size: 14px; font-weight: 900; color: var(--ink); margin-bottom: 10px; }
+    #icm-keep-btns { display: flex; gap: 10px; justify-content: center; }
+    .icm-keep-btn {
+        font-family: inherit; font-size: 15px; font-weight: 900; cursor: pointer;
+        padding: 12px 22px; border-radius: 12px; border: none; transition: transform 0.05s;
+    }
+    .icm-keep-btn:active { transform: translateY(2px); }
+    .icm-keep-btn.keep { background: var(--accent); color: #fff; box-shadow: 0 3px 0 #b8344a; }
+    .icm-keep-btn.drop { background: #9a96a4; color: #fff; box-shadow: 0 3px 0 #6a6678; }
+    /* 入れ替えエリア */
+    #icm-swap-msg { font-size: 14px; font-weight: 900; color: var(--ink); margin-bottom: 12px; line-height: 1.5; }
+    #icm-swap-msg span { font-size: 12px; color: #7a7088; font-weight: bold; }
+    #icm-swap-balls { display: grid; grid-template-columns: repeat(4, 1fr); column-gap: 10px; row-gap: 24px; margin-bottom: 6px; }
+    /* 🟠 ドラゴンボール図鑑 */
+    #icm-dragon-balls { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+    .icm-dragon-slot { aspect-ratio: 1; border-radius: 50%; position: relative; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; }
+    .icm-dragon-slot.got {
+        cursor: pointer; color: #b33000;
+        background: radial-gradient(circle at 38% 32%, #ffe7a0, #ff9b1e 60%, #e06a00 95%);
+        border: 2px solid #fff; box-shadow: 0 2px 6px var(--shadow);
+        text-shadow: 0 1px 1px rgba(255,255,255,0.6);
+    }
+    .icm-dragon-slot.got:active { transform: scale(0.92); }
+    .icm-dragon-slot.empty { background: rgba(180,120,40,0.12); border: 2px dashed rgba(180,120,40,0.35); color: rgba(180,120,40,0.45); }
+    #icm-call-shenron {
+        display: block; width: 100%; margin-top: 14px; font-family: inherit;
+        font-size: 16px; font-weight: 900; cursor: pointer; letter-spacing: 1px;
+        padding: 14px; border-radius: 12px; border: none;
+        background: linear-gradient(135deg, #1a7a1a, #5fd35f); color: #fff;
+        box-shadow: 0 4px 0 #0d4a0d, 0 0 16px rgba(95,211,95,0.5);
+        animation: icm-shenron-glow 1.4s ease-in-out infinite;
+    }
+    #icm-call-shenron:active { transform: translateY(3px); }
+    @keyframes icm-shenron-glow { 0%,100%{box-shadow:0 4px 0 #0d4a0d,0 0 14px rgba(95,211,95,0.4);} 50%{box-shadow:0 4px 0 #0d4a0d,0 0 26px rgba(95,211,95,0.85);} }
+
+
+    /* モーダル */
+    #icm-modal { display: none; position: fixed; inset: 0; z-index: 100;
+        background: rgba(20,16,30,0.82); align-items: center; justify-content: center; padding: 24px; }
+    #icm-modal.show { display: flex; }
+    #icm-modal-card { background: #ffffff; border-radius: 18px; padding: 24px; max-width: 340px; width: 100%;
+        text-align: center; box-shadow: 0 12px 36px rgba(0,0,0,0.4); animation: icm-pop 0.3s ease-out; }
+    @keyframes icm-pop { 0%{transform:scale(0.5);opacity:0} 60%{transform:scale(1.05)} 100%{transform:scale(1);opacity:1} }
+    #icm-modal-emoji { font-size: 76px; margin-bottom: 4px; }
+    #icm-modal-name { font-size: 22px; font-weight: 900; color: #1a1626; margin-bottom: 14px; letter-spacing: 1px; }
+    #icm-modal-speech { background: #fffbe8; color: #1a1626; border: 3px solid var(--accent); border-radius: 14px;
+        padding: 20px 18px; font-size: 19px; line-height: 1.7; font-weight: 900; margin-bottom: 16px; min-height: 70px;
+        display: flex; align-items: center; justify-content: center; }
+    #icm-modal-react { font-size: 15px; color: #ffffff; font-weight: 900; margin-bottom: 18px;
+        background: #e8506b; display: inline-block; padding: 8px 18px; border-radius: 20px; }
+    #icm-modal-close { font-family: inherit; font-size: 15px; font-weight: 900; padding: 12px 34px; border-radius: 12px; border: none; cursor: pointer; background: #2a2438; color: #ffffff; box-shadow: 0 3px 0 #16101f; }
+    /* 🐉 神龍イベント */
+    #icm-shenron {
+        display: none; position: fixed; inset: 0; z-index: 200;
+        background: radial-gradient(circle at 50% 40%, #1a2a1a 0%, #050805 100%);
+        align-items: center; justify-content: center; padding: 24px;
+        animation: icm-darken 1.2s ease-out;
+    }
+    #icm-shenron.show { display: flex; }
+    /* ⚡ 稲光フラッシュ */
+    #icm-lightning {
+        position: fixed; inset: 0; z-index: 210; pointer-events: none;
+        background: #fff; opacity: 0; display: none;
+    }
+    #icm-lightning.flash { display: block; animation: icm-flash 1.3s ease-out; }
+    @keyframes icm-flash {
+        0% { opacity: 0; }
+        4% { opacity: 0.95; }
+        10% { opacity: 0.1; }
+        16% { opacity: 0.85; }
+        24% { opacity: 0; }
+        40% { opacity: 0; }
+        46% { opacity: 0.6; }
+        54% { opacity: 0; }
+        100% { opacity: 0; }
+    }
+    @keyframes icm-darken { 0%{background:rgba(10,15,10,0);} 100%{} }
+    #icm-shenron-inner { max-width: 360px; width: 100%; text-align: center; }
+    #icm-shenron-dragon {
+        font-size: 96px; line-height: 1; margin-bottom: 10px;
+        filter: drop-shadow(0 0 18px #5fd35f);
+        animation: icm-dragon-in 1s ease-out;
+    }
+    @keyframes icm-dragon-in { 0%{transform:translateY(40px) scale(0.6);opacity:0;} 100%{transform:translateY(0) scale(1);opacity:1;} }
+    #icm-shenron-speech {
+        background: rgba(20,40,20,0.92); color: #d8ffd8; border: 2px solid #5fd35f; border-radius: 14px;
+        padding: 18px 16px; font-size: 17px; line-height: 1.6; font-weight: 900; margin-bottom: 18px;
+        text-shadow: 0 0 8px rgba(95,211,95,0.5); min-height: 60px;
+        display: flex; align-items: center; justify-content: center;
+    }
+    #icm-shenron-choices { display: flex; flex-direction: column; gap: 10px; }
+    .icm-shenron-choice {
+        font-family: inherit; font-size: 15px; font-weight: 900; cursor: pointer;
+        background: #fffbe8; color: #1a1626; border: 2px solid #5fd35f; border-radius: 10px;
+        padding: 13px 16px; transition: transform 0.05s, background 0.1s;
+    }
+    .icm-shenron-choice:active { transform: translateY(2px); }
+    .icm-shenron-choice:hover { background: #fff; }
+    #icm-treasure-box {
+        font-size: 90px; cursor: pointer; line-height: 1; margin: 10px 0;
+        animation: icm-treasure-wobble 1.2s ease-in-out infinite;
+    }
+    @keyframes icm-treasure-wobble { 0%,100%{transform:rotate(-4deg);} 50%{transform:rotate(4deg);} }
+    #icm-treasure-box:active { transform: scale(0.9); }
+    #icm-treasure-hint { font-size: 13px; color: #d8ffd8; font-weight: bold; margin-bottom: 10px; }
+    #icm-treasure-quote {
+        background: #ffffff; color: #1a1626; border: 4px solid var(--gold); border-radius: 14px; padding: 22px 18px;
+        font-size: 24px; font-weight: 900; line-height: 1.5; margin: 14px 0 18px;
+        box-shadow: 0 0 28px rgba(245,185,33,0.85); animation: icm-pop 0.5s ease-out;
+    }
+    #icm-shenron-close {
+        font-family: inherit; font-size: 15px; font-weight: 900; padding: 12px 36px; border-radius: 12px;
+        border: none; cursor: pointer; background: #2a2438; color: #fff; box-shadow: 0 3px 0 #16101f;
+    }
+    /* ⚔️ ボス戦 */
+    #icm-boss-btn {
+        display: block; width: 100%; margin-top: 14px; font-family: inherit;
+        font-size: 16px; font-weight: 900; cursor: pointer; letter-spacing: 1px;
+        padding: 14px; border-radius: 12px; border: none;
+        background: linear-gradient(135deg, #3a2a5a, #6a4a9a); color: #fff;
+        box-shadow: 0 4px 0 #241640;
+    }
+    #icm-boss-btn:active { transform: translateY(3px); }
+    #icm-boss {
+        display: none; position: fixed; inset: 0; z-index: 250;
+        background: radial-gradient(circle at 50% 35%, #2a1a3a 0%, #0a0510 100%);
+        align-items: center; justify-content: center; padding: 20px;
+    }
+    #icm-boss.show { display: flex; }
+    #icm-boss-inner { max-width: 380px; width: 100%; text-align: center; }
+    #icm-boss-title { font-size: 22px; font-weight: 900; color: #c89aff; letter-spacing: 2px;
+        text-shadow: 0 0 12px rgba(150,80,255,0.6); margin-bottom: 18px; }
+    #icm-boss-stage { position: relative; margin-bottom: 18px; min-height: 200px; }
+    #icm-boss-monster {
+        font-size: 100px; line-height: 1; filter: brightness(0.35) drop-shadow(0 0 20px #6a30b0);
+        animation: icm-boss-float 2.2s ease-in-out infinite; position: relative; display: inline-block;
+    }
+    @keyframes icm-boss-float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-12px);} }
+    #icm-boss-monster.hit { animation: icm-boss-hit 0.3s; }
+    @keyframes icm-boss-hit { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-12px);} 75%{transform:translateX(12px);} }
+    #icm-boss-monster.defeated { animation: icm-boss-die 1s forwards; }
+    @keyframes icm-boss-die { 0%{opacity:1;transform:scale(1);} 100%{opacity:0;transform:scale(0.3) rotate(40deg);} }
+    #icm-boss-hpbar { position: absolute; top: -6px; left: 50%; transform: translateX(-50%); width: 160px; height: 12px;
+        background: #2a1a3a; border: 2px solid #c89aff; border-radius: 8px; overflow: hidden; }
+    #icm-boss-hpfill { height: 100%; width: 100%; background: linear-gradient(90deg,#ff4a6a,#ff8a5c); transition: width 0.4s; }
+    #icm-boss-name { position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%);
+        font-size: 12px; font-weight: 900; color: #c89aff; white-space: nowrap; }
+    #icm-boss-balls { display: flex; justify-content: center; gap: 10px; margin-top: 16px; min-height: 44px; }
+    .icm-boss-ball { width: 38px; height: 38px; border-radius: 50%; position: relative; flex-shrink: 0;
+        background: radial-gradient(circle at 35% 30%, #ff9aaa, var(--accent) 55%, #b8344a 92%);
+        border: 2px solid #fff; }
+    .icm-boss-ball::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 2px; background: #5a1020; transform: translateY(-50%); }
+    .icm-boss-ball::after { content: ""; position: absolute; left: 50%; top: 50%; width: 28%; height: 28%; background: #fff; border: 2px solid #5a1020; border-radius: 50%; transform: translate(-50%,-50%); }
+    .icm-boss-ball.thrown { animation: icm-throw 0.5s ease-in forwards; }
+    @keyframes icm-throw { 0%{transform:translateY(0) scale(1);opacity:1;} 100%{transform:translateY(-150px) scale(0.5);opacity:0;} }
+    #icm-boss-msg { font-size: 15px; font-weight: 900; color: #e8d8ff; margin-bottom: 16px; min-height: 44px;
+        display: flex; align-items: center; justify-content: center; line-height: 1.5; }
+    #icm-boss-btns { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+    #icm-boss-attack, #icm-boss-back {
+        font-family: inherit; font-size: 17px; font-weight: 900; cursor: pointer; padding: 14px 40px; border-radius: 12px; border: none;
+    }
+    #icm-boss-attack { background: var(--accent); color: #fff; box-shadow: 0 4px 0 #b8344a; }
+    #icm-boss-back { background: #2a2438; color: #fff; box-shadow: 0 3px 0 #16101f; }
+    #icm-boss-attack:active, #icm-boss-back:active { transform: translateY(2px); }
+    /* 🔥 大爆発 */
+    #icm-boss-blast { position: absolute; top: 40px; left: 50%; margin-left: -65px;
+        font-size: 130px; line-height: 1; animation: icm-blast 1.1s ease-out; pointer-events: none; }
+    @keyframes icm-blast { 0%{transform:scale(0.2);opacity:0;} 30%{transform:scale(1.3);opacity:1;} 100%{transform:scale(2);opacity:0;} }
+    /* 🏆 称号 */
+    #icm-title-overlay {
+        display: none; position: fixed; inset: 0; z-index: 300;
+        background: radial-gradient(circle at 50% 40%, rgba(60,40,90,0.95), rgba(10,5,20,0.97));
+        align-items: center; justify-content: center; padding: 24px;
+    }
+    #icm-title-overlay.show { display: flex; }
+    #icm-title-card {
+        max-width: 340px; width: 100%; text-align: center;
+        background: linear-gradient(160deg, #fffbe8, #fff);
+        border: 4px solid var(--gold); border-radius: 20px; padding: 28px 22px;
+        box-shadow: 0 0 40px rgba(245,185,33,0.8); animation: icm-pop 0.6s ease-out;
+    }
+    #icm-title-crown { font-size: 72px; line-height: 1; animation: icm-crown-bounce 1.2s ease-in-out infinite; }
+    @keyframes icm-crown-bounce { 0%,100%{transform:translateY(0) rotate(-5deg);} 50%{transform:translateY(-8px) rotate(5deg);} }
+    #icm-title-label { font-size: 14px; font-weight: 900; color: #b8860b; letter-spacing: 2px; margin: 8px 0 6px; }
+    #icm-title-name { font-size: 24px; font-weight: 900; color: #1a1626; margin-bottom: 10px; line-height: 1.3; }
+    #icm-title-desc { font-size: 13px; font-weight: bold; color: #7a6a30; margin-bottom: 20px; line-height: 1.5; }
+    #icm-title-close {
+        font-family: inherit; font-size: 15px; font-weight: 900; cursor: pointer; padding: 13px 28px;
+        border-radius: 12px; border: none; background: var(--accent); color: #fff; box-shadow: 0 4px 0 #b8344a;
+    }
+    #icm-title-close:active { transform: translateY(2px); }
+    .icm-hidden { display: none !important; }
+    /* 🏆 とった称号 一覧 */
+    #icm-titles-list { display: flex; flex-direction: column; gap: 8px; }
+    .icm-title-row { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 12px; }
+    .icm-title-row.got { background: linear-gradient(135deg, #fffbe8, #fff); border: 2px solid var(--gold); box-shadow: 0 2px 6px var(--shadow); }
+    .icm-title-row.locked { background: rgba(120,100,140,0.08); border: 2px dashed rgba(120,100,140,0.3); }
+    .icm-title-row .ic-crown { font-size: 30px; line-height: 1; flex-shrink: 0; width: 34px; text-align: center; }
+    .icm-title-row.locked .ic-crown { filter: grayscale(1); opacity: 0.45; }
+    .icm-title-row .ic-text { text-align: left; flex: 1; }
+    .icm-title-row .ic-name { font-size: 15px; font-weight: 900; color: #1a1626; line-height: 1.3; }
+    .icm-title-row.locked .ic-name { color: #8a7e98; }
+    .icm-title-row .ic-desc { font-size: 11px; font-weight: bold; color: #7a6a30; margin-top: 2px; line-height: 1.4; }
+    .icm-title-row.locked .ic-desc { color: #a59cb0; }
+
+    </style>
 
 <script src="https://unpkg.com/@zxing/library@0.21.3/umd/index.min.js"></script>
 </head>
@@ -1996,6 +2374,7 @@
             <button id="play-noid-btn" onclick="playShinChikuwa(event)">🧱 チクワノイド<span class="hassaku-sub">ちくわのボールでおでんブロックを崩せ</span></button>
             <button id="play-beam-omake-btn" onclick="playBeamGame(event)">🔫 チクビウス<span class="hassaku-sub">チクビー戦闘機でおでん軍団を撃ち抜け</span></button>
             <button id="play-chase-omake-btn" onclick="playChaseStandalone(event)">🏃 ちくわにげ<span class="hassaku-sub">追ってくるちくわから15秒逃げ切れ</span></button>
+            <button id="play-ichamon-btn" onclick="playIchamon(event)">🔴 めざせイチャモンスター<span class="hassaku-sub">町にかくれたボールを探して、理不尽なイチャモンを集めろ</span></button>
         </div>
         <div id="open-guide">
             <div class="og-title">⚠️ 音が出ない / タップできない時は</div>
@@ -7806,5 +8185,1021 @@
 })();
 
 </script>
+
+// ===== 🔴 イチャモンスター（組み込みJS）=====
+<script>
+
+(function() {
+    // ===================================================================
+    // 🟡 イチャモン図鑑（ここのセリフを自由に書き換えてOK）
+    //   emoji : 見た目の絵文字
+    //   name  : 名前
+    //   speech: ボールを開いたときに言うイチャモン（← あとで自由に差し替え）
+    // ===================================================================
+    var ICHAMON = [
+        { emoji:"😬", name:"ズケズケくん",       speech:"そこまで ひろがったハミガキ、はじめて見たわ" },
+        { emoji:"🤨", name:"サイフ警察",         speech:"そんな大きな財布いらなくね？ 中身ほとんどないでしょ？" },
+        { emoji:"🩲", name:"ねんすうチェッカー", speech:"そのパンツ、中古？" },
+        { emoji:"👃", name:"におい刑事",         speech:"おまえんちの玄関、くさくね？普通はくさくないよね？" },
+        { emoji:"🧺", name:"せんたく番長",       speech:"洗濯機の中身も洗うんだよ？ まぁ、あなたには理解できないかもしれないけど" },
+        { emoji:"💨", name:"オナラ探知機",       speech:"あれれ、おなら普通にしたよね？" },
+        { emoji:"🚽", name:"トイレ見張り",       speech:"さっきトイレで ウンコしてたでしょ？普通より長くない？" },
+        { emoji:"🍆", name:"ヘアスタイル評論家", speech:"その髪型、ナスみたいだね 私なら絶対ナスにはしないけどね" },
+        { emoji:"📱", name:"上から目線マン",     speech:"それ、AIのジェミニ。え、そんなことも知らないの？" },
+        { emoji:"📺", name:"ドヤ顔こぞう",       speech:"テレビに人は入っていないって、あははははは そこまで言わないと分からない？" },
+        { emoji:"🦑", name:"おはだチェッカー",   speech:"お肌が イカみたいに つるつるだねー 私なら絶対そんなミスしないけどね" },
+        { emoji:"🔦", name:"スモールライト魔",   speech:"スモールライトあてても、デブってなおらないよね？なおしてあげたいけど" },
+        { emoji:"🍱", name:"おべんとう評論家",   speech:"そのお弁当 土足色だねぇ〜 せめて上履き色のほうがよかったんじゃない？笑" },
+        { emoji:"🍀", name:"運のせいマン",       speech:"へぇー それ手に入ったんだー たまたま運が良かっただけじゃない？？" },
+        { emoji:"⚫", name:"いいがかり王",       speech:"お前が黒い服を着てたから、オセロの黒が見えにくくて負けたんだ！たまには気をつかえないのかな！？" },
+        { emoji:"🧽", name:"ぞうきん指導員",     speech:"雑巾のしぼり方が遅いから そのやりかたではダメだよ 早ければいいって物じゃ無いからきをつけてね！" },
+        { emoji:"🌬️", name:"ずるい認定係",       speech:"お前が走るとき風が吹いたから、お前だけ風に押されて1位になったんだ！ずるいことするなよ！" },
+        { emoji:"🐟", name:"メダカ過保護",       speech:"エサを急に入れたらだめだろう！メダカはお腹がすいてるんだから、おどろいて食べなくなったら大変だ！さあいそいで！" }
+    ];
+
+    // ===================================================================
+    // 🟠 ドラゴンボール図鑑（別枠コレクション・くだらないセリフ）
+    //   たまに町で見つかる。7つ集めるのが目標。
+    // ===================================================================
+    var DRAGON = [
+        { star:1, speech:"オッス オラ悟空！ 元気玉ってさあ、もらっても元気になんねえらしいぞ！ 笑" },
+        { star:2, speech:"オッス オラ悟空！ ハミガキ粉って グレープ味がいちばんうめえな！ 笑" },
+        { star:3, speech:"オッス オラ悟空！ ウエストを上げ続けると！何かが限界突破するらしいぞ！ 笑" },
+        { star:4, speech:"オッス オラ悟空！ ぷーるでションベン するんじゃねえぞ オラにわけてくれ！ 笑" },
+        { star:5, speech:"オッス オラ悟空！ パンツの中で モヤシ 育てたら味がこくなったぞ！ 笑" },
+        { star:6, speech:"オッス オラ悟空！ 自分の鼻くそって 1日に1回はたべちゃうんだよな！笑" },
+        { star:7, speech:"オッス オラ悟空！ オナラをガマンしすぎて カメハメ波と一緒にだしちゃったぞ！ 笑" }
+    ];
+
+    // 町並みの装飾（建物・木・草など）。この“かげ”にボールが隠れる雰囲気を出す
+    var SCENERY = ["🏠","🏡","🏢","🏬","🏪","🌳","🌲","🌳","🚗","🚙","🌷","🌻","🚦","📮","🪧","🌳","🏠","🌲"];
+
+    var collected = icmLoad();
+    var ballCount = icmLoadBalls();
+    var currentIdx = null;
+    var lastCaught = -1;  // 直前に捕まえたイチャモンのindex（NEW表示用）
+    var dragonGot = icmLoadDragon();   // 集めたドラゴンボールのstar番号配列
+    var currentDragon = null;          // 今回出現したドラゴンボールのstar（出ないときnull）
+
+    function $(id){ return document.getElementById(id); }
+
+    // ===== 町を生成してボールを隠す =====
+    window.icmSearch = function() {
+        $("icm-result").style.display = "none";
+        $("icm-field-screen").style.display = "block";
+        $("icm-found-msg").innerText = "";
+        var town = $("icm-town");
+        town.innerHTML = "";
+
+        // 背景に町の装飾をばらまく
+        var n = 14 + Math.floor(Math.random()*4);
+        for (var i=0;i<n;i++){
+            var s = document.createElement("div");
+            var item = SCENERY[Math.floor(Math.random()*SCENERY.length)];
+            s.innerText = item;
+            s.style.position = "absolute";
+            s.style.left = (5 + Math.random()*86) + "%";
+            s.style.top = (8 + Math.random()*82) + "%";
+            s.style.fontSize = (22 + Math.random()*20) + "px";
+            s.style.transform = "translate(-50%,-50%)";
+            s.style.zIndex = String(4 + Math.floor(Math.random()*5));
+            s.style.pointerEvents = "none";
+            town.appendChild(s);
+        }
+
+        // まだ集めていないドラゴンボールがあれば、たまに（約18%）ドラゴンボールが出現
+        currentDragon = null;
+        var missingDragons = [];
+        for (var d=1; d<=7; d++){ if (dragonGot.indexOf(d) === -1) missingDragons.push(d); }
+        if (missingDragons.length > 0 && Math.random() < 0.18) {
+            currentDragon = missingDragons[Math.floor(Math.random()*missingDragons.length)];
+        } else {
+            // 通常はイチャモンを決める
+            currentIdx = Math.floor(Math.random() * ICHAMON.length);
+        }
+
+        // 隠す球を配置（ドラゴンボールのときはオレンジ、それ以外はイチャモンボール）
+        var ball = document.createElement("div");
+        ball.id = "icm-hidden-ball";
+        if (currentDragon !== null) ball.className = "dragon";
+        ball.style.left = (10 + Math.random()*78) + "%";
+        ball.style.top = (12 + Math.random()*74) + "%";
+        ball.onclick = function(e){ e.stopPropagation(); icmFound(); };
+        town.appendChild(ball);
+
+        // ハズレ位置をタップしたとき
+        town.onclick = function(){
+            $("icm-found-msg").innerText = "う〜ん、そこじゃないみたい…";
+        };
+    };
+
+    function icmFound() {
+        var ball = $("icm-hidden-ball");
+        if (ball) ball.classList.add("found");
+        $("icm-found-msg").innerText = "みつけた！";
+        if (currentDragon !== null) {
+            setTimeout(function(){ icmCatchDragon(); }, 600);
+        } else {
+            setTimeout(function(){ icmCatch(); }, 600);
+        }
+    }
+
+    function icmCatch() {
+        var m = ICHAMON[currentIdx];
+        // この時点ではまだ図鑑に入れない（取っておく/捨てるを選んでもらう）
+        lastCaught = currentIdx;
+        resultBallIdx = currentIdx;
+        $("icm-field-screen").style.display = "none";
+        $("icm-result").style.display = "block";
+        $("icm-result-emoji").innerText = m.emoji;
+        $("icm-result-title").innerText = "みつけた！";
+        $("icm-result-name").innerText = m.name;
+        $("icm-result-getrow").style.display = "flex";
+        var rnew = $("icm-result-new");
+        if (rnew) rnew.classList.remove("show");  // 取っておいた時に出す
+        var rno = $("icm-result-ballno");
+        if (rno) rno.innerText = "No." + (currentIdx + 1);
+        // 取っておく/捨てるの選択を表示、入れ替え・つぎへは隠す
+        $("icm-keep-choice").style.display = "block";
+        $("icm-keep-msg").innerText = "このボール、どうする？（持ち玉は最大4こ）";
+        $("icm-swap-area").style.display = "none";
+        $("icm-result-next").style.display = "none";
+        renderCollection();
+    }
+
+    // 「取っておく」
+    window.icmKeepBall = function() {
+        if (collected.length < 4) {
+            // 空きがある → そのまま追加
+            collected.push(currentIdx); icmSave();
+            ballCount = collected.length; icmSaveBalls();
+            lastCaught = currentIdx;
+            $("icm-result-new").classList.add("show");
+            finishKeep();
+        } else {
+            // 満杯 → 入れ替え画面へ
+            $("icm-keep-choice").style.display = "none";
+            $("icm-swap-area").style.display = "block";
+            renderSwap();
+        }
+    };
+
+    // 「捨てる」（今手に入れたボールを捨てる）
+    window.icmDropBall = function() {
+        $("icm-keep-msg").innerText = "";
+        $("icm-keep-choice").style.display = "none";
+        $("icm-result-title").innerText = "ポイっと 捨てた…";
+        $("icm-result-new").classList.remove("show");
+        $("icm-result-next").style.display = "block";
+    };
+
+    // 入れ替え画面：今の4個を並べ、タップしたものを捨てて新しいのを入れる
+    function renderSwap() {
+        var box = $("icm-swap-balls");
+        box.innerHTML = "";
+        for (var k=0;k<collected.length;k++){
+            var idx = collected[k];
+            var div = document.createElement("div");
+            div.className = "icm-ball-slot got";
+            var no = document.createElement("span");
+            no.className = "icm-ball-no";
+            no.innerText = "No." + (idx+1);
+            div.appendChild(no);
+            (function(slot){ div.onclick = function(){ icmDoSwap(slot); }; })(k);
+            box.appendChild(div);
+        }
+    }
+    window.icmDoSwap = function(slot) {
+        collected[slot] = currentIdx;  // その枠を新しいボールで上書き
+        icmSave();
+        ballCount = collected.length; icmSaveBalls();
+        lastCaught = currentIdx;
+        $("icm-swap-area").style.display = "none";
+        $("icm-result-new").classList.add("show");
+        finishKeep();
+    };
+    window.icmCancelSwap = function() {
+        // 入れ替えやめ → 今のを捨てる
+        $("icm-swap-area").style.display = "none";
+        $("icm-result-title").innerText = "ポイっと 捨てた…";
+        $("icm-result-new").classList.remove("show");
+        $("icm-result-next").style.display = "block";
+    };
+
+    function finishKeep() {
+        $("icm-result-title").innerText = "🔴 持ち玉に入れた！";
+        $("icm-result-next").style.display = "block";
+        updateBallCount();
+        renderCollection();
+    }
+
+    // 結果画面のボールをクリック → そのイチャモンを開く
+    var resultBallIdx = null;
+    window.icmResultOpenBall = function() {
+        if (resultBallIdx !== null) icmOpenBall(resultBallIdx);
+    };
+
+    window.icmReset = function() {
+        $("icm-keep-choice").style.display = "none";
+        $("icm-swap-area").style.display = "none";
+        $("icm-result-next").style.display = "none";
+        icmSearch();
+    };
+
+    // 🟠 ドラゴンボールを見つけた
+    function icmCatchDragon() {
+        var star = currentDragon;
+        var isNew = dragonGot.indexOf(star) === -1;
+        if (isNew) { dragonGot.push(star); icmSaveDragon(); }
+        var dd = null;
+        for (var i=0;i<DRAGON.length;i++){ if (DRAGON[i].star === star) dd = DRAGON[i]; }
+        $("icm-field-screen").style.display = "none";
+        $("icm-result").style.display = "block";
+        $("icm-result-emoji").innerText = "🟠";
+        $("icm-result-title").innerText = isNew ? "★ドラゴンボール発見！★" : "また ドラゴンボール！";
+        $("icm-result-name").innerText = star + "星球を 手に入れた！";
+        // ドラゴンボールは「取っておく/捨てる」不要 → 選択系を隠して「つぎを さがす」を出す
+        $("icm-result-getrow").style.display = "none";
+        $("icm-keep-choice").style.display = "none";
+        $("icm-swap-area").style.display = "none";
+        $("icm-result-next").style.display = "block";
+        renderDragon();
+        // 7個目でも、まずは普通に悟空のセリフを見せる
+        if (dd) {
+            $("icm-modal-emoji").innerText = "🟠";
+            $("icm-modal-name").innerText = star + "星球";
+            $("icm-modal-speech").innerText = dd.speech;
+            $("icm-modal-react").innerText = (dragonGot.length >= 7) ? "7つ ぜんぶ そろった…！" : "なんか きいてしまった…";
+            $("icm-modal").classList.add("show");
+        }
+        // 7個そろったら「シェンロンを呼ぼう」ボタンを出す
+        updateShenronButton();
+    }
+
+    // 🐉 「シェンロンを呼ぼう」ボタンの表示更新
+    function updateShenronButton() {
+        var btn = $("icm-call-shenron");
+        if (!btn) return;
+        btn.style.display = (dragonGot.length >= 7) ? "block" : "none";
+    }
+
+    // 🐉 神龍イベント
+    // 吹き出しはタップで進む方式（自動では進まない＝ゆっくり読める）
+    var shenronStep = 0;
+    window.icmShenronStart = function() {
+        var sh = $("icm-shenron");
+        sh.classList.add("show");
+        // ⚡ 稲光と雷の演出
+        icmLightning();
+        $("icm-treasure").style.display = "none";
+        $("icm-treasure-quote").style.display = "none";
+        $("icm-treasure-hint").style.display = "block";
+        $("icm-shenron-close").style.display = "none";
+        $("icm-shenron-choices").innerHTML = "";
+        shenronStep = 0;
+        shenronGotQuote = false;
+        icmShenronShow();
+    };
+
+    // ⚡ 稲光（画面フラッシュ）＋雷鳴。2回ピカッと光らせる
+    function icmLightning() {
+        var el = $("icm-lightning");
+        if (el) {
+            el.classList.remove("flash");
+            void el.offsetWidth;  // アニメ再トリガー
+            el.classList.add("flash");
+            setTimeout(function(){ el.classList.remove("flash"); }, 1400);
+        }
+        icmThunder();
+    }
+
+    // 神龍の登場セリフ（タップで順に進む）
+    var SHENRON_LINES = [
+        "ながい あいだ まっておった…",
+        "どんな ねがいでも かなえてやろう。",
+        "…ところで、あなたが おとしたのは、この『金のボール』ですか？ それとも『銀のボール』？ それとも『くさったボール』ですか？"
+    ];
+    function icmShenronShow() {
+        var sp = $("icm-shenron-speech");
+        if (shenronStep < SHENRON_LINES.length - 1) {
+            sp.innerText = SHENRON_LINES[shenronStep] + "  ▶";
+            sp.style.cursor = "pointer";
+            sp.onclick = function(){ shenronStep++; icmShenronShow(); };
+        } else {
+            // 最後の行＝質問。タップ進行をやめて3択を出す
+            sp.innerText = SHENRON_LINES[shenronStep];
+            sp.style.cursor = "default";
+            sp.onclick = null;
+            var choices = [
+                { t:"🥇 金のボール！", react:"……何を 期待しているのですか？" },
+                { t:"🥈 銀のボール", react:"……ただの パチンコ玉です。" },
+                { t:"🤢 くさったボール！？", react:"まさに これです。あなたが おとしたのは！\n正直に 話してくれましたね。すばらしい！" }
+            ];
+            var box = $("icm-shenron-choices");
+            box.innerHTML = "";
+            choices.forEach(function(c){
+                var b = document.createElement("button");
+                b.className = "icm-shenron-choice";
+                b.innerText = c.t;
+                b.onclick = function(){ icmShenronAnswer(c.react); };
+                box.appendChild(b);
+            });
+        }
+    }
+
+    function icmShenronAnswer(react) {
+        var sp = $("icm-shenron-speech");
+        $("icm-shenron-choices").innerHTML = "";
+        // 返事を表示。タップしたら宝箱へ
+        sp.innerText = react + "  ▶";
+        sp.style.cursor = "pointer";
+        sp.onclick = function(){
+            sp.onclick = null; sp.style.cursor = "default";
+            sp.innerText = "では、これを さずけよう…";
+            $("icm-treasure").style.display = "block";
+        };
+    }
+
+    window.icmOpenTreasure = function() {
+        $("icm-treasure-hint").style.display = "none";
+        $("icm-treasure-quote").style.display = "block";
+        $("icm-treasure-quote").innerText = "「私が1番　あなたは2番」";
+        $("icm-shenron-close").style.display = "inline-block";
+        $("icm-shenron-speech").innerText = "ありがたく うけとるがよい。";
+        shenronGotQuote = true;
+    };
+
+    var shenronGotQuote = false;  // 名言まで受け取ったか
+    window.icmCloseShenron = function() {
+        $("icm-shenron").classList.remove("show");
+        updateShenronButton();  // 7個あればボタンを出しっぱなしに（何回でも呼べる）
+        if (shenronGotQuote) {
+            shenronGotQuote = false;
+            icmTitleOnClose = function(){};
+            icmShowTitleCustom("🐲", "「ねがいを かなえし者」", "シェンロンを 呼び出し、伝説の名言を さずかった者。", "shenron");
+        }
+    };
+
+    // ===== ⚔️ ボス戦 =====
+    var bossHP = 0, bossMaxHP = 0, bossThrown = 0;
+    window.icmBossStart = function() {
+        icmBossBgmStart();  // 👻 ドロドロBGM開始
+        if (collected.length === 0) {
+            // ボールが無いと戦えない
+            $("icm-boss").classList.add("show");
+            $("icm-boss-monster").className = "";
+            $("icm-boss-hpfill").style.width = "100%";
+            $("icm-boss-msg").innerText = "イチャモンスターを 1ぴきも 持っていない！\nまずは 町で つかまえよう。";
+            $("icm-boss-attack").style.display = "none";
+            $("icm-boss-back").style.display = "inline-block";
+            $("icm-boss-balls").innerHTML = "";
+            return;
+        }
+        $("icm-boss").classList.add("show");
+        // ボスHP：ボール4個でだいたい勝てるバランス（1個=約30ダメージ目安、HP100）
+        bossMaxHP = 155; bossHP = 155; bossThrown = 0;
+        $("icm-boss-monster").className = "";
+        $("icm-boss-monster").firstChild && ($("icm-boss-monster").childNodes[0].nodeValue = "👻");
+        $("icm-boss-hpfill").style.width = "100%";
+        $("icm-boss-msg").innerText = "持っている イチャモンスターを ぶつけろ！";
+        $("icm-boss-attack").style.display = "inline-block";
+        $("icm-boss-attack").disabled = false;
+        $("icm-boss-back").style.display = "none";
+        renderBossBalls();
+    };
+
+    function renderBossBalls() {
+        var box = $("icm-boss-balls");
+        box.innerHTML = "";
+        for (var i=bossThrown; i<collected.length; i++){
+            var b = document.createElement("div");
+            b.className = "icm-boss-ball";
+            box.appendChild(b);
+        }
+    }
+
+    // 🔥 必勝コンボ判定（裏設定：特定の4体がそろうと1個目で大爆発・一発クリア）
+    var ICM_COMBO = [3, 5, 6, 11];  // No.4,6,7,12
+    function icmCheckCombo() {
+        if (collected.length !== 4) return false;
+        var sorted = collected.slice().sort(function(a,b){return a-b;});
+        for (var i=0;i<4;i++){ if (sorted[i] !== ICM_COMBO[i]) return false; }
+        return true;
+    }
+    function icmComboBlast() {
+        var mon = $("icm-boss-monster");
+        $("icm-boss-attack").style.display = "none";
+        var balls = $("icm-boss-balls").getElementsByClassName("icm-boss-ball");
+        if (balls.length > 0) balls[0].classList.add("thrown");
+        $("icm-boss-msg").innerText = "…なにか ひかった！？";
+        setTimeout(function(){
+            var blast = document.createElement("div");
+            blast.id = "icm-boss-blast";
+            blast.innerText = "💥";
+            $("icm-boss-stage").appendChild(blast);
+            $("icm-boss-hpfill").style.width = "0%";
+            $("icm-boss-msg").innerText = "🔥 ひっさつコンボ はつどう！！ 🔥";
+            mon.classList.add("hit");
+            setTimeout(function(){
+                mon.className = "defeated";
+                if (blast.parentNode) blast.parentNode.removeChild(blast);
+                $("icm-boss-msg").innerText = "💥 大ばくはつ！ 一げきで たおした！！";
+                icmVictoryFanfare();  // 🎉 テケテケテケ→ジャーン
+                setTimeout(icmShowTitle, 900);
+            }, 1100);
+        }, 500);
+    }
+    // 取った称号の記録（ID配列で永続化）
+    var TITLE_DEFS = {
+        combo:   { crown:"🏆", name:"「ひっさつコンボ マスター」", desc:"伝説の組み合わせを 見つけ出した者。" },
+        boss:    { crown:"🏅", name:"「やみばらい イチャマスター」", desc:"闇のイチャお化けを 打ちやぶった 勇者。" },
+        shenron: { crown:"🐲", name:"「ねがいを かなえし者」", desc:"シェンロンを 呼び出し、伝説の名言を さずかった者。" }
+    };
+    var titlesGot = icmLoadTitles();
+    function icmLoadTitles(){ try { var a=JSON.parse(localStorage.getItem("icm_titles")||"[]"); return Array.isArray(a)?a:[]; } catch(e){ return []; } }
+    function icmSaveTitles(){ try { localStorage.setItem("icm_titles", JSON.stringify(titlesGot)); } catch(e){} }
+
+    // 🏆 とった称号一覧の描画（未獲得はグレーで「？？？」）
+    var TITLE_ORDER = ["boss","combo","shenron"];
+    function renderTitles() {
+        var cnt = $("icm-titles-count");
+        if (cnt) cnt.innerText = titlesGot.length;
+        var box = $("icm-titles-list");
+        if (!box) return;
+        box.innerHTML = "";
+        TITLE_ORDER.forEach(function(id){
+            var def = TITLE_DEFS[id];
+            var got = titlesGot.indexOf(id) !== -1;
+            var row = document.createElement("div");
+            row.className = "icm-title-row " + (got ? "got" : "locked");
+            var crown = document.createElement("div");
+            crown.className = "ic-crown";
+            crown.innerText = got ? def.crown : "🔒";
+            var text = document.createElement("div");
+            text.className = "ic-text";
+            var nm = document.createElement("div");
+            nm.className = "ic-name";
+            nm.innerText = got ? def.name : "？？？";
+            var ds = document.createElement("div");
+            ds.className = "ic-desc";
+            ds.innerText = got ? def.desc : "まだ 手に入れていない 称号。";
+            text.appendChild(nm); text.appendChild(ds);
+            row.appendChild(crown); row.appendChild(text);
+            box.appendChild(row);
+        });
+    }
+
+    // 称号オーバーレイ（内容を差し替えて表示）。idを渡すと記録＆一覧に反映
+    function icmShowTitleCustom(crown, name, desc, id) {
+        $("icm-title-crown").innerText = crown || "🏆";
+        $("icm-title-name").innerText = name || "「ひっさつコンボ マスター」";
+        $("icm-title-desc").innerText = desc || "伝説の組み合わせを 見つけ出した者。";
+        var isNew = false;
+        if (id && titlesGot.indexOf(id) === -1) { titlesGot.push(id); icmSaveTitles(); isNew = true; }
+        $("icm-title-label").innerText = isNew ? "称号 を かくとく！" : "獲得ずみの 称号";
+        renderTitles();
+        $("icm-title-overlay").classList.add("show");
+    }
+    function icmShowTitle() {
+        icmTitleOnClose = function(){ window.icmBossClose(); };
+        icmShowTitleCustom("🏆", "「ひっさつコンボ マスター」", "伝説の組み合わせを 見つけ出した者。", "combo");
+    }
+    var icmTitleOnClose = function(){ if (typeof window.icmBossClose === "function") window.icmBossClose(); };
+    window.icmCloseTitle = function() {
+        $("icm-title-overlay").classList.remove("show");
+        if (typeof icmTitleOnClose === "function") icmTitleOnClose();
+    };
+
+    window.icmBossAttack = function() {
+        if (bossThrown >= collected.length) return;
+        // 🔥 1個目を投げる直前に必勝コンボ判定
+        if (bossThrown === 0 && icmCheckCombo()) {
+            $("icm-boss-attack").disabled = true;
+            icmComboBlast();
+            return;
+        }
+        $("icm-boss-attack").disabled = true;
+        // 一番左のボールを投げる演出
+        var balls = $("icm-boss-balls").getElementsByClassName("icm-boss-ball");
+        if (balls.length > 0) balls[0].classList.add("thrown");
+        // ダメージ
+        var dmg = 25 + Math.floor(Math.random()*21);
+        setTimeout(function(){
+            bossHP -= dmg; if (bossHP < 0) bossHP = 0;
+            $("icm-boss-hpfill").style.width = (bossHP/bossMaxHP*100) + "%";
+            var mon = $("icm-boss-monster");
+            mon.classList.remove("hit"); void mon.offsetWidth; mon.classList.add("hit");
+            bossThrown++;
+            renderBossBalls();
+            if (bossHP <= 0) {
+                // 勝ち
+                setTimeout(function(){
+                    mon.className = "defeated";
+                    $("icm-boss-msg").innerText = "🎉 闇のイチャお化けを たおした！\nあなたは イチャモンマスターだ！";
+                    $("icm-boss-attack").style.display = "none";
+                    $("icm-boss-back").style.display = "inline-block";
+                    icmVictoryFanfare();  // 🎉 テケテケテケ→ジャーン
+                    // 勝利の称号（閉じてもボス画面は残す＝「もどる」で戻れる）
+                    setTimeout(function(){
+                        icmTitleOnClose = function(){};
+                        icmShowTitleCustom("🏅", "「やみばらい イチャマスター」", "闇のイチャお化けを 打ちやぶった 勇者。", "boss");
+                    }, 900);
+                }, 400);
+            } else if (bossThrown >= collected.length) {
+                // ボールを使い切ったが倒せず → 負け
+                $("icm-boss-msg").innerText = "ぜんぶ ぶつけたが たおせなかった…\nもっと イチャモンスターを 集めよう！";
+                $("icm-boss-attack").style.display = "none";
+                $("icm-boss-back").style.display = "inline-block";
+            } else {
+                $("icm-boss-msg").innerText = "まだまだ！ つぎを ぶつけろ！";
+                $("icm-boss-attack").disabled = false;
+            }
+        }, 500);
+    };
+
+    window.icmBossClose = function() {
+        $("icm-boss").classList.remove("show");
+        icmBossBgmStop();  // 👻 ドロドロBGM停止→通常BGMへ
+    };
+
+    // 🟠 ドラゴン図鑑の描画（1星〜7星の順に並べる）
+    function renderDragon() {
+        $("icm-dragon-collected").innerText = dragonGot.length;
+        var box = $("icm-dragon-balls");
+        if (!box) return;
+        box.innerHTML = "";
+        for (var s=1; s<=7; s++){
+            var div = document.createElement("div");
+            if (dragonGot.indexOf(s) !== -1) {
+                div.className = "icm-dragon-slot got";
+                div.innerText = "★".repeat(s>4?1:s) + (s>4? ("×"+s) : "");
+                div.innerText = s + "★";
+                (function(st){ div.onclick = function(){ icmOpenDragon(st); }; })(s);
+            } else {
+                div.className = "icm-dragon-slot empty";
+                div.innerText = s + "★";
+            }
+            box.appendChild(div);
+        }
+    }
+
+    window.icmOpenDragon = function(star) {
+        var dd = null;
+        for (var i=0;i<DRAGON.length;i++){ if (DRAGON[i].star === star) dd = DRAGON[i]; }
+        if (!dd) return;
+        $("icm-modal-emoji").innerText = "🟠";
+        $("icm-modal-name").innerText = star + "星球";
+        $("icm-modal-speech").innerText = dd.speech;
+        $("icm-modal-react").innerText = "オラと また あそぼうな！";
+        $("icm-modal").classList.add("show");
+    };
+
+    function icmLoadDragon(){ try { return JSON.parse(localStorage.getItem("icm_dragon")||"[]"); } catch(e){ return []; } }
+    function icmSaveDragon(){ try { localStorage.setItem("icm_dragon", JSON.stringify(dragonGot)); } catch(e){} }
+
+    function updateBallCount(){ var e=$("icm-ball-num"); if(e) e.innerText = collected.length; }
+
+    // ===== コレクション =====
+    function renderCollection() {
+        var cc=$("icm-collected"); if(cc) cc.innerText = collected.length;
+        var box = $("icm-balls");
+        box.innerHTML = "";
+        // 手持ち（最大4個）を左上から並べる。万一5個以上あっても最新4個だけ表示
+        var startK = Math.max(0, collected.length - 4);
+        for (var k=startK;k<collected.length;k++){
+            var idx = collected[k];
+            var div = document.createElement("div");
+            div.className = "icm-ball-slot got";
+            (function(id){ div.onclick = function(){ icmOpenBall(id); }; })(idx);
+            div.title = ICHAMON[idx].name;
+            var no = document.createElement("span");
+            no.className = "icm-ball-no";
+            no.innerText = "No." + (idx+1);
+            div.appendChild(no);
+            box.appendChild(div);
+        }
+        var remain = 4 - Math.min(4, collected.length);
+        for (var r=0;r<remain;r++){
+            var e = document.createElement("div");
+            e.className = "icm-ball-slot empty";
+            e.innerHTML = "<span>?</span>";
+            box.appendChild(e);
+        }
+    }
+
+    window.icmOpenBall = function(idx) {
+        var m = ICHAMON[idx];
+        $("icm-modal-emoji").innerText = m.emoji;
+        $("icm-modal-name").innerText = "No." + (idx+1) + "  " + m.name;
+        $("icm-modal-speech").innerText = m.speech;
+        var reacts = ["…と、言ってきた。","あなたは ちょっと イラッとした。","なぜか きいてしまった…","また あいたく なってきた…？"];
+        $("icm-modal-react").innerText = reacts[Math.floor(Math.random()*reacts.length)];
+        $("icm-modal").classList.add("show");
+    };
+    window.icmCloseModal = function(e) {
+        if (e) e.stopPropagation();
+        $("icm-modal").classList.remove("show");
+    };
+
+    function icmLoad(){ try { var a = JSON.parse(localStorage.getItem("icm_collected")||"[]"); if(!Array.isArray(a)) a=[]; if(a.length>4) a=a.slice(a.length-4); return a; } catch(e){ return []; } }
+    function icmSave(){ try { localStorage.setItem("icm_collected", JSON.stringify(collected)); } catch(e){} }
+    function icmLoadBalls(){ try { return parseInt(localStorage.getItem("icm_balls"))||0; } catch(e){ return 0; } }
+    function icmSaveBalls(){ try { localStorage.setItem("icm_balls", ballCount); } catch(e){} }
+
+    // ===== 🎵 平和なBGM =====
+    var bgmCtx = null, bgmOn = false, bgmTimer = null, bgmStep = 0;
+    var NOTE = { C3:130.81,F3:174.61,G3:196.00,A3:220.00,
+                 C4:261.63,D4:293.66,E4:329.63,G4:392.00,A4:440.00,C5:523.25 };
+    var BGM_MELODY = ["E4","G4","A4","G4","E4","D4","C4","D4","E4","G4","A4","C5","A4","G4","E4","G4",
+                      "C5","A4","G4","E4","D4","E4","G4","A4","G4","E4","D4","C4","C4","D4","E4","D4"];
+    var BGM_BASS = ["C3","C3","G3","G3","A3","A3","F3","G3","C3","C3","G3","G3","A3","A3","F3","G3",
+                    "C3","C3","G3","G3","A3","A3","F3","G3","C3","C3","G3","G3","A3","A3","F3","G3"];
+    // AudioContextを必要時に用意（効果音・ボスBGM共用）
+    function icmEnsureAudio() {
+        if (!bgmCtx) { try { bgmCtx = new (window.AudioContext||window.webkitAudioContext)(); } catch(e){ return null; } }
+        if (bgmCtx.state === "suspended") { try { bgmCtx.resume(); } catch(e){} }
+        return bgmCtx;
+    }
+    function bgmTone(freq, dur, type, vol) {
+        if (!bgmCtx) return;
+        var t = bgmCtx.currentTime;
+        var o = bgmCtx.createOscillator(), g = bgmCtx.createGain();
+        o.type = type; o.frequency.setValueAtTime(freq, t);
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.linearRampToValueAtTime(vol, t + 0.04);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+        o.connect(g); g.connect(bgmCtx.destination);
+        o.start(t); o.stop(t + dur + 0.05);
+    }
+    function bgmTick() {
+        var i = bgmStep % BGM_MELODY.length;
+        var mf = NOTE[BGM_MELODY[i]];
+        if (mf) bgmTone(mf, 0.42, "triangle", 0.12);
+        if (i % 2 === 0) { var bf = NOTE[BGM_BASS[i]]; if (bf) bgmTone(bf, 0.7, "sine", 0.13); }
+        bgmStep++;
+    }
+
+    // ===== ⚡ 雷の効果音（神龍登場用） =====
+    function icmThunder() {
+        var ctx = icmEnsureAudio();
+        if (!ctx) return;
+        var t = ctx.currentTime;
+        // ホワイトノイズのバッファ（バリッという破裂音）
+        var dur = 1.4;
+        var buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * dur), ctx.sampleRate);
+        var data = buf.getChannelData(0);
+        for (var i=0;i<data.length;i++){
+            var p = i / data.length;
+            // 最初に強く、だんだん減衰（ゴロゴロと尾を引く）
+            var env = Math.pow(1 - p, 1.6);
+            data[i] = (Math.random()*2 - 1) * env;
+        }
+        var src = ctx.createBufferSource();
+        src.buffer = buf;
+        // ローパスで重い「ゴロゴロ」に寄せる
+        var lp = ctx.createBiquadFilter();
+        lp.type = "lowpass";
+        lp.frequency.setValueAtTime(2600, t);
+        lp.frequency.exponentialRampToValueAtTime(380, t + dur);
+        var g = ctx.createGain();
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.linearRampToValueAtTime(0.55, t + 0.02);   // バリッ！
+        g.gain.exponentialRampToValueAtTime(0.18, t + 0.25);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+        src.connect(lp); lp.connect(g); g.connect(ctx.destination);
+        src.start(t); src.stop(t + dur);
+        // 低い轟き（サブベース）を重ねる
+        var o = ctx.createOscillator(), og = ctx.createGain();
+        o.type = "sine"; o.frequency.setValueAtTime(70, t);
+        o.frequency.exponentialRampToValueAtTime(38, t + dur);
+        og.gain.setValueAtTime(0.0001, t);
+        og.gain.linearRampToValueAtTime(0.4, t + 0.05);
+        og.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+        o.connect(og); og.connect(ctx.destination);
+        o.start(t); o.stop(t + dur + 0.05);
+    }
+
+    // ===== 👻 ボス戦BGM（ドロドロした不穏なドローン） =====
+    var bossBgmTimer = null, bossBgmStep = 0;
+    // 不協和な低音をうねらせる
+    var BOSS_BASS = [55.00, 58.27, 55.00, 51.91, 49.00, 51.91, 55.00, 58.27]; // A1まわりの半音うねり
+    function bossBgmTick() {
+        var ctx = bgmCtx;
+        if (!ctx) return;
+        var t = ctx.currentTime;
+        var f = BOSS_BASS[bossBgmStep % BOSS_BASS.length];
+        // 重いノコギリ波のドローン
+        var o = ctx.createOscillator(), g = ctx.createGain();
+        o.type = "sawtooth"; o.frequency.setValueAtTime(f, t);
+        var lp = ctx.createBiquadFilter();
+        lp.type = "lowpass"; lp.frequency.setValueAtTime(420, t);
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.linearRampToValueAtTime(0.14, t + 0.3);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 1.0);
+        o.connect(lp); lp.connect(g); g.connect(ctx.destination);
+        o.start(t); o.stop(t + 1.05);
+        // 半音上を薄く重ねて不協和（ドロドロ）に
+        var o2 = ctx.createOscillator(), g2 = ctx.createGain();
+        o2.type = "sawtooth"; o2.frequency.setValueAtTime(f * 1.06, t);
+        g2.gain.setValueAtTime(0.0001, t);
+        g2.gain.linearRampToValueAtTime(0.06, t + 0.3);
+        g2.gain.exponentialRampToValueAtTime(0.0001, t + 1.0);
+        o2.connect(lp); o2.connect(g2); g2.connect(ctx.destination);
+        o2.start(t); o2.stop(t + 1.05);
+        // 数歩ごとに不気味な高音のひと刺し
+        if (bossBgmStep % 4 === 2) {
+            var hi = ctx.createOscillator(), hg = ctx.createGain();
+            hi.type = "triangle"; hi.frequency.setValueAtTime(523.25, t);
+            hi.frequency.exponentialRampToValueAtTime(392.0, t + 0.5);
+            hg.gain.setValueAtTime(0.0001, t);
+            hg.gain.linearRampToValueAtTime(0.05, t + 0.05);
+            hg.gain.exponentialRampToValueAtTime(0.0001, t + 0.6);
+            hi.connect(hg); hg.connect(ctx.destination);
+            hi.start(t); hi.stop(t + 0.65);
+        }
+        bossBgmStep++;
+    }
+    function icmBossBgmStart() {
+        if (!icmEnsureAudio()) return;
+        // 通常BGMを一時停止（戻ったら元に戻す）
+        if (bgmOn && bgmTimer) { clearInterval(bgmTimer); bgmTimer = null; }
+        if (bossBgmTimer) { clearInterval(bossBgmTimer); }
+        bossBgmStep = 0;
+        bossBgmTick();
+        bossBgmTimer = setInterval(bossBgmTick, 520);
+    }
+    function icmBossBgmStop() {
+        if (bossBgmTimer) { clearInterval(bossBgmTimer); bossBgmTimer = null; }
+        // 通常BGMがオンだったら再開
+        if (bgmOn && bgmCtx && !bgmTimer) {
+            bgmStep = 0; bgmTick();
+            bgmTimer = setInterval(bgmTick, 400);
+        }
+    }
+
+    // ===== 🎉 勝利ファンファーレ（テケテケテケ → ジャーン！） =====
+    function icmVictoryFanfare() {
+        var ctx = icmEnsureAudio();
+        if (!ctx) return;
+        // ボスBGMが鳴っていたら止める（勝利の瞬間に切り替え）
+        if (bossBgmTimer) { clearInterval(bossBgmTimer); bossBgmTimer = null; }
+        var t0 = ctx.currentTime;
+        function note(freq, start, dur, vol, type) {
+            var t = t0 + start;
+            var o = ctx.createOscillator(), g = ctx.createGain();
+            o.type = type || "square";
+            o.frequency.setValueAtTime(freq, t);
+            g.gain.setValueAtTime(0.0001, t);
+            g.gain.linearRampToValueAtTime(vol, t + 0.015);
+            g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+            o.connect(g); g.connect(ctx.destination);
+            o.start(t); o.stop(t + dur + 0.03);
+        }
+        var G4=392.00, C5=523.25, E5=659.25, G5=783.99, C6=1046.50;
+        // テケテケテケ…（速い上昇の刻み）
+        var seq = [G4, C5, E5, G4, C5, E5, G5];
+        var step = 0.085;
+        for (var i=0;i<seq.length;i++){
+            note(seq[i], i*step, 0.11, 0.16, "square");
+        }
+        // ジャーン！（和音で締め）
+        var hit = seq.length * step + 0.04;
+        note(C5, hit, 0.7, 0.16, "square");
+        note(E5, hit, 0.7, 0.14, "square");
+        note(G5, hit, 0.7, 0.14, "square");
+        note(C6, hit, 0.7, 0.10, "triangle");
+        // 低音の土台でドンと
+        note(130.81, hit, 0.7, 0.18, "sine");   // C3
+    }
+    window.icmToggleBGM = function() {
+        if (!icmEnsureAudio()) return;
+        bgmOn = !bgmOn;
+        var btn = $("icm-bgm-btn");
+        if (bgmOn) {
+            btn.classList.add("on"); btn.innerText = "🎵 おんがく";
+            bgmStep = 0; bgmTick();
+            bgmTimer = setInterval(bgmTick, 400);
+        } else {
+            btn.classList.remove("on"); btn.innerText = "🔇 おんがく";
+            if (bgmTimer) { clearInterval(bgmTimer); bgmTimer = null; }
+        }
+    };
+
+    // ===== 8番ちくわ組み込み用：起動と停止 =====
+    var icmLaunched = false;
+    function icmAutoStartBGM() {
+        if (!bgmOn) { icmToggleBGM(); }
+        document.removeEventListener("pointerdown", icmAutoStartBGM);
+        document.removeEventListener("click", icmAutoStartBGM);
+    }
+    // ボタンから呼ばれる：初期描画してBGMを鳴らす
+    window.icmLaunch = function() {
+        // 表示し直すたびにフィールドを作り直す
+        updateBallCount();
+        renderCollection();
+        renderDragon();
+        renderTitles();
+        updateShenronButton();
+        icmSearch();
+        icmLaunched = true;
+        // 起動時に一度だけBGMを開始（ユーザー操作直後なので鳴る）
+        if (!bgmOn) { icmToggleBGM(); }
+        // 念のため、最初のタップでも起動できるよう保険
+        document.addEventListener("pointerdown", icmAutoStartBGM);
+        document.addEventListener("click", icmAutoStartBGM);
+    };
+    // 8番ちくわに戻るとき：音とタイマーを完全停止
+    window.icmShutdown = function() {
+        // 通常BGM停止
+        if (bgmTimer) { clearInterval(bgmTimer); bgmTimer = null; }
+        bgmOn = false;
+        var btn = $("icm-bgm-btn");
+        if (btn) { btn.classList.remove("on"); btn.innerText = "🔇 おんがく"; }
+        // ボスBGM停止
+        if (typeof bossBgmTimer !== "undefined" && bossBgmTimer) { clearInterval(bossBgmTimer); bossBgmTimer = null; }
+        // 開いている各オーバーレイを閉じる
+        ["icm-modal","icm-shenron","icm-boss","icm-title-overlay"].forEach(function(id){
+            var el = $(id); if (el) el.classList.remove("show");
+        });
+        var ln = $("icm-lightning"); if (ln) ln.classList.remove("flash");
+        document.removeEventListener("pointerdown", icmAutoStartBGM);
+        document.removeEventListener("click", icmAutoStartBGM);
+    };
+})();
+
+</script>
+
+<div id="ichamon-wrap">
+<button id="ichamon-back-btn" onclick="ichamonToTitle(event)">↩ タイトルに戻る</button>
+
+<div id="icm-wrap">
+    <div id="icm-header">
+        <div id="icm-logo">めざせ<span>イチャモンスター</span></div>
+        <div id="icm-sub">― 町でさがして、つかまえて、ひらいて ―</div>
+        <div id="icm-ballcount">🔴 イチャモンボール あつめちゅう</div>
+        <button id="icm-bgm-btn" onclick="icmToggleBGM()">🔇 おんがく</button>
+    </div>
+
+    <div class="icm-panel">
+        <!-- 町並み探索 -->
+        <div id="icm-field-screen">
+            <div id="icm-field-title">🔎 町のどこかに イチャモンボール！</div>
+            <div id="icm-field-hint">よ〜く見て、ボールを見つけてタップ！</div>
+            <div id="icm-town"></div>
+            <button id="icm-search-btn" onclick="icmSearch()">べつの場所をさがす</button>
+            <div id="icm-found-msg"></div>
+        </div>
+
+        <!-- 結果 -->
+        <div id="icm-result">
+            <div id="icm-result-emoji">🎉</div>
+            <div id="icm-result-title">みつけた！ なかまにした！</div>
+            <div id="icm-result-name">イチャモン</div>
+            <div id="icm-result-getrow">
+                <span id="icm-result-ball">🔴 イチャモンボールを 1こ ゲット！</span>
+                <div id="icm-result-ballbtn" onclick="icmResultOpenBall()">
+                    <span id="icm-result-new">NEW</span>
+                    <span id="icm-result-ballno" class="icm-ball-no">No.1</span>
+                </div>
+                <div id="icm-result-balltip">中身をチェックは クリック！👆</div>
+            </div>
+            <!-- 取っておく / 捨てる -->
+            <div id="icm-keep-choice">
+                <div id="icm-keep-msg">このボール、どうする？</div>
+                <div id="icm-keep-btns">
+                    <button class="icm-keep-btn keep" onclick="icmKeepBall()">🔴 取っておく</button>
+                    <button class="icm-keep-btn drop" onclick="icmDropBall()">🗑 捨てる</button>
+                </div>
+            </div>
+            <!-- 満杯のとき：どれと入れ替えるか -->
+            <div id="icm-swap-area" style="display:none;">
+                <div id="icm-swap-msg">持ち玉がいっぱい！ どれと入れ替える？<br><span>（捨てたいボールをタップ）</span></div>
+                <div id="icm-swap-balls"></div>
+                <button class="icm-keep-btn drop" onclick="icmCancelSwap()" style="margin-top:10px;">やっぱり 今のを捨てる</button>
+            </div>
+            <div id="icm-result-next" style="display:none;">
+                <br>
+                <button id="icm-search-btn" onclick="icmReset()" style="margin-top:2px;">つぎを さがす</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- コレクション -->
+    <div class="icm-panel">
+        <div id="icm-collection-head">
+            <div id="icm-collection-title">🔴 あなたのイチャモンスター</div>
+            <div id="icm-collection-count"></div>
+        </div>
+        <div id="icm-balls"></div>
+        <button id="icm-boss-btn" onclick="icmBossStart()">⚔️ 今のイチャモンスターで ボスと戦う！</button>
+    </div>
+
+    <!-- 🟠 ドラゴンボール図鑑（別枠） -->
+    <div class="icm-panel">
+        <div id="icm-collection-head">
+            <div id="icm-collection-title">🟠 ドラゴンボール</div>
+            <div id="icm-collection-count"><span id="icm-dragon-collected">0</span> / 7</div>
+        </div>
+        <div id="icm-dragon-balls"></div>
+        <button id="icm-call-shenron" style="display:none;" onclick="icmShenronStart()">🐉 7個そろった！ シェンロンを呼ぼう</button>
+    </div>
+
+    <!-- 🏆 獲得した称号 -->
+    <div class="icm-panel">
+        <div id="icm-collection-head">
+            <div id="icm-collection-title">🏆 とった称号</div>
+            <div id="icm-collection-count"><span id="icm-titles-count">0</span> / 3</div>
+        </div>
+        <div id="icm-titles-list"></div>
+    </div>
+</div>
+
+<div id="icm-modal" onclick="icmCloseModal(event)">
+    <div id="icm-modal-card" onclick="event.stopPropagation()">
+        <div id="icm-modal-emoji">👴</div>
+        <div id="icm-modal-name">イチャモン</div>
+        <div id="icm-modal-speech">…</div>
+        <div id="icm-modal-react">…</div>
+        <button id="icm-modal-close" onclick="icmCloseModal(event)">とじる（イラッ）</button>
+    </div>
+</div>
+
+<!-- 🐉 神龍イベント（ドラゴンボール7個コンプリートで発動） -->
+<!-- ⚔️ ボス戦（黒い闇お化け） -->
+<div id="icm-boss">
+    <div id="icm-boss-inner">
+        <div id="icm-boss-title">⚔️ ボスバトル ⚔️</div>
+        <div id="icm-boss-stage">
+            <div id="icm-boss-monster">👻
+                <div id="icm-boss-hpbar"><div id="icm-boss-hpfill"></div></div>
+                <div id="icm-boss-name">闇のイチャお化け</div>
+            </div>
+            <div id="icm-boss-balls"></div>
+        </div>
+        <div id="icm-boss-msg">持っているイチャモンスターを ぶつけろ！</div>
+        <div id="icm-boss-btns">
+            <button id="icm-boss-attack" onclick="icmBossAttack()">⚔️ こうげき！</button>
+            <button id="icm-boss-back" style="display:none;" onclick="icmBossClose()">↩ もどる</button>
+        </div>
+    </div>
+</div>
+
+<!-- 🏆 称号オーバーレイ（必勝コンボでクリア時） -->
+<div id="icm-title-overlay">
+    <div id="icm-title-card">
+        <div id="icm-title-crown">🏆</div>
+        <div id="icm-title-label">称号 を かくとく！</div>
+        <div id="icm-title-name">「ひっさつコンボ マスター」</div>
+        <div id="icm-title-desc">伝説の組み合わせを 見つけ出した者。</div>
+        <button id="icm-title-close" onclick="icmCloseTitle()">また イチャモンを 集める</button>
+    </div>
+</div>
+
+<div id="icm-lightning"></div>
+<div id="icm-shenron">
+    <div id="icm-shenron-inner">
+        <div id="icm-shenron-dragon">🐉</div>
+        <div id="icm-shenron-speech">…</div>
+        <div id="icm-shenron-choices"></div>
+        <div id="icm-treasure" style="display:none;">
+            <div id="icm-treasure-box" onclick="icmOpenTreasure()">🎁</div>
+            <div id="icm-treasure-hint">宝箱をタップ</div>
+            <div id="icm-treasure-quote" style="display:none;"></div>
+            <button id="icm-shenron-close" style="display:none;" onclick="icmCloseShenron()">とじる</button>
+        </div>
+    </div>
+</div>
+
+</div>
+
+
+<script>
+    // 🔴 イチャモンスター起動（おまけ）
+    function playIchamon(e) {
+        if (e) e.stopPropagation();
+        if (!audioCtx) { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(err){} }
+        if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+        isAudioStarted = true;
+        if (titleInterval) { clearInterval(titleInterval); titleInterval = null; }
+        if (bpmInterval) { clearInterval(bpmInterval); bpmInterval = null; }
+        if (typeof stopBGM === "function") stopBGM();
+        currentBgmMode = null;
+        document.getElementById("title-screen").style.display = "none";
+        gameState = "ICHAMON";
+        var w = document.getElementById("ichamon-wrap");
+        w.classList.add("show");
+        w.scrollTop = 0;
+        firstTitleDone = true;
+        if (typeof window.icmLaunch === "function") window.icmLaunch();
+    }
+    // 🔴 イチャモンを終了して8番ちくわのタイトルへ
+    function ichamonToTitle(e) {
+        if (e) e.stopPropagation();
+        if (typeof window.icmShutdown === "function") window.icmShutdown();
+        document.getElementById("ichamon-wrap").classList.remove("show");
+        goToTitle();
+    }
+</script>
+
 </body>
 </html>
