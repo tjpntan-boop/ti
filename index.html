@@ -8589,13 +8589,27 @@
     }
 
     // 🔥 必勝コンボ判定（裏設定：特定の4体がそろうと1個目で大爆発・一発クリア）
-    var ICM_COMBO = [3, 5, 6, 11];  // No.4,6,7,12
+    // 5つの組み合わせのどれかと一致すれば発動。当たったらそのインデックス(0..4)、外れは -1
+    var ICM_COMBOS = [
+        [3, 5, 6, 11],   // におい刑事・オナラ探知機・トイレ見張り・スモールライト魔（身体攻撃軍団）
+        [1, 2, 7, 10],   // サイフ警察・ねんすうチェッカー・ヘアスタイル評論家・おはだチェッカー（身だしなみ軍団）
+        [0, 4, 12, 15],  // ズケズケくん・せんたく番長・おべんとう評論家・ぞうきん指導員（生活ぐせ軍団）
+        [8, 9, 14, 16],  // 上から目線マン・ドヤ顔こぞう・いいがかり王・ずるい認定係(マウントとり軍団)
+        [13, 14, 16, 17] // 運のせいマン・いいがかり王・ずるい認定係・メダカ過保護（言いがかり軍団）
+    ];
     function icmCheckCombo() {
-        if (collected.length !== 4) return false;
+        if (collected.length !== 4) return -1;
         var sorted = collected.slice().sort(function(a,b){return a-b;});
-        for (var i=0;i<4;i++){ if (sorted[i] !== ICM_COMBO[i]) return false; }
-        return true;
+        for (var c=0; c<ICM_COMBOS.length; c++){
+            var combo = ICM_COMBOS[c];
+            var ok = true;
+            for (var i=0;i<4;i++){ if (sorted[i] !== combo[i]) { ok = false; break; } }
+            if (ok) return c;
+        }
+        return -1;
     }
+    // 当たったコンボのインデックス（icmComboBlast→icmShowTitleへ橋渡し）
+    var icmLastComboIdx = -1;
     function icmComboBlast() {
         var mon = $("icm-boss-monster");
         $("icm-boss-attack").style.display = "none";
@@ -8621,16 +8635,29 @@
     }
     // 取った称号の記録（ID配列で永続化）
     var TITLE_DEFS = {
-        combo:   { crown:"🏆", name:"「ひっさつコンボ マスター」", desc:"伝説の組み合わせを 見つけ出した者。" },
-        boss:    { crown:"🏅", name:"「やみばらい イチャマスター」", desc:"闇のイチャお化けを 打ちやぶった 勇者。" },
-        shenron: { crown:"🐲", name:"「ねがいを かなえし者」", desc:"シェンロンを 呼び出し、伝説の名言を さずかった者。" }
+        combo1:  { crown:"🏆", name:"「しんたい攻撃 マスター」",       desc:"におい・オナラ・トイレ・スモールライト で うちやぶった。" },
+        combo2:  { crown:"🏆", name:"「みだしなみ攻撃 マスター」",     desc:"サイフ・パンツ・髪型・お肌 で うちやぶった。" },
+        combo3:  { crown:"🏆", name:"「せいかつぐせ攻撃 マスター」",   desc:"ズケズケ・せんたく・お弁当・ぞうきん で うちやぶった。" },
+        combo4:  { crown:"🏆", name:"「マウントとり マスター」",       desc:"上から目線・ドヤ顔・いいがかり・ずるい認定 で うちやぶった。" },
+        combo5:  { crown:"🏆", name:"「言いがかり マスター」",         desc:"運のせい・いいがかり・ずるい・メダカ過保護 で うちやぶった。" },
+        boss:    { crown:"🏅", name:"「やみばらい イチャマスター」",   desc:"闇のイチャお化けを 打ちやぶった 勇者。" },
+        shenron: { crown:"🐲", name:"「ねがいを かなえし者」",         desc:"シェンロンを 呼び出し、伝説の名言を さずかった者。" }
     };
     var titlesGot = icmLoadTitles();
+    // 旧バージョン（comboが1種類）からのデータ移行
+    (function migrateTitles(){
+        var idx = titlesGot.indexOf("combo");
+        if (idx !== -1) {
+            titlesGot.splice(idx, 1);
+            if (titlesGot.indexOf("combo1") === -1) titlesGot.push("combo1");
+            icmSaveTitles();
+        }
+    })();
     function icmLoadTitles(){ try { var a=JSON.parse(localStorage.getItem("icm_titles")||"[]"); return Array.isArray(a)?a:[]; } catch(e){ return []; } }
     function icmSaveTitles(){ try { localStorage.setItem("icm_titles", JSON.stringify(titlesGot)); } catch(e){} }
 
     // 🏆 とった称号一覧の描画（未獲得はグレーで「？？？」）
-    var TITLE_ORDER = ["boss","combo","shenron"];
+    var TITLE_ORDER = ["boss","combo1","combo2","combo3","combo4","combo5","shenron"];
     function renderTitles() {
         var cnt = $("icm-titles-count");
         if (cnt) cnt.innerText = titlesGot.length;
@@ -8672,7 +8699,10 @@
     }
     function icmShowTitle() {
         icmTitleOnClose = function(){ window.icmBossClose(); };
-        icmShowTitleCustom("🏆", "「ひっさつコンボ マスター」", "伝説の組み合わせを 見つけ出した者。", "combo");
+        // 当たったコンボに対応する称号を出す（フォールバックは combo1）
+        var id = "combo" + ((icmLastComboIdx >= 0 ? icmLastComboIdx : 0) + 1);
+        var def = TITLE_DEFS[id] || TITLE_DEFS.combo1;
+        icmShowTitleCustom(def.crown, def.name, def.desc, id);
     }
     var icmTitleOnClose = function(){ if (typeof window.icmBossClose === "function") window.icmBossClose(); };
     window.icmCloseTitle = function() {
@@ -8683,10 +8713,14 @@
     window.icmBossAttack = function() {
         if (bossThrown >= collected.length) return;
         // 🔥 1個目を投げる直前に必勝コンボ判定
-        if (bossThrown === 0 && icmCheckCombo()) {
-            $("icm-boss-attack").disabled = true;
-            icmComboBlast();
-            return;
+        if (bossThrown === 0) {
+            var ci = icmCheckCombo();
+            if (ci >= 0) {
+                icmLastComboIdx = ci;
+                $("icm-boss-attack").disabled = true;
+                icmComboBlast();
+                return;
+            }
         }
         $("icm-boss-attack").disabled = true;
         // 一番左のボールを投げる演出
@@ -9118,7 +9152,7 @@
     <div class="icm-panel">
         <div id="icm-collection-head">
             <div id="icm-collection-title">🏆 とった称号</div>
-            <div id="icm-collection-count"><span id="icm-titles-count">0</span> / 3</div>
+            <div id="icm-collection-count"><span id="icm-titles-count">0</span> / 7</div>
         </div>
         <div id="icm-titles-list"></div>
     </div>
