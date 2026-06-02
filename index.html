@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>8番ちくわ -ちくわ捕食編-</title>
+    <title>はちばんちくわ -ちくわ捕食編-</title>
     <style>
         body {
             margin: 0; padding: 0; overflow: hidden;
@@ -65,8 +65,8 @@
         @keyframes blink { from { opacity: 0.55; } to { opacity: 1; } }
 
         .famicom-title {
-            color: #200000; font-size: 50px; font-weight: bold; margin-bottom: 50px;
-            text-shadow: 3px 3px #000, 5px 5px #000; text-align: center; letter-spacing: 4px;
+            color: #200000; font-size: 42px; font-weight: bold; margin-bottom: 50px;
+            text-shadow: 3px 3px #000, 5px 5px #000; text-align: center; letter-spacing: 3px;
             z-index: 1005; transform: translateY(-120vh); animation: slowDrop 6.0s linear 0.5s forwards;
         }
         @keyframes slowDrop {
@@ -2386,7 +2386,7 @@
         <div class="blood-curtain"></div>
         <div id="title-content">
         <div id="tap-notice" onclick="beginTitleAudio(event)">▶ タップして音を出す</div>
-        <div class="famicom-title">８番ちくわ</div>
+        <div class="famicom-title">はちばんちくわ</div>
         <div id="version-label">Ver 2.0.0</div>
         <button id="start-btn" class="start-btn" onclick="startGame(event)" style="display:none;">ちくわを覗く...</button>
         <button id="title-badge-btn" class="badge-link-btn" onclick="openBadgeScreen('title')" style="display:none;">🏅 称号コレクション</button>
@@ -2636,7 +2636,7 @@
             <div class="pwr-stat pwr-p"><div class="pwr-stat-top"><span>☀️ 前向きな力</span><span class="pwr-stat-val" id="pwr-v-p">0</span></div><div class="pwr-bar"><div class="pwr-bar-fill" id="pwr-b-p"></div></div></div>
             <div class="pwr-stat pwr-h"><div class="pwr-stat-top"><span>🌿 癒やしの力</span><span class="pwr-stat-val" id="pwr-v-h">0</span></div><div class="pwr-bar"><div class="pwr-bar-fill" id="pwr-b-h"></div></div></div>
             <div id="pwr-total-row">🏆 総合スコア <span id="pwr-total-val">0</span> <small>/ 400</small><span id="pwr-total-best"></span></div>
-            <div id="pwr-card-sig">🌱 ４つのタネ 〜 8番ちくわ 〜</div>
+            <div id="pwr-card-sig">🌱 ４つのタネ 〜 はちばんちくわ 〜</div>
             <div class="pwr-btn-row" style="margin-top:6px;">
                 <button class="pwr-btn" onclick="pwrPickAlbum()">🖼 別の写真を選ぶ</button>
                 <button class="pwr-btn" onclick="pwrResultCamera()">📷 カメラで撮る</button>
@@ -2733,7 +2733,7 @@
                 煮え立つ汁の中に、ちくわが沈んでいる。<br><br>
 
                 お前の使命はただひとつ。<br>
-                <b>0番から8番まで、ちくわを喰らい尽くすこと。</b><br><br>
+                <b>ぜろばんから はちばんまで、ちくわを喰らい尽くすこと。</b><br><br>
 
                 だが油断するな。<br>
                 鍋にはときどき<b>「異変」</b>が紛れ込む。<br>
@@ -2745,7 +2745,7 @@
                 </div>
 
                 判断を<b>間違えれば、腹の中はリセット</b>。<br>
-                またゼロ番から喰い直しだ。<br><br>
+                またぜろばんから喰い直しだ。<br><br>
 
                 異変は全<b>37種</b>。すべて見破れるか――。
             </div>
@@ -2754,7 +2754,7 @@
     </div>
 
     <div id="ed-screen">
-        <div class="ed-title">🍢 8番ちくわ 大量食い達成！ 🍢</div>
+        <div class="ed-title">🍢 はちばんちくわ 大量食い達成！ 🍢</div>
         <div class="ed-text">
             あなたは全ての不気味な異変を見破り、無限に湧き出る恐怖のちくわを綺麗に平らげました！<br><br>
             ドス黒い呪いは消え去り、あなたの胃袋とちくわ界に再び平和な練り物の香りが戻ったのです。<br><br>
@@ -2832,7 +2832,7 @@
 
     <div id="fake-title">
         <div class="blood-curtain"></div>
-        <div class="famicom-title">８番ちくび</div>
+        <div class="famicom-title">はちばんちくび</div>
     </div>
 
     <div id="dont-tap" onclick="failDontTap()">
@@ -2897,7 +2897,7 @@
     </div>
 
     <div id="ui-layer">
-        <div id="counter" class="chikuwa-counter">0番ちくわ (異変なしのちくわ)</div>
+        <div id="counter" class="chikuwa-counter">ぜろばんちくわ (異変なしのちくわ)</div>
         
         <div id="anomaly-tracker" class="anomaly-tracker">見つけた異変(通算): 0 / 37</div>
         
@@ -4223,7 +4223,7 @@
             gameState = "RESULT"; // 操作不可の待機状態
             const layer = document.getElementById("ingredients-layer");
             if (layer) layer.innerHTML = "";
-            document.getElementById("counter").innerText = "0番ちくわ (異変なしのちくわ)";
+            document.getElementById("counter").innerText = "ぜろばんちくわ (異変なしのちくわ)";
 
             const backMsg = document.getElementById("back-to-start-msg");
             backMsg.classList.remove("show");
@@ -5041,7 +5041,8 @@
         document.getElementById("fake-title").style.display = "none"; // 🎭 偽タイトルのリセット
         document.querySelector(".controls").classList.remove("swapped"); // 🔀 ボタン配置を通常に戻す
 
-        document.getElementById("counter").innerText = currentChikuwa === 8 ? "0番ちくわ (異変なしのちくわ)" : `${8 - currentChikuwa}番ちくわ`;
+        var __chikuwaNumKana = ["ぜろ","いち","に","さん","よん","ご","ろく","なな","はち"];
+        document.getElementById("counter").innerText = currentChikuwa === 8 ? "ぜろばんちくわ (異変なしのちくわ)" : `${__chikuwaNumKana[8 - currentChikuwa]}ばんちくわ`;
 
         // 📊 異変の抽選（3/5 ＝ 60% の確率に再調整）
         if (currentChikuwa === 8) {
@@ -5094,7 +5095,7 @@
 
         // 🔢 異変26：カウンターの番号がありえない数字に化ける
         if (isAnomaly && anomalyType === 26) {
-            document.getElementById("counter").innerText = "2026番ちくわ";
+            document.getElementById("counter").innerText = "ぱちもんちくわ";
         }
 
         // 🎭 異変31：プレイ中なのにタイトル画面に戻ってしまう（タイトルが「ちくび」に化けている）
