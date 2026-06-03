@@ -2715,7 +2715,7 @@
         <div id="title-content">
         <div id="tap-notice" onclick="beginTitleAudio(event)">▶ タップして音を出す</div>
         <div class="famicom-title">はちばんちくわ</div>
-        <div id="version-label">Ver 2.5.6</div>
+        <div id="version-label">Ver 2.5.8</div>
         <button id="start-btn" class="start-btn" onclick="startGame(event)" style="display:none;">🍩 ちくわを覗く... 🍩</button>
         <button id="title-badge-btn" class="badge-link-btn" onclick="openBadgeScreen('title')" style="display:none;">🏅 称号コレクション</button>
         <button id="reset-record-btn" onclick="resetDiscoveryRecord(event)" style="display:none;">🗑 異変の記録をリセット</button>
@@ -10256,7 +10256,7 @@
     function ichamonToTitle(e) {
         if (e) e.stopPropagation();
         if (typeof window.icmShutdown === "function") window.icmShutdown();
-        document.getElementById("ichamon-wrap").classList.remove("show");
+        // ラッパーは消さず、リロードに任せる
         goToTitle();
     }
 </script>
@@ -10265,7 +10265,7 @@
 // ===== ⚖️ ちくわ裁判（組み込みJS）=====
 (function(){
     // 単語プール（毎回ここから3つランダム抽出）
-    // 子ども・大人・シュール・ドリフ系の軽い下ネタ枠を混ぜて、組み合わせの妙を狙う
+    // 子ども・大人・シュール・ドリフ系・政治時事枠を混ぜて、組み合わせの妙を狙う
     const SAIBAN_POOL = {
         when: [
             // シュール・基本
@@ -10277,7 +10277,11 @@
             "出勤前の電車で", "会議の最中に", "金曜の夜に", "残業中に",
             "二日酔いの朝に", "ボーナス支給日に",
             // 🎭 ドリフ系
-            "真夜中の3時に", "コントの本番中に", "鏡を見たあとで", "だらしない朝に"
+            "真夜中の3時に", "コントの本番中に", "鏡を見たあとで", "だらしない朝に",
+            // 🗳 政治・時事
+            "選挙の前日に", "物価が上がった日に", "猛暑日のお昼に",
+            "台風が来た夜に", "株が大暴落した日に", "増税が決まった夜に",
+            "解散の噂が出た日に"
         ],
         where: [
             // シュール・基本
@@ -10290,7 +10294,11 @@
             "オフィスのトイレで", "居酒屋のカウンターで", "満員電車のなかで",
             "上司の机のうえで", "コインランドリーで", "ホームセンターで",
             // 🎭 ドリフ系
-            "銭湯で", "うらの空き地で", "たらいの下で", "酔っ払って迷い込んだ路地で"
+            "銭湯で", "うらの空き地で", "たらいの下で", "酔っ払って迷い込んだ路地で",
+            // 🗳 政治・時事
+            "国会の廊下で", "記者会見の途中で", "投票所のうしろで",
+            "首相官邸のまえで", "演説台のうえで", "高級料亭の個室で",
+            "派閥の事務所で"
         ],
         who: [
             // シュール・基本
@@ -10304,7 +10312,11 @@
             "近所のうわさ好きが", "ちょっと有名な人が",
             // 🎭 ドリフ系
             "ハゲた上司が", "変なカツラの人が", "タンスのうしろのおじさんが",
-            "こっそり覗いてた人が", "酔っ払いのおじさんが"
+            "こっそり覗いてた人が", "酔っ払いのおじさんが",
+            // 🗳 政治・時事
+            "大臣が", "総理大臣が", "政治家の秘書が", "市長が",
+            "国会議員が", "野党のリーダーが", "ベテラン記者が",
+            "コメンテーターが", "派閥のドンが"
         ],
         what: [
             // シュール・基本
@@ -10324,7 +10336,14 @@
             "たらいに　頭をぶつけた", "ヅラが　ズレた",
             "こっそり　おならをした", "一発ギャグを　すべった",
             "ちょっとだけ　脱いだ", "変な踊りを　踊った",
-            "鼻の穴に　指を入れた"
+            "鼻の穴に　指を入れた",
+            // 🗳 政治・時事
+            "公約を　ぜんぶ忘れた", "緊急会見を　ひらいた",
+            "辞任を　ほのめかした", "うっかり本音を　もらした",
+            "値上げを　発表した", "頭を　深く下げた",
+            "聞かれてないことを　話した", "裏金が　見つかった",
+            "領収書を　なくした", "スキャンダルを　もみ消そうとした",
+            "増税を　ささやいた"
         ]
     };
     const SAIBAN_STEPS = ["when","where","who","what"];
@@ -10615,7 +10634,7 @@
     function saibanToTitle(e) {
         if (e) e.stopPropagation();
         if (typeof window.saibanShutdown === "function") window.saibanShutdown();
-        document.getElementById("saiban-wrap").classList.remove("show");
+        // ラッパーは消さず、リロードに任せる（一瞬おでん画面が見えるのを防ぐ）
         goToTitle();
     }
 </script>
