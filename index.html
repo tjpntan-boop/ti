@@ -437,6 +437,77 @@
             margin-top: 15px; pointer-events: auto; text-align: center; box-shadow: 0 0 10px #500;
             white-space: pre-line; outline: none;
         }
+        /* ===== 新異変用 ===== */
+        .hidden-anomaly { display: none; }
+        /* 🥚 異変37: たまごの上に重ねるおじさんの顔（鍋シーンで .tamago に重ねる） */
+        #anomaly-face-egg {
+            position: absolute; pointer-events: none; z-index: 8;
+            font-size: 28px; line-height: 1;
+            display: none; align-items: center; justify-content: center;
+        }
+        #anomaly-face-egg.show { display: flex; }
+        /* 🌑 異変38: 画面全体に真っ黒のオーバーレイ＋うっすらおじさん影 */
+        #anomaly-dark-oji {
+            position: fixed; inset: 0; pointer-events: none; z-index: 50;
+            background: #000;
+        }
+        #anomaly-dark-oji.show { display: block; }
+        #anomaly-dark-oji::before {
+            content: "";
+            position: absolute; left: 50%; top: 50%;
+            transform: translate(-50%, -50%);
+            width: 280px; height: 320px;
+            background:
+                radial-gradient(ellipse 140px 165px at 50% 55%, rgba(220,200,170,0.10), rgba(220,200,170,0) 70%),
+                /* 髪（黒い帽子のような輪郭、中央分け） */
+                radial-gradient(ellipse 130px 65px at 50% 28%, rgba(120,90,60,0.13) 0%, rgba(120,90,60,0) 75%);
+            border-radius: 50%;
+        }
+        #anomaly-dark-oji::after {
+            content: "";
+            position: absolute; left: 50%; top: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px; height: 200px;
+            background:
+                /* 左目（眼鏡の丸） */
+                radial-gradient(circle 22px at 35% 45%, rgba(200,180,150,0.18) 0%, rgba(200,180,150,0.18) 60%, rgba(200,180,150,0) 70%),
+                /* 右目 */
+                radial-gradient(circle 22px at 65% 45%, rgba(200,180,150,0.18) 0%, rgba(200,180,150,0.18) 60%, rgba(200,180,150,0) 70%),
+                /* 口元 */
+                radial-gradient(ellipse 35px 8px at 50% 70%, rgba(200,180,150,0.12), rgba(200,180,150,0) 80%);
+        }
+        /* 🚪 異変40: 偽の「引き返せ！」オーバーレイ */
+        #anomaly-fake-back {
+            position: fixed; left: 50%; top: 30%;
+            transform: translateX(-50%);
+            z-index: 60; pointer-events: auto;
+            background: rgba(0,0,0,0.85);
+            border: 3px solid #ff3030;
+            border-radius: 12px;
+            padding: 18px 30px;
+            box-shadow: 0 0 30px #ff0000;
+            text-align: center;
+            min-width: 240px;
+        }
+        #anomaly-fake-back.show { display: block; }
+        #anomaly-fake-back-msg {
+            color: #ff5050; font-size: 26px; font-weight: bold;
+            text-shadow: 0 0 12px #f00;
+            margin-bottom: 14px;
+            letter-spacing: 3px;
+            animation: anomalyFakeBlink 0.8s infinite alternate;
+        }
+        @keyframes anomalyFakeBlink {
+            0% { opacity: 0.7; } 100% { opacity: 1; }
+        }
+        #anomaly-fake-back-btn {
+            background: #b71c1c; color: #fff;
+            border: 2px solid #c62828; border-radius: 8px;
+            padding: 10px 28px; font-size: 17px; font-weight: bold;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        #anomaly-fake-back-btn:active { transform: translateY(2px); }
 
         /* 下部エリア：操作ボタン＋タイトルに戻るボタンをまとめる */
         #bottom-area {
@@ -2438,7 +2509,7 @@
         <div id="title-content">
         <div id="tap-notice" onclick="beginTitleAudio(event)">▶ タップして音を出す</div>
         <div class="famicom-title">はちばんちくわ</div>
-        <div id="version-label">Ver 2.3.5</div>
+        <div id="version-label">Ver 2.4.2</div>
         <button id="start-btn" class="start-btn" onclick="startGame(event)" style="display:none;">🍩 ちくわを覗く... 🍩</button>
         <button id="title-badge-btn" class="badge-link-btn" onclick="openBadgeScreen('title')" style="display:none;">🏅 称号コレクション</button>
         <button id="reset-record-btn" onclick="resetDiscoveryRecord(event)" style="display:none;">🗑 異変の記録をリセット</button>
@@ -2798,7 +2869,7 @@
                 判断を<b>間違えれば、腹の中はリセット</b>。<br>
                 またぜろばんから喰い直しだ。<br><br>
 
-                異変は全<b>37種</b>。すべて見破れるか――。
+                異変は全<b>42種</b>。すべて見破れるか――。
             </div>
             <button class="start-btn howto-go-btn" onclick="closeHowtoAndPlay(event)">ちくわを喰らう 🍢</button>
         </div>
@@ -2958,7 +3029,7 @@
         <div id="counter" class="chikuwa-counter">ぜろばんちくわ
 (異変なしのちくわ)</div>
         
-        <div id="anomaly-tracker" class="anomaly-tracker">見つけた異変(通算): 0 / 37</div>
+        <div id="anomaly-tracker" class="anomaly-tracker">見つけた異変(通算): 0 / 42</div>
         
         <div id="bottom-area">
             <div class="controls">
@@ -2967,6 +3038,16 @@
             </div>
             <button id="to-title-btn" onclick="goToTitle(event)">↩ タイトルに戻る</button>
         </div>
+    </div>
+
+    <!-- 異変37: たまごおじさん -->
+    <div id="anomaly-face-egg" class="hidden-anomaly"></div>
+    <!-- 異変38: 真っ黒背景にうっすらおじさん -->
+    <div id="anomaly-dark-oji" class="hidden-anomaly"></div>
+    <!-- 異変40: 偽の「引き返せ！」オーバーレイ＋偽ボタン（トラップ） -->
+    <div id="anomaly-fake-back" class="hidden-anomaly">
+        <div id="anomaly-fake-back-msg">⚠️ 引き返せ！</div>
+        <button id="anomaly-fake-back-btn" onclick="anomalyFakeBackTrap()">引き返す</button>
     </div>
 
     <div id="msg-overlay"></div>
@@ -2979,7 +3060,7 @@
     
     // 🧠 1ゲーム内で同じ異変を二度と使わないための記録リスト
     let encounteredAnomalies = [];
-    const TOTAL_ANOMALY_COUNT = 37; // 0 〜 36 の全37種類（ちくわにげ・タイムスリップはレア枠）
+    const TOTAL_ANOMALY_COUNT = 42; // 0 〜 41 の全42種類
 
     // 🏆 通算（累計）で見破った異変の記録。ゲームをやり直しても消えない
     const SAVE_KEY = "chikuwa_discovered_anomalies";
@@ -5604,11 +5685,21 @@
         sv.style.display = "block";
         document.getElementById("fake-title").style.display = "none"; // 🎭 偽タイトルのリセット
         document.querySelector(".controls").classList.remove("swapped"); // 🔀 ボタン配置を通常に戻す
+        // 🥚🌑🚪 新異変のリセット
+        var aFaceEgg = document.getElementById("anomaly-face-egg");
+        if (aFaceEgg) { aFaceEgg.classList.remove("show"); aFaceEgg.innerText = ""; }
+        var aDarkOji = document.getElementById("anomaly-dark-oji");
+        if (aDarkOji) aDarkOji.classList.remove("show");
+        var aFakeBack = document.getElementById("anomaly-fake-back");
+        if (aFakeBack) aFakeBack.classList.remove("show");
 
         var __chikuwaNumKana = ["ぜろ","いち","に","さん","よん","ご","ろく","なな","はち"];
         if (currentChikuwa === 8) {
             document.getElementById("counter").innerText = "ぜろばんちくわ\n(異変なしのちくわ)";
         } else {
+            // 異変39: 実は異変なのに「(異変なしのちくわ)」と表示してくる
+            // ※「(異変なしのちくわ)」自体が異変 — 番号でしか出ないはずの表記が出る = 異変
+            // 判定はあとで行うので、ここでは通常表示にしておき、異変39のとき後段で上書きする
             document.getElementById("counter").innerText = __chikuwaNumKana[8 - currentChikuwa] + "ばんちくわ";
         }
 
@@ -5728,6 +5819,33 @@
         // 異変7：四角形おでん鍋
         if (isAnomaly && anomalyType === 7) { container.style.borderRadius = "12px"; nabeBg.style.borderRadius = "0px"; }
 
+        // 🌑 異変38: 画面真っ黒の背景にうっすらおじさん
+        if (isAnomaly && anomalyType === 38) {
+            const aDark = document.getElementById("anomaly-dark-oji");
+            if (aDark) aDark.classList.add("show");
+        }
+
+        // ⚠️ 異変39: 実は異変なのに「(異変なしのちくわ)」とカウンターが偽表示
+        if (isAnomaly && anomalyType === 39) {
+            // ぜろばんちくわのときのテキストを、ぜろばんでないちくわで表示する＝異変
+            document.getElementById("counter").innerText = __chikuwaNumKana[8 - currentChikuwa] + "ばんちくわ\n(異変なしのちくわ)";
+        }
+
+        // 🚪 異変40: 偽の「引き返せ！」オーバーレイ＋偽ボタン（トラップ）
+        if (isAnomaly && anomalyType === 40) {
+            const aFake = document.getElementById("anomaly-fake-back");
+            if (aFake) aFake.classList.add("show");
+        }
+
+        // 📋 異変41: トラッカー表示が「異変見つけた」に
+        if (isAnomaly && anomalyType === 41) {
+            const tracker = document.getElementById("anomaly-tracker");
+            if (tracker) {
+                // 通常は「見つけた異変(通算): N / 42」だが、ここでは「異変見つけた」のみ
+                tracker.innerText = "異変見つけた";
+            }
+        }
+
         // 🍢 具材の生成
         const isAllChikuwa = (isAnomaly && anomalyType === 12); 
         const isSymmetric = (isAnomaly && anomalyType === 21); // 🪞 左右対称異変
@@ -5768,8 +5886,9 @@
         } else {
             tamago.className = "guzai tamago";
             if (isAnomaly && anomalyType === 1) {
-                tamago.style.width = "110px"; tamago.style.height = "120px"; tamago.style.top = "15px"; tamago.style.right = "15px"; tamago.style.zIndex = "80";
-                tamago.innerHTML = "<div class='scary-anpan'>⚆ 益 ⚆</div>"; 
+                // 異変1: たまごが普通より少し大きい（1.3倍・ぱっと見わからない違和感）
+                tamago.style.width = "72px"; tamago.style.height = "85px";
+                tamago.innerText = "";
             } else if (isAnomaly && anomalyType === 13) {
                 tamago.innerText = "たまご"; 
                 tamago.style.fontStyle = "italic";
@@ -5778,6 +5897,10 @@
                 const crack = document.createElement("div");
                 crack.className = "tamago-crack";
                 tamago.appendChild(crack);
+            } else if (isAnomaly && anomalyType === 37) {
+                // 🥚 異変37: たまごにおじさんの顔
+                tamago.innerHTML = "<div style='font-size:36px; line-height:1; text-align:center;'>👨</div><div style='font-size:9px; color:#7a5530; text-align:center; margin-top:-4px;'>たまご</div>";
+                tamago.style.fontSize = "10px";
             }
         }
         // 🔀 入れ替え：たまごを本来の大根の位置（左上）へ
@@ -5915,6 +6038,14 @@
         const overlay = document.getElementById("msg-overlay");
         overlay.innerText = text; overlay.style.display = "block";
         setTimeout(() => { overlay.style.display = "none"; callback(); }, 2500);
+    }
+
+    // 🚪 異変40: 偽の「引き返す」ボタンを押した→トラップ発動（=不正解）
+    function anomalyFakeBackTrap() {
+        if (gameState !== "PLAYING") return;
+        document.getElementById("anomaly-fake-back").classList.remove("show");
+        currentChikuwa = 8;
+        showOverlay("罠だった……！\nニセモノの「引き返せ！」に騙された！\n（お腹がリセットされ、最初から食い直しです）", () => { initStage(); });
     }
 
     function judge(isForwardAction) {
