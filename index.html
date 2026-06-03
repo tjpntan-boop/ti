@@ -2388,7 +2388,7 @@
         <div id="title-content">
         <div id="tap-notice" onclick="beginTitleAudio(event)">▶ タップして音を出す</div>
         <div class="famicom-title">はちばんちくわ</div>
-        <div id="version-label">Ver 2.1.1</div>
+        <div id="version-label">Ver 2.1.4</div>
         <button id="start-btn" class="start-btn" onclick="startGame(event)" style="display:none;">🍩 ちくわを覗く... 🍩</button>
         <button id="title-badge-btn" class="badge-link-btn" onclick="openBadgeScreen('title')" style="display:none;">🏅 称号コレクション</button>
         <button id="reset-record-btn" onclick="resetDiscoveryRecord(event)" style="display:none;">🗑 異変の記録をリセット</button>
@@ -4633,9 +4633,9 @@
             if (s.x < 0) { s.x = beamW; s.y = Math.random()*beamH; }
         }
 
-        // ビーム自動連射（8フレームごと）
+        // ビーム自動連射（16フレームごと＝連射ゆっくり、難易度高め）
         beamShotTimer++;
-        if (beamShotTimer >= 8) {
+        if (beamShotTimer >= 16) {
             beamShotTimer = 0;
             beamShots.push({ x: beamPlayer.x + beamPlayer.w/2, y: beamPlayer.y - 6, r: 5, sp: 9 });
             beamShots.push({ x: beamPlayer.x + beamPlayer.w/2, y: beamPlayer.y + 6, r: 5, sp: 9 });
@@ -4648,7 +4648,7 @@
         // 敵の出現（ボス前のみ）
         if (!beamBoss && beamKilled < BEAM_KILL_FOR_BOSS) {
             beamEnemyTimer++;
-            if (beamEnemyTimer >= 45) {
+            if (beamEnemyTimer >= 22) {
                 beamEnemyTimer = 0;
                 const ing = BEAM_ENEMIES[Math.floor(Math.random()*BEAM_ENEMIES.length)];
                 const ey = 40 + Math.random()*(beamH-80);
@@ -4699,11 +4699,13 @@
             } else {
                 b.y += b.vy;
                 if (b.y < b.h/2 + 10 || b.y > beamH - b.h/2 - 10) b.vy = -b.vy;
-                // ボスの反撃（おでん弾）
+                // ボスの反撃（おでん弾）— 強化版：間隔半分＋同時2発
                 b.shootT++;
-                if (b.shootT >= 50) {
+                if (b.shootT >= 25) {
                     b.shootT = 0;
-                    beamBossShots.push({ x: b.x - b.w/2, y: b.y, r: 9, sp: 4.5 });
+                    // 上下にずらした2発を同時に発射
+                    beamBossShots.push({ x: b.x - b.w/2, y: b.y - 28, r: 9, sp: 4.5 });
+                    beamBossShots.push({ x: b.x - b.w/2, y: b.y + 28, r: 9, sp: 4.5 });
                     playTone(160, 0.1, 'sawtooth', 0.05);
                 }
             }
