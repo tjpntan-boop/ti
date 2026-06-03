@@ -2438,7 +2438,7 @@
         <div id="title-content">
         <div id="tap-notice" onclick="beginTitleAudio(event)">▶ タップして音を出す</div>
         <div class="famicom-title">はちばんちくわ</div>
-        <div id="version-label">Ver 2.3.4</div>
+        <div id="version-label">Ver 2.3.5</div>
         <button id="start-btn" class="start-btn" onclick="startGame(event)" style="display:none;">🍩 ちくわを覗く... 🍩</button>
         <button id="title-badge-btn" class="badge-link-btn" onclick="openBadgeScreen('title')" style="display:none;">🏅 称号コレクション</button>
         <button id="reset-record-btn" onclick="resetDiscoveryRecord(event)" style="display:none;">🗑 異変の記録をリセット</button>
@@ -4675,7 +4675,9 @@
             shinLoop();
         } else {
             // クリア or ゲームオーバー後 → タイトルへ
-            endShinGame();
+            // 画面は消さずにリロードに任せる（一瞬タイトルが見えるのを防ぐ）
+            shinRunning = false;
+            if (shinReq) { cancelAnimationFrame(shinReq); shinReq = null; }
             goToTitle();
         }
     }
