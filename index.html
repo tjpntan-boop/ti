@@ -2715,7 +2715,7 @@
         <div id="title-content">
         <div id="tap-notice" onclick="beginTitleAudio(event)">▶ タップして音を出す</div>
         <div class="famicom-title">はちばんちくわ</div>
-        <div id="version-label">Ver 2.5.12</div>
+        <div id="version-label">Ver 2.5.13</div>
         <button id="start-btn" class="start-btn" onclick="startGame(event)" style="display:none;">🍩 ちくわを覗く... 🍩</button>
         <button id="title-badge-btn" class="badge-link-btn" onclick="openBadgeScreen('title')" style="display:none;">🏅 称号コレクション</button>
         <button id="reset-record-btn" onclick="resetDiscoveryRecord(event)" style="display:none;">🗑 異変の記録をリセット</button>
@@ -10586,7 +10586,7 @@
         const lp = ctx.createBiquadFilter();
         lp.type = "lowpass"; lp.frequency.setValueAtTime(500, t);
         g.gain.setValueAtTime(0.0001, t);
-        g.gain.linearRampToValueAtTime(0.22, t + 0.05);
+        g.gain.linearRampToValueAtTime(0.35, t + 0.05);
         g.gain.exponentialRampToValueAtTime(0.0001, t + 0.55);
         o.connect(lp); lp.connect(g); g.connect(ctx.destination);
         o.start(t); o.stop(t + 0.6);
@@ -10596,7 +10596,7 @@
             hi.type = "triangle"; hi.frequency.setValueAtTime(587.33, t); // D5
             hi.frequency.exponentialRampToValueAtTime(440, t + 0.4);     // A4へ滑落
             hg.gain.setValueAtTime(0.0001, t);
-            hg.gain.linearRampToValueAtTime(0.12, t + 0.03);
+            hg.gain.linearRampToValueAtTime(0.20, t + 0.03);
             hg.gain.exponentialRampToValueAtTime(0.0001, t + 0.5);
             hi.connect(hg); hg.connect(ctx.destination);
             hi.start(t); hi.stop(t + 0.55);
