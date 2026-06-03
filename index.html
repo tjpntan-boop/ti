@@ -446,10 +446,10 @@
             display: none; align-items: center; justify-content: center;
         }
         #anomaly-face-egg.show { display: flex; }
-        /* 🌑 異変38: 画面全体に真っ黒のオーバーレイ＋うっすらおじさん影 */
+        /* 🌑 異変38: 画面全体に半透明の暗幕＋うっすらおじさん（操作はできる） */
         #anomaly-dark-oji {
-            position: fixed; inset: 0; pointer-events: none; z-index: 50;
-            background: #000;
+            position: fixed; inset: 0; pointer-events: none; z-index: 4;
+            background: rgba(0,0,0,0.55);
         }
         #anomaly-dark-oji.show { display: block; }
         #anomaly-dark-oji::before {
@@ -458,9 +458,9 @@
             transform: translate(-50%, -50%);
             width: 280px; height: 320px;
             background:
-                radial-gradient(ellipse 140px 165px at 50% 55%, rgba(220,200,170,0.10), rgba(220,200,170,0) 70%),
-                /* 髪（黒い帽子のような輪郭、中央分け） */
-                radial-gradient(ellipse 130px 65px at 50% 28%, rgba(120,90,60,0.13) 0%, rgba(120,90,60,0) 75%);
+                radial-gradient(ellipse 140px 165px at 50% 55%, rgba(220,200,170,0.18), rgba(220,200,170,0) 70%),
+                /* 髪（中央分けの暗い輪郭） */
+                radial-gradient(ellipse 130px 65px at 50% 28%, rgba(120,90,60,0.22) 0%, rgba(120,90,60,0) 75%);
             border-radius: 50%;
         }
         #anomaly-dark-oji::after {
@@ -470,11 +470,11 @@
             width: 200px; height: 200px;
             background:
                 /* 左目（眼鏡の丸） */
-                radial-gradient(circle 22px at 35% 45%, rgba(200,180,150,0.18) 0%, rgba(200,180,150,0.18) 60%, rgba(200,180,150,0) 70%),
+                radial-gradient(circle 22px at 35% 45%, rgba(200,180,150,0.30) 0%, rgba(200,180,150,0.30) 60%, rgba(200,180,150,0) 70%),
                 /* 右目 */
-                radial-gradient(circle 22px at 65% 45%, rgba(200,180,150,0.18) 0%, rgba(200,180,150,0.18) 60%, rgba(200,180,150,0) 70%),
+                radial-gradient(circle 22px at 65% 45%, rgba(200,180,150,0.30) 0%, rgba(200,180,150,0.30) 60%, rgba(200,180,150,0) 70%),
                 /* 口元 */
-                radial-gradient(ellipse 35px 8px at 50% 70%, rgba(200,180,150,0.12), rgba(200,180,150,0) 80%);
+                radial-gradient(ellipse 35px 8px at 50% 70%, rgba(200,180,150,0.22), rgba(200,180,150,0) 80%);
         }
         /* 🚪 異変40: 偽の「引き返せ！」オーバーレイ */
         #anomaly-fake-back {
@@ -1166,6 +1166,18 @@
         }
         #play-ichamon-btn:hover { background: #3a1620; border-color: #ff5a7a; }
         #play-ichamon-btn .hassaku-sub { font-size: 10px; font-weight: normal; letter-spacing: 0; opacity: 0.8; color: #c08a98; }
+        #play-saiban-btn {
+            margin-top: 10px;
+            background: #2a1808; color: #ffd86b;
+            border: 1px solid #8a6520; border-radius: 8px; padding: 9px 22px;
+            font-size: 15px; font-weight: bold; cursor: pointer; z-index: 1010; letter-spacing: 1px;
+            display: flex; flex-direction: column; align-items: center; gap: 2px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+            transition: background 0.15s, border-color 0.15s;
+            font-family: inherit;
+        }
+        #play-saiban-btn:hover { background: #3a2410; border-color: #ffd86b; }
+        #play-saiban-btn .hassaku-sub { font-size: 10px; font-weight: normal; letter-spacing: 0; opacity: 0.8; color: #b89860; }
 
         /* タイトルに常設する「ブラウザで開く手順」案内ボックス */
         #open-guide {
@@ -2092,6 +2104,151 @@
     @keyframes ijw-cd { 0%{opacity:0;transform:scale(0.3);} 25%{opacity:1;transform:scale(1.1);} 70%{opacity:1;transform:scale(1);} 100%{opacity:0;transform:scale(1.3);} }
 
 
+        /* ===== ⚖️ ちくわ裁判 ===== */
+        #saiban-wrap {
+            display: none; position: fixed; inset: 0; z-index: 5200;
+            background: linear-gradient(180deg, #4a2e17 0%, #6b3517 30%, #2a1808 100%);
+            overflow-y: auto; -webkit-overflow-scrolling: touch;
+            font-family: "Hiragino Maru Gothic ProN","Hiragino Sans",sans-serif;
+            color: #fff5e6; user-select: none; -webkit-user-select: none;
+        }
+        #saiban-wrap.show { display: block; }
+        #saiban-back {
+            position: sticky; top: 8px; left: 8px; z-index: 5300; margin: 8px;
+            font-size: 14px; font-weight: 900; cursor: pointer;
+            padding: 9px 16px; border-radius: 20px; border: none;
+            background: #2a1808; color: #fff;
+            box-shadow: 0 3px 0 #100400;
+            font-family: inherit;
+        }
+        #saiban-back:active { transform: translateY(2px); }
+        #saiban-inner {
+            max-width: 480px; margin: 0 auto;
+            padding: 0 16px 30px; box-sizing: border-box;
+        }
+        #saiban-title {
+            text-align: center; font-size: 28px; font-weight: 900;
+            color: #ffd86b; text-shadow: 0 2px 0 #5a2e17, 0 4px 8px rgba(0,0,0,0.6);
+            margin: 4px 0 10px; letter-spacing: 4px;
+        }
+        #saiban-scene {
+            background: #fffbe8; color: #2a1808;
+            border: 4px solid #5a2e17; border-radius: 14px;
+            padding: 16px; margin-bottom: 16px;
+            box-shadow: 0 4px 0 #2a1808, inset 0 0 0 2px #d8c8a8;
+            text-align: center;
+            min-height: 130px;
+            position: relative;
+        }
+        #saiban-judge-row {
+            display: flex; align-items: center; justify-content: center;
+            gap: 10px; margin-bottom: 10px;
+        }
+        #saiban-judge-icon {
+            font-size: 48px; line-height: 1;
+        }
+        #saiban-judge-name {
+            font-size: 12px; color: #5a2e17; font-weight: 900;
+            background: #ffd86b; padding: 3px 10px; border-radius: 10px;
+            border: 2px solid #5a2e17;
+        }
+        #saiban-judge-msg {
+            font-size: 15px; font-weight: 900; line-height: 1.6;
+            margin-top: 6px; min-height: 60px;
+        }
+        #saiban-step-label {
+            text-align: center; font-size: 16px; font-weight: 900;
+            color: #ffd86b; margin: 10px 0 8px;
+        }
+        .saiban-choice {
+            display: block; width: 100%; margin: 8px 0;
+            padding: 14px 18px;
+            background: #fffbe8; color: #2a1808;
+            border: 3px solid #5a2e17; border-radius: 10px;
+            font-size: 16px; font-weight: 900;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 0 3px 0 #2a1808;
+            font-family: inherit;
+            transition: transform 0.05s;
+        }
+        .saiban-choice:hover { background: #fff5d0; }
+        .saiban-choice:active { transform: translateY(2px); box-shadow: 0 1px 0 #2a1808; }
+        #saiban-progress {
+            text-align: center; font-size: 12px; color: #ffd86b;
+            margin: 0 0 6px;
+        }
+        #saiban-progress-dots {
+            display: inline-flex; gap: 6px; margin-left: 8px;
+        }
+        .saiban-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: #6b3517; border: 2px solid #ffd86b;
+        }
+        .saiban-dot.done { background: #ffd86b; }
+        .saiban-dot.active { background: #ffeb3b; box-shadow: 0 0 8px #ffeb3b; }
+        /* 証言文表示 */
+        #saiban-testimony {
+            background: #ffd86b; color: #2a1808;
+            border: 4px solid #5a2e17; border-radius: 14px;
+            padding: 18px 16px; margin: 14px 0;
+            font-size: 18px; font-weight: 900; line-height: 1.7;
+            text-align: center;
+            box-shadow: 0 4px 0 #2a1808;
+            min-height: 90px;
+        }
+        #saiban-testimony .saiban-piece {
+            display: inline-block; padding: 2px 6px;
+            background: rgba(255,255,255,0.4); border-radius: 6px;
+            margin: 0 2px;
+        }
+        /* 判決ボックス */
+        #saiban-verdict {
+            background: #fffbe8;
+            border: 4px dashed #ff5050; border-radius: 14px;
+            padding: 18px; margin-top: 12px;
+            color: #2a1808; text-align: center;
+            display: none;
+        }
+        #saiban-verdict.show { display: block; }
+        #saiban-verdict-label {
+            font-size: 14px; font-weight: 900; color: #5a2e17;
+            margin-bottom: 8px;
+        }
+        #saiban-verdict-text {
+            font-size: 26px; font-weight: 900;
+            color: #c1272d;
+            text-shadow: 0 2px 0 rgba(0,0,0,0.1);
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        #saiban-retry {
+            font-family: inherit; font-size: 16px; font-weight: 900;
+            background: #c1272d; color: #fff;
+            border: 3px solid #800; border-radius: 10px;
+            padding: 12px 28px; cursor: pointer;
+            box-shadow: 0 3px 0 #500;
+        }
+        #saiban-retry:active { transform: translateY(2px); }
+        /* ハンマーの叩く演出 */
+        @keyframes saibanHammer {
+            0%, 100% { transform: rotate(0deg); }
+            40%      { transform: rotate(-40deg); }
+            60%      { transform: rotate(10deg); }
+        }
+        .saiban-hammer-anim { animation: saibanHammer 0.4s ease-out; display: inline-block; }
+        /* 暗転フラッシュ（証言の瞬間に画面がピカッ） */
+        #saiban-flash {
+            position: absolute; inset: 0; pointer-events: none;
+            background: #fff; opacity: 0;
+        }
+        #saiban-flash.on { animation: saibanFlash 0.6s ease-out; }
+        @keyframes saibanFlash {
+            0%   { opacity: 0; }
+            20%  { opacity: 0.9; }
+            100% { opacity: 0; }
+        }
+
         /* ===== 🔴 イチャモンスター（組み込み）===== */
         #ichamon-wrap { display: none; position: fixed; inset: 0; z-index: 5200;
             background: linear-gradient(170deg, #6ec6e8 0%, #a7d9ec 40%, #f3e9d6 100%);
@@ -2509,7 +2666,7 @@
         <div id="title-content">
         <div id="tap-notice" onclick="beginTitleAudio(event)">▶ タップして音を出す</div>
         <div class="famicom-title">はちばんちくわ</div>
-        <div id="version-label">Ver 2.4.2</div>
+        <div id="version-label">Ver 2.5.3</div>
         <button id="start-btn" class="start-btn" onclick="startGame(event)" style="display:none;">🍩 ちくわを覗く... 🍩</button>
         <button id="title-badge-btn" class="badge-link-btn" onclick="openBadgeScreen('title')" style="display:none;">🏅 称号コレクション</button>
         <button id="reset-record-btn" onclick="resetDiscoveryRecord(event)" style="display:none;">🗑 異変の記録をリセット</button>
@@ -2526,6 +2683,7 @@
             <button id="play-beam-omake-btn" onclick="playBeamGame(event)">🔫 チクビウス<span class="hassaku-sub">チクビー戦闘機でおでん軍団を撃ち抜け</span></button>
             <button id="play-chase-omake-btn" onclick="playChaseStandalone(event)">🏃 ちくわにげ<span class="hassaku-sub">迷路を60秒逃げ切れ！20秒ごとに敵が増える</span></button>
             <button id="play-ichamon-btn" onclick="playIchamon(event)">🔴 めざせイチャモンスター<span class="hassaku-sub">町にかくれたボールを探して、理不尽なイチャモンを集めろ</span></button>
+            <button id="play-saiban-btn" onclick="playSaiban(event)">⚖️ ちくわ裁判<span class="hassaku-sub">証言台で「いつ・どこで・だれが・なにをした」を組み立てろ</span></button>
         </div>
         <div id="open-guide">
             <div class="og-title">⚠️ 音が出ない / タップできない時は</div>
@@ -9843,6 +10001,39 @@
 
 </script>
 
+<!-- ⚖️ ちくわ裁判 -->
+<div id="saiban-wrap">
+    <button id="saiban-back" onclick="saibanToTitle(event)">↩ タイトルに戻る</button>
+    <div id="saiban-inner">
+        <div id="saiban-title">⚖️ ちくわ裁判 ⚖️</div>
+        <div id="saiban-scene">
+            <div id="saiban-judge-row">
+                <span id="saiban-judge-icon">👨‍⚖️</span>
+                <span id="saiban-judge-name">裁判官</span>
+            </div>
+            <div id="saiban-judge-msg">では証言を　お願いします！！！</div>
+            <div id="saiban-flash"></div>
+        </div>
+        <div id="saiban-progress">
+            証言の構成
+            <span id="saiban-progress-dots">
+                <span class="saiban-dot active" id="saiban-dot-0"></span>
+                <span class="saiban-dot" id="saiban-dot-1"></span>
+                <span class="saiban-dot" id="saiban-dot-2"></span>
+                <span class="saiban-dot" id="saiban-dot-3"></span>
+            </span>
+        </div>
+        <div id="saiban-step-label">「いつ」を　えらんで！</div>
+        <div id="saiban-choices"></div>
+        <div id="saiban-testimony" style="display:none;"></div>
+        <div id="saiban-verdict">
+            <div id="saiban-verdict-label">―― 判決 ――</div>
+            <div id="saiban-verdict-text"></div>
+            <button id="saiban-retry" onclick="saibanRetry()">もう一度　証言する</button>
+        </div>
+    </div>
+</div>
+
 <div id="ichamon-wrap">
 <button id="ichamon-back-btn" onclick="ichamonToTitle(event)">↩ タイトルに戻る</button>
 
@@ -10012,6 +10203,223 @@
         if (e) e.stopPropagation();
         if (typeof window.icmShutdown === "function") window.icmShutdown();
         document.getElementById("ichamon-wrap").classList.remove("show");
+        goToTitle();
+    }
+</script>
+
+<script>
+// ===== ⚖️ ちくわ裁判（組み込みJS）=====
+(function(){
+    // 単語プール（毎回ここから3つランダム抽出）
+    // 子ども・大人・シュール枠を混ぜて、組み合わせの妙を狙う
+    const SAIBAN_POOL = {
+        when: [
+            // シュール・基本
+            "今", "今日", "明日", "犯行の日", "誰も見ていない時に", "雨が降る前",
+            "ちくわが煮えた瞬間", "あの日のおでんの夜",
+            // 子ども枠
+            "おひるねの時に", "きゅうしょくの時間に", "うんどう会の朝", "プールの前に",
+            // 大人枠
+            "出勤前の電車で", "会議の最中に", "金曜の夜に", "残業中に",
+            "二日酔いの朝に", "ボーナス支給日に"
+        ],
+        where: [
+            // シュール・基本
+            "現場で", "富士山で", "ちくわ畑で", "夢のなかで", "コンビニのレジ前で",
+            "おでん屋で",
+            // 子ども枠
+            "ようちえんで", "プールで", "すなばで", "うさぎ小屋のまえで",
+            "おゆうぎ室で",
+            // 大人枠
+            "オフィスのトイレで", "居酒屋のカウンターで", "満員電車のなかで",
+            "上司の机のうえで", "コインランドリーで", "ホームセンターで"
+        ],
+        who: [
+            // シュール・基本
+            "犯人が", "自分が", "ちくわが", "裁判官が", "8番ちくわが",
+            "知らないおばさんが",
+            // 子ども枠
+            "ようちえんのともだちが", "いつもないてる子が", "うさぎが", "園長先生が",
+            // 大人枠
+            "お母さんが", "おじさんが", "上司が", "となりの席の人が",
+            "となりの部署の人が", "むかしの同級生が", "むかしの恋人が",
+            "近所のうわさ好きが", "ちょっと有名な人が"
+        ],
+        what: [
+            // シュール・基本
+            "犯行をおこなった", "ハンコをおした", "お尻を出した", "寝返りをうった",
+            "ご飯をたべた", "人生の壁にぶつかった", "突然　歌い出した",
+            "ちくわを丸かじりした", "深いため息をついた", "全部　なかったことにした",
+            "とつぜん　謝り出した",
+            // 子ども枠
+            "おべんとうを　ぜんぶ食べた", "うんどう会で　1とうになった",
+            "うさぎを　なでた", "せんせいの　まねをした", "おもちゃを　かくした",
+            // 大人枠
+            "辞表を　書いた", "声を出して　泣いた", "宝くじを　買った",
+            "上司の悪口を　言った", "深く　反省した", "嘘の　言い訳をした",
+            "通帳を　見つめた", "深夜にラーメンを　すすった"
+        ]
+    };
+    const SAIBAN_STEPS = ["when","where","who","what"];
+    const SAIBAN_LABELS = {
+        when:  "「いつ」を　えらんで！",
+        where: "「どこで」を　えらんで！",
+        who:   "「だれが」を　えらんで！",
+        what:  "「なにをした」を　えらんで！"
+    };
+    // 判決パターン
+    const SAIBAN_VERDICTS = [
+        "🔨 ⚖️ 有罪！！", "🎉 無罪！！", "😂 おもしろい！", "🤔 あと少し！",
+        "👀 それから　どうなった？", "💭 ……黙秘？", "📜 証拠不十分！",
+        "😱 とんでもない自白だ！", "💤 ……眠くなってきた。", "❓ 質問の意味が　わからん。"
+    ];
+
+    let saibanPicked = {};   // {when, where, who, what}
+    let saibanStepIdx = 0;
+    let saibanReady = false;
+
+    function $S(id){ return document.getElementById(id); }
+
+    function pick3(arr){
+        const copy = arr.slice();
+        const result = [];
+        for (let i=0; i<3 && copy.length>0; i++){
+            const idx = Math.floor(Math.random() * copy.length);
+            result.push(copy.splice(idx, 1)[0]);
+        }
+        return result;
+    }
+
+    function saibanUpdateDots(){
+        for (let i=0;i<4;i++){
+            const dot = $S("saiban-dot-"+i);
+            if (!dot) continue;
+            dot.classList.remove("active","done");
+            if (i < saibanStepIdx) dot.classList.add("done");
+            else if (i === saibanStepIdx) dot.classList.add("active");
+        }
+    }
+
+    function saibanRenderStep(){
+        const step = SAIBAN_STEPS[saibanStepIdx];
+        if (!step) { saibanShowTestimony(); return; }
+        $S("saiban-step-label").innerText = SAIBAN_LABELS[step];
+        const choicesEl = $S("saiban-choices");
+        choicesEl.innerHTML = "";
+        const candidates = pick3(SAIBAN_POOL[step]);
+        candidates.forEach(function(text){
+            const btn = document.createElement("button");
+            btn.className = "saiban-choice";
+            btn.innerText = text;
+            btn.onclick = function(){ saibanChoose(text); };
+            choicesEl.appendChild(btn);
+        });
+        saibanUpdateDots();
+    }
+
+    function saibanChoose(text){
+        const step = SAIBAN_STEPS[saibanStepIdx];
+        saibanPicked[step] = text;
+        // 裁判官のリアクション（控えめ）
+        const reactions = [
+            "ふむ……。", "ほう。", "なるほど。", "つづけて。", "それから？",
+            "ぐぬぬ。", "メモメモ……。"
+        ];
+        $S("saiban-judge-msg").innerText = reactions[Math.floor(Math.random()*reactions.length)];
+        saibanStepIdx++;
+        // 少し間を置いて次の質問
+        setTimeout(saibanRenderStep, 450);
+    }
+
+    function saibanShowTestimony(){
+        // ピカッとフラッシュ
+        const flash = $S("saiban-flash");
+        if (flash) { flash.classList.remove("on"); void flash.offsetWidth; flash.classList.add("on"); }
+        $S("saiban-step-label").style.display = "none";
+        $S("saiban-choices").style.display = "none";
+        $S("saiban-judge-msg").innerText = "では　証言を……！";
+        // 証言文を組み立て：「[いつ]、[どこで]、[だれが]、[なにをした]！」
+        const t = $S("saiban-testimony");
+        t.style.display = "block";
+        t.innerHTML =
+            "<span class='saiban-piece'>"+saibanPicked.when+"</span>、" +
+            "<span class='saiban-piece'>"+saibanPicked.where+"</span>、" +
+            "<span class='saiban-piece'>"+saibanPicked.who+"</span>" +
+            "<span class='saiban-piece'>"+saibanPicked.what+"</span>！！";
+        // 判決をちょっと遅らせて出す（裁判官が考える間）
+        setTimeout(function(){
+            const verdict = SAIBAN_VERDICTS[Math.floor(Math.random()*SAIBAN_VERDICTS.length)];
+            $S("saiban-verdict-text").innerText = verdict;
+            $S("saiban-verdict").classList.add("show");
+            // ハンマーを振る演出（裁判官絵文字を一瞬叩く感じに）
+            const icon = $S("saiban-judge-icon");
+            if (icon) {
+                icon.innerText = "🔨";
+                icon.classList.remove("saiban-hammer-anim");
+                void icon.offsetWidth;
+                icon.classList.add("saiban-hammer-anim");
+                setTimeout(function(){
+                    icon.innerText = "👨‍⚖️";
+                    icon.classList.remove("saiban-hammer-anim");
+                }, 500);
+            }
+            $S("saiban-judge-msg").innerText = "では　判決を　いいわたす！";
+        }, 1200);
+    }
+
+    window.saibanRetry = function(){
+        saibanPicked = {};
+        saibanStepIdx = 0;
+        $S("saiban-verdict").classList.remove("show");
+        $S("saiban-testimony").style.display = "none";
+        $S("saiban-step-label").style.display = "block";
+        $S("saiban-choices").style.display = "block";
+        $S("saiban-judge-msg").innerText = "では　もういちど　証言を！";
+        saibanRenderStep();
+    };
+
+    // 起動・終了（8番ちくわのlauncher側から呼ばれる）
+    window.saibanLaunch = function(){
+        saibanPicked = {};
+        saibanStepIdx = 0;
+        saibanReady = true;
+        $S("saiban-verdict").classList.remove("show");
+        $S("saiban-testimony").style.display = "none";
+        $S("saiban-step-label").style.display = "block";
+        $S("saiban-choices").style.display = "block";
+        $S("saiban-judge-msg").innerText = "では証言を　お願いします！！！";
+        saibanRenderStep();
+    };
+    window.saibanShutdown = function(){
+        saibanReady = false;
+    };
+})();
+</script>
+
+<script>
+    // ⚖️ ちくわ裁判 起動（おまけ）
+    function playSaiban(e) {
+        if (e) e.stopPropagation();
+        if (!audioCtx) { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(err){} }
+        if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+        isAudioStarted = true;
+        if (titleInterval) { clearInterval(titleInterval); titleInterval = null; }
+        if (bpmInterval) { clearInterval(bpmInterval); bpmInterval = null; }
+        if (typeof stopBGM === "function") stopBGM();
+        currentBgmMode = null;
+        document.getElementById("title-screen").style.display = "none";
+        gameState = "SAIBAN";
+        var w = document.getElementById("saiban-wrap");
+        w.classList.add("show");
+        w.scrollTop = 0;
+        firstTitleDone = true;
+        if (typeof window.saibanLaunch === "function") window.saibanLaunch();
+    }
+    // ⚖️ 裁判を終了して8番ちくわのタイトルへ
+    function saibanToTitle(e) {
+        if (e) e.stopPropagation();
+        if (typeof window.saibanShutdown === "function") window.saibanShutdown();
+        document.getElementById("saiban-wrap").classList.remove("show");
         goToTitle();
     }
 </script>
