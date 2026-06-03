@@ -2248,6 +2248,55 @@
             20%  { opacity: 0.9; }
             100% { opacity: 0; }
         }
+        /* 📜 証言履歴 */
+        #saiban-history {
+            margin-top: 16px;
+            background: #fffbe8;
+            border: 3px solid #5a2e17; border-radius: 14px;
+            padding: 14px;
+            color: #2a1808;
+            box-shadow: 0 3px 0 #2a1808;
+        }
+        #saiban-history-title {
+            font-size: 13px; font-weight: 900;
+            color: #5a2e17; margin-bottom: 10px;
+            border-bottom: 2px dashed #8a6520; padding-bottom: 6px;
+        }
+        #saiban-history-list {
+            display: flex; flex-direction: column; gap: 8px;
+            max-height: none;
+        }
+        .saiban-history-empty {
+            text-align: center; color: #8a6520;
+            font-size: 13px; padding: 8px;
+        }
+        .saiban-history-item {
+            display: flex; align-items: flex-start; gap: 8px;
+            background: #fff; border: 2px solid #d8c8a8; border-radius: 8px;
+            padding: 8px 10px;
+        }
+        .saiban-history-star {
+            flex-shrink: 0; width: 32px; height: 32px;
+            background: transparent; border: none; cursor: pointer;
+            font-size: 22px; line-height: 1; padding: 0;
+            color: #8a6520; font-family: inherit;
+        }
+        .saiban-history-star.on { color: #f5b921; text-shadow: 0 0 4px #ffd86b; }
+        .saiban-history-star:active { transform: scale(0.85); }
+        .saiban-history-body { flex: 1; min-width: 0; }
+        .saiban-history-text {
+            font-size: 13px; font-weight: 900; line-height: 1.5;
+            color: #2a1808;
+        }
+        .saiban-history-text .saiban-piece {
+            display: inline-block; padding: 1px 4px;
+            background: rgba(255,216,107,0.5); border-radius: 4px;
+            margin: 0 1px; font-size: 12px;
+        }
+        .saiban-history-verdict {
+            margin-top: 4px;
+            font-size: 11px; font-weight: bold; color: #c1272d;
+        }
 
         /* ===== 🔴 イチャモンスター（組み込み）===== */
         #ichamon-wrap { display: none; position: fixed; inset: 0; z-index: 5200;
@@ -2666,7 +2715,7 @@
         <div id="title-content">
         <div id="tap-notice" onclick="beginTitleAudio(event)">▶ タップして音を出す</div>
         <div class="famicom-title">はちばんちくわ</div>
-        <div id="version-label">Ver 2.5.4</div>
+        <div id="version-label">Ver 2.5.6</div>
         <button id="start-btn" class="start-btn" onclick="startGame(event)" style="display:none;">🍩 ちくわを覗く... 🍩</button>
         <button id="title-badge-btn" class="badge-link-btn" onclick="openBadgeScreen('title')" style="display:none;">🏅 称号コレクション</button>
         <button id="reset-record-btn" onclick="resetDiscoveryRecord(event)" style="display:none;">🗑 異変の記録をリセット</button>
@@ -10031,6 +10080,11 @@
             <div id="saiban-verdict-text"></div>
             <button id="saiban-retry" onclick="saibanRetry()">もう一度　証言する</button>
         </div>
+        <!-- 📜 証言履歴 -->
+        <div id="saiban-history">
+            <div id="saiban-history-title">📜 証言の履歴（最大10件・★は消えません）</div>
+            <div id="saiban-history-list"></div>
+        </div>
     </div>
 </div>
 
@@ -10291,6 +10345,42 @@
     let saibanStepIdx = 0;
     let saibanReady = false;
 
+    // ===== 📜 証言履歴（最大10件、お気に入りは消えない） =====
+    const SAIBAN_HISTORY_MAX = 10;
+    let saibanHistory = saibanLoadHistory();
+    function saibanLoadHistory(){
+        try {
+            const a = JSON.parse(localStorage.getItem("saiban_history") || "[]");
+            return Array.isArray(a) ? a : [];
+        } catch(e){ return []; }
+    }
+    function saibanSaveHistory(){
+        try { localStorage.setItem("saiban_history", JSON.stringify(saibanHistory)); } catch(e){}
+    }
+    function saibanAddHistory(testimonyHtml, verdict){
+        // 先頭に追加
+        saibanHistory.unshift({
+            t: testimonyHtml,   // 証言文（HTML可）
+            v: verdict,         // 判決
+            f: false,           // お気に入りフラグ
+            d: Date.now()
+        });
+        // 上限超え → 末尾から「お気に入りじゃないもの」を削る
+        while (saibanHistory.length > SAIBAN_HISTORY_MAX) {
+            let removed = false;
+            for (let i = saibanHistory.length - 1; i >= 0; i--) {
+                if (!saibanHistory[i].f) {
+                    saibanHistory.splice(i, 1);
+                    removed = true;
+                    break;
+                }
+            }
+            // 全部お気に入りだったら諦めて末尾を消す
+            if (!removed) { saibanHistory.pop(); }
+        }
+        saibanSaveHistory();
+    }
+
     function $S(id){ return document.getElementById(id); }
 
     function pick3(arr){
@@ -10377,6 +10467,9 @@
                 }, 500);
             }
             $S("saiban-judge-msg").innerText = "では　判決を　いいわたす！";
+            // 📜 履歴に追加
+            saibanAddHistory(t.innerHTML, verdict);
+            saibanRenderHistory();
         }, 1200);
     }
 
@@ -10391,6 +10484,93 @@
         saibanRenderStep();
     };
 
+    // 📜 履歴の描画
+    function saibanRenderHistory(){
+        const box = $S("saiban-history-list");
+        if (!box) return;
+        if (saibanHistory.length === 0) {
+            box.innerHTML = '<div class="saiban-history-empty">まだ証言の履歴は ありません。</div>';
+            return;
+        }
+        box.innerHTML = "";
+        saibanHistory.forEach(function(item, idx){
+            const row = document.createElement("div");
+            row.className = "saiban-history-item";
+            // ⭐ お気に入りボタン
+            const star = document.createElement("button");
+            star.className = "saiban-history-star" + (item.f ? " on" : "");
+            star.innerText = item.f ? "★" : "☆";
+            star.title = item.f ? "お気に入り解除" : "お気に入りに登録";
+            star.onclick = function(){ saibanToggleFav(idx); };
+            // 中身
+            const body = document.createElement("div");
+            body.className = "saiban-history-body";
+            const t = document.createElement("div");
+            t.className = "saiban-history-text";
+            t.innerHTML = item.t;
+            const v = document.createElement("div");
+            v.className = "saiban-history-verdict";
+            v.innerText = "判決：" + item.v;
+            body.appendChild(t); body.appendChild(v);
+            row.appendChild(star); row.appendChild(body);
+            box.appendChild(row);
+        });
+    }
+    window.saibanToggleFav = function(idx){
+        if (!saibanHistory[idx]) return;
+        saibanHistory[idx].f = !saibanHistory[idx].f;
+        saibanSaveHistory();
+        saibanRenderHistory();
+    };
+
+    // ===== 🎵 BGM（緊張感ある法廷サスペンス風） =====
+    let saibanBgmCtx = null;
+    let saibanBgmTimer = null;
+    let saibanBgmStep = 0;
+    // 低音のサスペンスループ：A1, A1, C2, G1 を脈動させる
+    const SAIBAN_BASS = [55.00, 55.00, 65.41, 49.00];   // A1, A1, C2, G1
+    function saibanBgmTick() {
+        const ctx = saibanBgmCtx;
+        if (!ctx) return;
+        const t = ctx.currentTime;
+        const f = SAIBAN_BASS[saibanBgmStep % SAIBAN_BASS.length];
+        // 低音のパルス（チェロ風サスペンス）
+        const o = ctx.createOscillator(), g = ctx.createGain();
+        o.type = "sawtooth"; o.frequency.setValueAtTime(f, t);
+        const lp = ctx.createBiquadFilter();
+        lp.type = "lowpass"; lp.frequency.setValueAtTime(500, t);
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.linearRampToValueAtTime(0.10, t + 0.05);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.55);
+        o.connect(lp); lp.connect(g); g.connect(ctx.destination);
+        o.start(t); o.stop(t + 0.6);
+        // 4拍に1回、高音のひと刺し（緊張感のアクセント）
+        if (saibanBgmStep % 4 === 3) {
+            const hi = ctx.createOscillator(), hg = ctx.createGain();
+            hi.type = "triangle"; hi.frequency.setValueAtTime(587.33, t); // D5
+            hi.frequency.exponentialRampToValueAtTime(440, t + 0.4);     // A4へ滑落
+            hg.gain.setValueAtTime(0.0001, t);
+            hg.gain.linearRampToValueAtTime(0.05, t + 0.03);
+            hg.gain.exponentialRampToValueAtTime(0.0001, t + 0.5);
+            hi.connect(hg); hg.connect(ctx.destination);
+            hi.start(t); hi.stop(t + 0.55);
+        }
+        saibanBgmStep++;
+    }
+    function saibanStartBgm() {
+        if (!saibanBgmCtx) {
+            try { saibanBgmCtx = window.audioCtx || new (window.AudioContext||window.webkitAudioContext)(); } catch(e){ return; }
+        }
+        if (saibanBgmCtx.state === "suspended") { try { saibanBgmCtx.resume(); } catch(e){} }
+        if (saibanBgmTimer) clearInterval(saibanBgmTimer);
+        saibanBgmStep = 0;
+        saibanBgmTick();
+        saibanBgmTimer = setInterval(saibanBgmTick, 600); // 0.6秒間隔の重い鼓動
+    }
+    function saibanStopBgm() {
+        if (saibanBgmTimer) { clearInterval(saibanBgmTimer); saibanBgmTimer = null; }
+    }
+
     // 起動・終了（8番ちくわのlauncher側から呼ばれる）
     window.saibanLaunch = function(){
         saibanPicked = {};
@@ -10402,9 +10582,12 @@
         $S("saiban-choices").style.display = "block";
         $S("saiban-judge-msg").innerText = "では証言を　お願いします！！！";
         saibanRenderStep();
+        saibanRenderHistory();
+        saibanStartBgm();
     };
     window.saibanShutdown = function(){
         saibanReady = false;
+        saibanStopBgm();
     };
 })();
 </script>
