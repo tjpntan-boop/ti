@@ -2438,7 +2438,7 @@
         <div id="title-content">
         <div id="tap-notice" onclick="beginTitleAudio(event)">▶ タップして音を出す</div>
         <div class="famicom-title">はちばんちくわ</div>
-        <div id="version-label">Ver 2.3.1</div>
+        <div id="version-label">Ver 2.3.4</div>
         <button id="start-btn" class="start-btn" onclick="startGame(event)" style="display:none;">🍩 ちくわを覗く... 🍩</button>
         <button id="title-badge-btn" class="badge-link-btn" onclick="openBadgeScreen('title')" style="display:none;">🏅 称号コレクション</button>
         <button id="reset-record-btn" onclick="resetDiscoveryRecord(event)" style="display:none;">🗑 異変の記録をリセット</button>
@@ -4006,7 +4006,7 @@
     let chasePlayer = null;   // {col,row,dir,nextDir,px,py}
     let chaseEnemies = [];    // 敵リスト
     let chasePlayerSpeed = 2.6; // px/frame
-    let chaseEnemyBaseSpeed = 1.8;
+    let chaseEnemyBaseSpeed = 1.2;
 
     function chaseIsWall(c, r) {
         if (c < 0 || c >= CHASE_COLS || r < 0 || r >= CHASE_ROWS) return true;
@@ -4554,6 +4554,7 @@
     let shinPaddle, shinBall, shinBricks, shinLives, shinRunning, shinAngle;
     let shinItems = [];           // 落下中のチャンスボール
     let shinPowerActive = false;  // パワー演出中
+    let shinPowerTimer = null;    // パワー効果終了用のsetTimeout ID
     let shinPaddleMode = "H";     // パドル形状: "H"=横, "V"=縦, "T"=斜め
     let shinFloatText = null;     // {text, x, y, life}
     const SHIN_INGREDIENTS = [
@@ -4688,9 +4689,25 @@
         shinPaddle.x = x;
     }
 
+    // 進行中のパワー効果を完全リセット（新しいパワー発動前に呼ぶ）
+    function shinClearPower() {
+        if (shinPowerTimer) { clearTimeout(shinPowerTimer); shinPowerTimer = null; }
+        // パドル形状を横に戻す
+        shinPaddleMode = "H";
+        shinPaddle.w = 78; shinPaddle.h = 12;
+        shinPaddle.y = shinH - 30;
+        // 巨大化を解除
+        if (shinBall) {
+            shinBall.r = 9;
+            shinBall.giant = false;
+        }
+        shinPowerActive = false;
+    }
+
     // 🎁 取得したらランダムでくだらないパワーが発動
     function shinTriggerRandomPower() {
-        if (shinPowerActive) return;
+        // 既に効果中なら、それを止めて上書き（あとから取った方が有効）
+        shinClearPower();
         shinPowerActive = true;
         const POWERS = ["vertical","giant","nothing","revive","tilted"];
         const power = POWERS[Math.floor(Math.random() * POWERS.length)];
@@ -4701,52 +4718,54 @@
             shinShowFloatText("パドルが　たてになった！");
             shinPaddleMode = "V";
             shinPaddle.w = 12; shinPaddle.h = 78;
-            // 画面下から少し上に位置を上げる
             shinPaddle.y = shinH - 90;
-            // 元に戻す（8秒後）
-            setTimeout(function(){
+            shinPowerTimer = setTimeout(function(){
                 shinPaddleMode = "H";
                 shinPaddle.w = 78; shinPaddle.h = 12;
                 shinPaddle.y = shinH - 30;
                 shinPowerActive = false;
+                shinPowerTimer = null;
             }, 8000);
         } else if (power === "giant") {
-            // 2. ちくわが巨大化→受け止めきれず爆発
-            shinShowFloatText("ちくわが　きょだいか！！");
-            shinBall.r = 48; // 一気に巨大化
-            // 速度は遅く（巨大なちくわはのっそり）
-            const sp = Math.sqrt(shinBall.vx*shinBall.vx + shinBall.vy*shinBall.vy) || 1;
-            shinBall.vx = (shinBall.vx/sp) * 2.5;
-            shinBall.vy = (shinBall.vy/sp) * 2.5;
-            // 数秒後に爆発演出→ゲームオーバー（受け止めきれない）
-            setTimeout(function(){
-                if (gameState !== "SHIN" || !shinRunning) return;
-                shinShowFloatText("💥　ばくはつ！！　💥");
-                // 爆発エフェクト：画面フラッシュ＋低音ドーン
-                playTone(60, 0.6, 'sawtooth', 0.25);
-                playTone(120, 0.4, 'sawtooth', 0.2);
-                setTimeout(function(){
-                    shinRunning = false;
-                    shinOverlayMode = "over";
-                    showShinOverlay("💥 ばくはつ！！ 💥\n\nちくわが大きくなりすぎて\nもう受け止めきれません……", "タイトルに戻る");
-                }, 1200);
-            }, 3000);
+            // 2. 🎉 ちくわが巨大化（無敵モード！全部ブロックを突き抜けて崩せる）
+            shinShowFloatText("ちくわが　きょだいか！！\nブロックを　ぶち抜け！");
+            const origR = 9;
+            shinBall.r = 38;
+            shinBall.giant = true;
+            shinBall.vx *= 0.4;
+            shinBall.vy = -Math.abs(shinBall.vy) * 1.3;
+            playTone(220, 0.5, 'sawtooth', 0.15);
+            playTone(330, 0.4, 'triangle', 0.10);
+            shinPowerTimer = setTimeout(function(){
+                shinBall.r = origR;
+                shinBall.giant = false;
+                shinPowerActive = false;
+                shinPowerTimer = null;
+                playTone(660, 0.2, 'triangle', 0.08);
+            }, 7000);
         } else if (power === "nothing") {
             // 3. 「たまにはいいこともあるよ」だけ
             shinShowFloatText("たまには　いいことも　あるよ");
-            setTimeout(function(){ shinPowerActive = false; }, 2500);
+            shinPowerTimer = setTimeout(function(){
+                shinPowerActive = false;
+                shinPowerTimer = null;
+            }, 2500);
         } else if (power === "revive") {
             // 4. ブロック全復活（崩したものも元通り）
             shinShowFloatText("ブロックが　ぜんぶ　もどった！");
             for (const br of shinBricks) br.alive = true;
-            setTimeout(function(){ shinPowerActive = false; }, 2500);
+            shinPowerTimer = setTimeout(function(){
+                shinPowerActive = false;
+                shinPowerTimer = null;
+            }, 2500);
         } else if (power === "tilted") {
             // 5. 棒が斜めになる＋「笑」の文字
             shinShowFloatText("パドルが　ななめに……　笑");
             shinPaddleMode = "T";
-            setTimeout(function(){
+            shinPowerTimer = setTimeout(function(){
                 shinPaddleMode = "H";
                 shinPowerActive = false;
+                shinPowerTimer = null;
             }, 8000);
         }
     }
@@ -4814,10 +4833,13 @@
             if (b.x + b.r > br.x && b.x - b.r < br.x + br.w &&
                 b.y + b.r > br.y && b.y - b.r < br.y + br.h) {
                 br.alive = false;
-                b.vy = -b.vy;
-                playTone(660, 0.06, 'triangle', 0.05);
-                // 🎁 25%の確率でチャンスボールを落とす
-                if (Math.random() < 0.25 && !shinPowerActive) {
+                // 巨大モード中は反射せず突き抜けて連続破壊
+                if (!b.giant) {
+                    b.vy = -b.vy;
+                }
+                playTone(b.giant ? 880 : 660, 0.06, 'triangle', 0.05);
+                // 🎁 25%の確率でチャンスボールを落とす（巨大化中はアイテム出さない）
+                if (!b.giant && Math.random() < 0.25 && !shinPowerActive) {
                     shinItems.push({
                         x: br.x + br.w/2,
                         y: br.y + br.h/2,
@@ -4826,7 +4848,8 @@
                         hue: Math.floor(Math.random() * 360)
                     });
                 }
-                break;
+                if (!b.giant) break;
+                // 巨大時は1フレームで複数ブロック壊せる（breakしない）
             }
         }
 
@@ -4843,18 +4866,24 @@
         }
         shinItems = shinItems.filter(it => !it.taken && it.y < shinH + 30);
 
-        // 落下（ミス）
+        // 落下（ミス）— ただし巨大モード中は下からも反射（無敵）
         if (b.y - b.r > shinH) {
-            shinLives--;
-            updateShinLives();
-            playFailDoom();
-            if (shinLives <= 0) {
-                shinRunning = false;
-                shinOverlayMode = "over";
-                showShinOverlay("GAME OVER\n\nちくわを落としてしまった……\nまた挑戦しよう。", "タイトルに戻る");
-                return;
+            if (b.giant) {
+                // 無敵モード：下端から上に跳ね返す
+                b.y = shinH - b.r;
+                b.vy = -Math.abs(b.vy);
             } else {
-                resetShinBall();
+                shinLives--;
+                updateShinLives();
+                playFailDoom();
+                if (shinLives <= 0) {
+                    shinRunning = false;
+                    shinOverlayMode = "over";
+                    showShinOverlay("GAME OVER\n\nちくわを落としてしまった……\nまた挑戦しよう。", "タイトルに戻る");
+                    return;
+                } else {
+                    resetShinBall();
+                }
             }
         }
 
@@ -4941,11 +4970,21 @@
         ctx.save();
         ctx.translate(b.x, b.y);
         ctx.rotate(shinAngle);
-        ctx.fillStyle = "#e8c088";
-        ctx.strokeStyle = "#6b3517"; ctx.lineWidth = 3;
+        // 巨大モード時は金色のオーラ
+        if (b.giant) {
+            const aura = ctx.createRadialGradient(0, 0, b.r*0.5, 0, 0, b.r*1.8);
+            aura.addColorStop(0, "rgba(255,230,100,0.8)");
+            aura.addColorStop(0.5, "rgba(255,180,0,0.4)");
+            aura.addColorStop(1, "rgba(255,100,0,0)");
+            ctx.fillStyle = aura;
+            ctx.beginPath(); ctx.arc(0, 0, b.r*1.8, 0, Math.PI*2); ctx.fill();
+        }
+        ctx.fillStyle = b.giant ? "#ffd86b" : "#e8c088";
+        ctx.strokeStyle = b.giant ? "#9a5500" : "#6b3517";
+        ctx.lineWidth = b.giant ? 5 : 3;
         roundRect(ctx, -b.r, -b.r*0.7, b.r*2, b.r*1.4, 4); ctx.fill(); ctx.stroke();
         // ちくわの穴
-        ctx.fillStyle = "#6b3517";
+        ctx.fillStyle = b.giant ? "#9a5500" : "#6b3517";
         ctx.beginPath(); ctx.arc(-b.r*0.55, 0, b.r*0.35, 0, Math.PI*2); ctx.fill();
         ctx.restore();
 
