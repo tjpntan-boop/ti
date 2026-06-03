@@ -65,7 +65,7 @@
         @keyframes blink { from { opacity: 0.55; } to { opacity: 1; } }
 
         .famicom-title {
-            color: #200000; font-size: 42px; font-weight: bold; margin-bottom: 50px;
+            color: #200000; font-size: 42px; font-weight: bold; margin-top: 30px; margin-bottom: 80px;
             text-shadow: 3px 3px #000, 5px 5px #000; text-align: center; letter-spacing: 3px;
             z-index: 1005; transform: translateY(-120vh); animation: slowDrop 6.0s linear 0.5s forwards;
         }
@@ -78,7 +78,7 @@
         .start-btn {
             background-color: #111; color: #8b0000; border: 3px solid #8b0000;
             padding: 15px 40px; font-size: 20px; font-weight: bold; cursor: pointer;
-            box-shadow: 0 0 10px #8b0000; z-index: 1005;
+            box-shadow: 0 0 10px #8b0000; z-index: 1005; margin-bottom: 24px;
         }
         @keyframes fadeInButton { to { opacity: 1; } }
 
@@ -385,6 +385,7 @@
             background-color: #000; color: #ff0000; font-weight: bold; font-size: 22px;
             padding: 10px 25px; border-radius: 4px; align-self: center; border: 3px solid #8b0000;
             margin-top: 15px; pointer-events: auto; text-align: center; box-shadow: 0 0 10px #500;
+            white-space: pre-line; outline: none;
         }
 
         /* 下部エリア：操作ボタン＋タイトルに戻るボタンをまとめる */
@@ -2387,8 +2388,8 @@
         <div id="title-content">
         <div id="tap-notice" onclick="beginTitleAudio(event)">▶ タップして音を出す</div>
         <div class="famicom-title">はちばんちくわ</div>
-        <div id="version-label">Ver 2.0.0</div>
-        <button id="start-btn" class="start-btn" onclick="startGame(event)" style="display:none;">ちくわを覗く...</button>
+        <div id="version-label">Ver 2.1.1</div>
+        <button id="start-btn" class="start-btn" onclick="startGame(event)" style="display:none;">🍩 ちくわを覗く... 🍩</button>
         <button id="title-badge-btn" class="badge-link-btn" onclick="openBadgeScreen('title')" style="display:none;">🏅 称号コレクション</button>
         <button id="reset-record-btn" onclick="resetDiscoveryRecord(event)" style="display:none;">🗑 異変の記録をリセット</button>
 
@@ -2897,7 +2898,8 @@
     </div>
 
     <div id="ui-layer">
-        <div id="counter" class="chikuwa-counter">ぜろばんちくわ (異変なしのちくわ)</div>
+        <div id="counter" class="chikuwa-counter">ぜろばんちくわ
+(異変なしのちくわ)</div>
         
         <div id="anomaly-tracker" class="anomaly-tracker">見つけた異変(通算): 0 / 37</div>
         
@@ -4223,7 +4225,7 @@
             gameState = "RESULT"; // 操作不可の待機状態
             const layer = document.getElementById("ingredients-layer");
             if (layer) layer.innerHTML = "";
-            document.getElementById("counter").innerText = "ぜろばんちくわ (異変なしのちくわ)";
+            document.getElementById("counter").innerText = "ぜろばんちくわ\n(異変なしのちくわ)";
 
             const backMsg = document.getElementById("back-to-start-msg");
             backMsg.classList.remove("show");
@@ -4944,6 +4946,13 @@
     // ↩ タイトル画面に戻る（プレイ中・クリア後どちらからでも呼べる）
     function goToTitle(e) {
         if (e) e.stopPropagation();
+        // ↩ ページをリロードしてタイトル画面を完全に初期状態へ戻す
+        //    （セーブデータは localStorage に残るので失われない）
+        location.reload();
+        return;
+    }
+    function goToTitle_OLD(e) {
+        if (e) e.stopPropagation();
 
         // BGMのループを止める
         if (bpmInterval) { clearInterval(bpmInterval); bpmInterval = null; }
@@ -4963,6 +4972,33 @@
         // タイトル画面を再表示
         const titleScreen = document.getElementById("title-screen");
         titleScreen.style.display = "flex";
+        // ↩ 上から降ってくる演出（血・タイトルロゴ）を最初から再生し直す
+        // animation を一度クリア→reflow→元に戻す古典手法で、確実にリスタートさせる
+        const animTargets = [
+            { el: titleScreen.querySelector(".famicom-title"), anim: "slowDrop 6.0s linear 0.5s forwards" },
+            { el: titleScreen.querySelector(".blood-curtain"),  anim: "bloodDrip 7.0s cubic-bezier(0.25, 1, 0.5, 1) 0.5s forwards" }
+        ];
+        animTargets.forEach(function(t){
+            if (!t.el) return;
+            t.el.style.animation = "none";
+            // インライン transform を巻き戻しておく（forwardsで残った最終状態を解除）
+            t.el.style.transform = "";
+        });
+        // reflowを強制してanimation:noneを確定させる
+        void titleScreen.offsetWidth;
+        // 次フレームで元のアニメーションを再設定→先頭から再生される
+        requestAnimationFrame(function(){
+            animTargets.forEach(function(t){
+                if (!t.el) return;
+                t.el.style.animation = t.anim;
+            });
+            // スクロールも再度先頭へ（描画後に確実に上を向ける）
+            titleScreen.scrollTop = 0;
+        });
+        // ::before（赤いグラデーション）も再生し直すため、クラスのトグルでリセット
+        titleScreen.classList.remove("intro-played");
+        void titleScreen.offsetWidth;
+        titleScreen.classList.add("intro-played"); titleScreen.classList.remove("intro-played");
         // スクロール位置を先頭に戻す（ミニゲームを遊んだ後でも上から見えるように）
         titleScreen.scrollTop = 0;
         try { window.scrollTo(0, 0); } catch(e) {}
@@ -5042,7 +5078,11 @@
         document.querySelector(".controls").classList.remove("swapped"); // 🔀 ボタン配置を通常に戻す
 
         var __chikuwaNumKana = ["ぜろ","いち","に","さん","よん","ご","ろく","なな","はち"];
-        document.getElementById("counter").innerText = currentChikuwa === 8 ? "ぜろばんちくわ (異変なしのちくわ)" : `${__chikuwaNumKana[8 - currentChikuwa]}ばんちくわ`;
+        if (currentChikuwa === 8) {
+            document.getElementById("counter").innerText = "ぜろばんちくわ\n(異変なしのちくわ)";
+        } else {
+            document.getElementById("counter").innerText = __chikuwaNumKana[8 - currentChikuwa] + "ばんちくわ";
+        }
 
         // 📊 異変の抽選（3/5 ＝ 60% の確率に再調整）
         if (currentChikuwa === 8) {
@@ -8226,9 +8266,8 @@
 
 </script>
 
-// ===== 🔴 イチャモンスター（組み込みJS）=====
 <script>
-
+// ===== 🔴 イチャモンスター（組み込みJS）=====
 (function() {
     // ===================================================================
     // 🟡 イチャモン図鑑（ここのセリフを自由に書き換えてOK）
