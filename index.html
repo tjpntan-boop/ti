@@ -176,7 +176,7 @@
         }
         #chase-game.show {
             display: flex; flex-direction: column; align-items: center;
-            padding-top: 18px; padding-bottom: 80px; box-sizing: border-box;
+            padding-top: 18px; padding-bottom: 240px; box-sizing: border-box;
         }
         #chase-title {
             color: #ff5555; font-size: 22px; font-weight: bold; letter-spacing: 2px;
@@ -232,22 +232,34 @@
         }
         .chase-enemy.e2 { background: #c97a4a; box-shadow: 0 0 10px #f80, inset 0 0 4px #6b3517; }
         .chase-enemy.e3 { background: #8a4520; border-color: #3a1a08; box-shadow: 0 0 12px #f0f, inset 0 0 4px #200; }
-        /* 方向タップ用の透明領域（画面端4辺、Canvasより手前） */
+        /* 📱 画面下の十字キー（スマホで操作しやすく） */
         .chase-pad {
             position: fixed; z-index: 10; cursor: pointer;
+            width: 64px; height: 64px;
+            background: rgba(255,255,255,0.06);
+            border: 2px solid rgba(255,200,200,0.4);
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            color: #ffeecc; font-size: 32px; font-weight: bold;
+            text-shadow: 0 0 8px rgba(255,180,180,0.8);
+            box-shadow: 0 2px 0 rgba(0,0,0,0.5), inset 0 0 12px rgba(255,200,200,0.15);
+            user-select: none; -webkit-user-select: none;
         }
-        .chase-pad-up    { top: 0;    left: 0;     width: 100%; height: 110px; }
-        .chase-pad-down  { bottom: 0; left: 0;     width: 100%; height: 80px; }
-        .chase-pad-left  { top: 110px; left: 0;    width: 14%; bottom: 80px; }
-        .chase-pad-right { top: 110px; right: 0;   width: 14%; bottom: 80px; }
-        .chase-pad::after {
-            position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
-            color: rgba(255,200,200,0.18); font-size: 28px; font-weight: bold; pointer-events: none;
+        .chase-pad:active {
+            background: rgba(255,180,180,0.25);
+            transform: translateY(2px);
+            box-shadow: 0 0 0 rgba(0,0,0,0.5), inset 0 0 12px rgba(255,200,200,0.3);
         }
-        .chase-pad-up::after    { content: "↑"; top: auto; bottom: 12px; }
-        .chase-pad-down::after  { content: "↓"; top: 12px; }
-        .chase-pad-left::after  { content: "←"; left: auto; right: 10px; }
-        .chase-pad-right::after { content: "→"; left: 10px; }
+        /* 十字配置：画面下中央 */
+        .chase-pad-up    { left: calc(50% - 32px); bottom: 152px; }
+        .chase-pad-down  { left: calc(50% - 32px); bottom: 22px; }
+        .chase-pad-left  { left: calc(50% - 110px); bottom: 87px; }
+        .chase-pad-right { left: calc(50% + 46px);  bottom: 87px; }
+        .chase-pad::after { content: ""; }
+        .chase-pad-up::before    { content: "↑"; }
+        .chase-pad-down::before  { content: "↓"; }
+        .chase-pad-left::before  { content: "←"; }
+        .chase-pad-right::before { content: "→"; }
         @keyframes chikuwaPuni {
             0%   { transform: scale(1.15, 0.85); }
             100% { transform: scale(0.85, 1.15); }
@@ -2426,7 +2438,7 @@
         <div id="title-content">
         <div id="tap-notice" onclick="beginTitleAudio(event)">▶ タップして音を出す</div>
         <div class="famicom-title">はちばんちくわ</div>
-        <div id="version-label">Ver 2.2.1</div>
+        <div id="version-label">Ver 2.3.1</div>
         <button id="start-btn" class="start-btn" onclick="startGame(event)" style="display:none;">🍩 ちくわを覗く... 🍩</button>
         <button id="title-badge-btn" class="badge-link-btn" onclick="openBadgeScreen('title')" style="display:none;">🏅 称号コレクション</button>
         <button id="reset-record-btn" onclick="resetDiscoveryRecord(event)" style="display:none;">🗑 異変の記録をリセット</button>
@@ -2439,7 +2451,7 @@
             <button id="play-bcb-btn" onclick="playBcb(event)">📷 バーコード戦闘力<span class="hassaku-sub">家じゅうのバーコードで最強と最弱を探せ</span></button>
             <button id="play-pwr-btn" onclick="playPwr(event)">🌱 ４つのタネ<span class="hassaku-sub">写真の力で４つのタネを集め、花を咲かせよう</span></button>
             <button id="play-ijw-btn" onclick="playIjw(event)">🚪 じらじらし<span class="hassaku-sub">じらし好きの車掌になってお客さんをじらせ</span></button>
-            <button id="play-noid-btn" onclick="playShinChikuwa(event)">🧱 チクワノイド<span class="hassaku-sub">ちくわのボールでおでんブロックを崩せ</span></button>
+            <button id="play-noid-btn" onclick="playShinChikuwa(event)">🧱 チクワノイド<span class="hassaku-sub">ちくわボールでおでんを崩せ！チャンスボールで何かが起こる…</span></button>
             <button id="play-beam-omake-btn" onclick="playBeamGame(event)">🔫 チクビウス<span class="hassaku-sub">チクビー戦闘機でおでん軍団を撃ち抜け</span></button>
             <button id="play-chase-omake-btn" onclick="playChaseStandalone(event)">🏃 ちくわにげ<span class="hassaku-sub">迷路を60秒逃げ切れ！20秒ごとに敵が増える</span></button>
             <button id="play-ichamon-btn" onclick="playIchamon(event)">🔴 めざせイチャモンスター<span class="hassaku-sub">町にかくれたボールを探して、理不尽なイチャモンを集めろ</span></button>
@@ -4038,11 +4050,11 @@
     }
 
     function chaseLayout() {
-        // 画面サイズから1セルのpxを決定（上UI分・下パッド分を引く）
+        // 画面サイズから1セルのpxを決定（上UI分・下の十字キー分を引く）
         const screenW = window.innerWidth || 360;
         const screenH = window.innerHeight || 640;
-        const availW = Math.max(100, screenW - 40);  // 左右パッド分の余裕
-        const availH = Math.max(200, screenH - 130 - 90); // 上UI 130, 下パッド 90
+        const availW = Math.max(100, screenW - 40);
+        const availH = Math.max(200, screenH - 130 - 240); // 上UI 130, 下十字キー 240
         let cell = Math.floor(Math.min(availW / CHASE_COLS, availH / CHASE_ROWS));
         if (cell < 18) cell = 18;
         if (cell > 40) cell = 40;
@@ -4540,6 +4552,10 @@
     let shinReq = null;          // requestAnimationFrame id
     let shinW = 0, shinH = 0;
     let shinPaddle, shinBall, shinBricks, shinLives, shinRunning, shinAngle;
+    let shinItems = [];           // 落下中のチャンスボール
+    let shinPowerActive = false;  // パワー演出中
+    let shinPaddleMode = "H";     // パドル形状: "H"=横, "V"=縦, "T"=斜め
+    let shinFloatText = null;     // {text, x, y, life}
     const SHIN_INGREDIENTS = [
         { name: "大根", color: "#f5f5dc" },
         { name: "卵",   color: "#fff6d5" },
@@ -4599,6 +4615,11 @@
     }
 
     function setupShinLevel() {
+        // 状態リセット
+        shinItems = [];
+        shinPowerActive = false;
+        shinPaddleMode = "H";
+        shinFloatText = null;
         // パドル
         shinPaddle = { w: 78, h: 12, x: shinW/2 - 39, y: shinH - 30 };
         // ボール（ちくわ）
@@ -4667,6 +4688,73 @@
         shinPaddle.x = x;
     }
 
+    // 🎁 取得したらランダムでくだらないパワーが発動
+    function shinTriggerRandomPower() {
+        if (shinPowerActive) return;
+        shinPowerActive = true;
+        const POWERS = ["vertical","giant","nothing","revive","tilted"];
+        const power = POWERS[Math.floor(Math.random() * POWERS.length)];
+        playTone(880, 0.1, 'triangle', 0.08);
+        playTone(1320, 0.08, 'triangle', 0.06);
+        if (power === "vertical") {
+            // 1. 横の棒が縦になる
+            shinShowFloatText("パドルが　たてになった！");
+            shinPaddleMode = "V";
+            shinPaddle.w = 12; shinPaddle.h = 78;
+            // 画面下から少し上に位置を上げる
+            shinPaddle.y = shinH - 90;
+            // 元に戻す（8秒後）
+            setTimeout(function(){
+                shinPaddleMode = "H";
+                shinPaddle.w = 78; shinPaddle.h = 12;
+                shinPaddle.y = shinH - 30;
+                shinPowerActive = false;
+            }, 8000);
+        } else if (power === "giant") {
+            // 2. ちくわが巨大化→受け止めきれず爆発
+            shinShowFloatText("ちくわが　きょだいか！！");
+            shinBall.r = 48; // 一気に巨大化
+            // 速度は遅く（巨大なちくわはのっそり）
+            const sp = Math.sqrt(shinBall.vx*shinBall.vx + shinBall.vy*shinBall.vy) || 1;
+            shinBall.vx = (shinBall.vx/sp) * 2.5;
+            shinBall.vy = (shinBall.vy/sp) * 2.5;
+            // 数秒後に爆発演出→ゲームオーバー（受け止めきれない）
+            setTimeout(function(){
+                if (gameState !== "SHIN" || !shinRunning) return;
+                shinShowFloatText("💥　ばくはつ！！　💥");
+                // 爆発エフェクト：画面フラッシュ＋低音ドーン
+                playTone(60, 0.6, 'sawtooth', 0.25);
+                playTone(120, 0.4, 'sawtooth', 0.2);
+                setTimeout(function(){
+                    shinRunning = false;
+                    shinOverlayMode = "over";
+                    showShinOverlay("💥 ばくはつ！！ 💥\n\nちくわが大きくなりすぎて\nもう受け止めきれません……", "タイトルに戻る");
+                }, 1200);
+            }, 3000);
+        } else if (power === "nothing") {
+            // 3. 「たまにはいいこともあるよ」だけ
+            shinShowFloatText("たまには　いいことも　あるよ");
+            setTimeout(function(){ shinPowerActive = false; }, 2500);
+        } else if (power === "revive") {
+            // 4. ブロック全復活（崩したものも元通り）
+            shinShowFloatText("ブロックが　ぜんぶ　もどった！");
+            for (const br of shinBricks) br.alive = true;
+            setTimeout(function(){ shinPowerActive = false; }, 2500);
+        } else if (power === "tilted") {
+            // 5. 棒が斜めになる＋「笑」の文字
+            shinShowFloatText("パドルが　ななめに……　笑");
+            shinPaddleMode = "T";
+            setTimeout(function(){
+                shinPaddleMode = "H";
+                shinPowerActive = false;
+            }, 8000);
+        }
+    }
+
+    function shinShowFloatText(text) {
+        shinFloatText = { text: text, x: shinW/2, y: shinH/2 - 40, life: 130 };
+    }
+
     function shinLoop() {
         if (gameState !== "SHIN" || !shinRunning) return;
         const b = shinBall;
@@ -4678,16 +4766,44 @@
         if (b.x + b.r > shinW) { b.x = shinW - b.r; b.vx = -Math.abs(b.vx); }
         if (b.y - b.r < 0) { b.y = b.r; b.vy = Math.abs(b.vy); }
 
-        // パドル反射
+        // パドル反射（形状によって判定を変える）
         const p = shinPaddle;
-        if (b.vy > 0 && b.y + b.r >= p.y && b.y + b.r <= p.y + p.h + 8 &&
-            b.x >= p.x && b.x <= p.x + p.w) {
-            b.vy = -Math.abs(b.vy);
-            // 当たった位置で角度を変える（端ほど鋭角）
-            const hit = (b.x - (p.x + p.w/2)) / (p.w/2); // -1〜1
-            b.vx = hit * b.speed * 0.9;
+        let hitPaddle = false;
+        if (shinPaddleMode === "H") {
+            // 横パドル：従来通り
+            if (b.vy > 0 && b.y + b.r >= p.y && b.y + b.r <= p.y + p.h + 8 &&
+                b.x >= p.x && b.x <= p.x + p.w) {
+                b.vy = -Math.abs(b.vy);
+                const hit = (b.x - (p.x + p.w/2)) / (p.w/2);
+                b.vx = hit * b.speed * 0.9;
+                hitPaddle = true;
+            }
+        } else if (shinPaddleMode === "V") {
+            // 縦パドル：左右からの反射として扱う
+            if (b.x + b.r >= p.x && b.x - b.r <= p.x + p.w &&
+                b.y >= p.y && b.y <= p.y + p.h) {
+                // ボールがパドル中心より左なら左へ、右なら右へ
+                const cx = p.x + p.w/2;
+                if (b.x < cx) { b.x = p.x - b.r; b.vx = -Math.abs(b.vx); }
+                else          { b.x = p.x + p.w + b.r; b.vx = Math.abs(b.vx); }
+                const hit = (b.y - (p.y + p.h/2)) / (p.h/2);
+                b.vy = hit * b.speed * 0.9;
+                hitPaddle = true;
+            }
+        } else if (shinPaddleMode === "T") {
+            // 斜めパドル：横パドルと同じ位置で扱うが、反射角に斜め成分を追加
+            if (b.vy > 0 && b.y + b.r >= p.y && b.y + b.r <= p.y + p.h + 12 &&
+                b.x >= p.x && b.x <= p.x + p.w) {
+                b.vy = -Math.abs(b.vy);
+                // 斜めパドル：当たる位置で斜めに飛ばす（左ほど右上、右ほど右上の方向に偏る）
+                const hit = (b.x - (p.x + p.w/2)) / (p.w/2);
+                b.vx = (hit + 0.6) * b.speed * 0.9;  // 常に右上寄りにバイアス
+                hitPaddle = true;
+            }
+        }
+        if (hitPaddle) {
             // 速度を一定に保つ
-            const sp = Math.sqrt(b.vx*b.vx + b.vy*b.vy);
+            const sp = Math.sqrt(b.vx*b.vx + b.vy*b.vy) || 1;
             b.vx = b.vx/sp * b.speed; b.vy = b.vy/sp * b.speed;
             playTone(440, 0.05, 'square', 0.05);
         }
@@ -4700,9 +4816,32 @@
                 br.alive = false;
                 b.vy = -b.vy;
                 playTone(660, 0.06, 'triangle', 0.05);
+                // 🎁 25%の確率でチャンスボールを落とす
+                if (Math.random() < 0.25 && !shinPowerActive) {
+                    shinItems.push({
+                        x: br.x + br.w/2,
+                        y: br.y + br.h/2,
+                        r: 11,
+                        vy: 2.0,
+                        hue: Math.floor(Math.random() * 360)
+                    });
+                }
                 break;
             }
         }
+
+        // 🎁 アイテム（チャンスボール）の落下と取得判定
+        for (const it of shinItems) {
+            it.y += it.vy;
+            it.hue = (it.hue + 4) % 360;
+            // パドルにキャッチ
+            if (it.y + it.r >= p.y && it.y - it.r <= p.y + p.h &&
+                it.x >= p.x && it.x <= p.x + p.w) {
+                it.taken = true;
+                shinTriggerRandomPower();
+            }
+        }
+        shinItems = shinItems.filter(it => !it.taken && it.y < shinH + 30);
 
         // 落下（ミス）
         if (b.y - b.r > shinH) {
@@ -4748,11 +4887,54 @@
             ctx.fillText(br.name, br.x + br.w/2, br.y + br.h/2);
         }
 
-        // パドル（ちくわ色のバー）
+        // 🎁 落下中のチャンスボール（虹色のキラキラ）
+        for (const it of shinItems) {
+            ctx.save();
+            ctx.translate(it.x, it.y);
+            // 外側のオーラ
+            const grad = ctx.createRadialGradient(0, 0, 2, 0, 0, it.r + 6);
+            grad.addColorStop(0, `hsl(${it.hue}, 100%, 70%)`);
+            grad.addColorStop(0.6, `hsl(${(it.hue+60)%360}, 100%, 50%)`);
+            grad.addColorStop(1, "rgba(0,0,0,0)");
+            ctx.fillStyle = grad;
+            ctx.beginPath(); ctx.arc(0, 0, it.r + 6, 0, Math.PI*2); ctx.fill();
+            // 本体
+            ctx.fillStyle = `hsl(${it.hue}, 90%, 60%)`;
+            ctx.strokeStyle = "#fff"; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.arc(0, 0, it.r, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+            // ？マーク
+            ctx.fillStyle = "#fff";
+            ctx.font = "bold 13px sans-serif";
+            ctx.textAlign = "center"; ctx.textBaseline = "middle";
+            ctx.fillText("?", 0, 1);
+            ctx.restore();
+        }
+
+        // パドル（ちくわ色のバー）— 形状に応じて描き分け
         const p = shinPaddle;
-        ctx.fillStyle = "#ddaa66";
-        ctx.strokeStyle = "#6b3517"; ctx.lineWidth = 3;
-        roundRect(ctx, p.x, p.y, p.w, p.h, 6); ctx.fill(); ctx.stroke();
+        ctx.save();
+        if (shinPaddleMode === "T") {
+            // 斜めパドル＋「笑」の文字
+            ctx.translate(p.x + p.w/2, p.y + p.h/2);
+            ctx.rotate(-0.35); // -20度くらい
+            ctx.fillStyle = "#ddaa66";
+            ctx.strokeStyle = "#6b3517"; ctx.lineWidth = 3;
+            roundRect(ctx, -p.w/2, -p.h/2, p.w, p.h, 6); ctx.fill(); ctx.stroke();
+            ctx.rotate(0.35);
+            // 「笑」の文字をパドル横に
+            ctx.fillStyle = "#ffeb3b";
+            ctx.strokeStyle = "#000"; ctx.lineWidth = 2;
+            ctx.font = "bold 22px sans-serif";
+            ctx.textAlign = "left"; ctx.textBaseline = "middle";
+            ctx.strokeText("笑", p.w/2 + 6, 0);
+            ctx.fillText("笑", p.w/2 + 6, 0);
+        } else {
+            // H/V 共通：単純な矩形（縦長/横長）
+            ctx.fillStyle = "#ddaa66";
+            ctx.strokeStyle = "#6b3517"; ctx.lineWidth = 3;
+            roundRect(ctx, p.x, p.y, p.w, p.h, 6); ctx.fill(); ctx.stroke();
+        }
+        ctx.restore();
 
         // ボール（ちくわ：回転する筒）
         const b = shinBall;
@@ -4766,6 +4948,22 @@
         ctx.fillStyle = "#6b3517";
         ctx.beginPath(); ctx.arc(-b.r*0.55, 0, b.r*0.35, 0, Math.PI*2); ctx.fill();
         ctx.restore();
+
+        // 💬 浮き上がるメッセージ
+        if (shinFloatText) {
+            shinFloatText.life--;
+            const alpha = Math.min(1, shinFloatText.life / 30);
+            ctx.save();
+            ctx.globalAlpha = alpha;
+            ctx.fillStyle = "#fff";
+            ctx.strokeStyle = "#000"; ctx.lineWidth = 4;
+            ctx.font = "bold 22px sans-serif";
+            ctx.textAlign = "center"; ctx.textBaseline = "middle";
+            ctx.strokeText(shinFloatText.text, shinFloatText.x, shinFloatText.y);
+            ctx.fillText(shinFloatText.text, shinFloatText.x, shinFloatText.y);
+            ctx.restore();
+            if (shinFloatText.life <= 0) shinFloatText = null;
+        }
     }
 
     function roundRect(ctx, x, y, w, h, r) {
