@@ -168,53 +168,91 @@
         }
         @keyframes eatPulse { 0% { transform: translateX(-50%) scale(1); } 100% { transform: translateX(-50%) scale(1.08); } }
 
-        /* 🏃 異変33：ちくわ鬼ごっこ（15秒逃げ切れば勝ち） */
+        /* 🏃 ちくわにげ（迷路パックマン風）60秒生き残れ */
         #chase-game {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: #000; z-index: 3000; display: none; overflow: hidden;
-            cursor: pointer; touch-action: none;
+            touch-action: none; user-select: none;
+        }
+        #chase-game.show {
+            display: flex; flex-direction: column; align-items: center;
+            padding-top: 18px; padding-bottom: 80px; box-sizing: border-box;
         }
         #chase-title {
-            position: absolute; top: 24px; left: 50%; transform: translateX(-50%);
-            color: #ff5555; font-size: 26px; font-weight: bold; letter-spacing: 2px;
-            text-shadow: 0 0 12px #f00; pointer-events: none; white-space: nowrap;
+            color: #ff5555; font-size: 22px; font-weight: bold; letter-spacing: 2px;
+            text-shadow: 0 0 12px #f00; pointer-events: none; white-space: nowrap; z-index: 5;
+            margin: 0 0 6px;
         }
         #chase-hint {
-            position: absolute; top: 62px; left: 50%; transform: translateX(-50%);
-            color: rgba(255,255,255,0.6); font-size: 15px; font-weight: bold;
-            animation: chaseBlink 1s infinite alternate; pointer-events: none;
+            color: rgba(255,255,255,0.7); font-size: 13px; font-weight: bold;
+            pointer-events: none; z-index: 5; margin: 0 0 4px;
         }
-        @keyframes chaseBlink { 0% { opacity: 0.3; } 100% { opacity: 0.9; } }
         #chase-timer {
-            position: absolute; top: 92px; left: 50%; transform: translateX(-50%);
-            color: #ff5555; font-size: 48px; font-weight: bold; text-shadow: 0 0 14px #f00;
-            pointer-events: none;
+            color: #ff5555; font-size: 38px; font-weight: bold; text-shadow: 0 0 14px #f00;
+            pointer-events: none; z-index: 5; margin: 0 0 8px;
+            line-height: 1;
         }
-        #chase-player {
-            position: absolute; width: 44px; height: 44px; font-size: 38px; line-height: 44px;
-            text-align: center; transition: left 0.25s ease-out, top 0.25s ease-out;
+        /* 迷路を包むコンテナ（中にCanvasとアクター層を絶対配置） */
+        #chase-stage {
+            position: relative; flex-shrink: 0;
+        }
+        /* 迷路Canvas */
+        #chase-maze {
+            display: block;
+            background: #000;
+            border: 2px solid #3344aa;
+            box-shadow: 0 0 18px #3344aa;
+        }
+        /* プレイヤーと敵を載せるレイヤー（Canvasの上にぴったり重ねる） */
+        #chase-actors {
+            position: absolute; left: 2px; top: 2px;
             pointer-events: none; z-index: 2;
         }
-        #chase-chikuwa {
-            position: absolute; width: 50px; height: 50px; pointer-events: none; z-index: 3;
-            background: #ddaa66; border: 5px solid #6b3517; border-radius: 12px;
-            box-shadow: 0 0 16px #f00, inset 0 0 8px #8a5a2a;
+        .chase-actor {
+            position: absolute; width: 28px; height: 28px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; line-height: 1;
+            transition: left 0.08s linear, top 0.08s linear;
+            will-change: left, top;
+        }
+        .chase-actor.player { z-index: 3; }
+        .chase-enemy {
+            background: #ddaa66; border: 3px solid #6b3517; border-radius: 8px;
+            box-shadow: 0 0 10px #f00, inset 0 0 4px #8a5a2a;
+            font-size: 0; z-index: 4;
             animation: chikuwaPuni 0.5s ease-in-out infinite alternate;
         }
+        .chase-enemy::before {
+            content: ""; position: absolute; top: 2px; left: 50%; transform: translateX(-50%);
+            width: 9px; height: 9px; background: #6b3517; border-radius: 50%;
+        }
+        .chase-enemy::after {
+            content: "👁"; position: absolute; bottom: 1px; left: 50%; transform: translateX(-50%);
+            font-size: 10px;
+        }
+        .chase-enemy.e2 { background: #c97a4a; box-shadow: 0 0 10px #f80, inset 0 0 4px #6b3517; }
+        .chase-enemy.e3 { background: #8a4520; border-color: #3a1a08; box-shadow: 0 0 12px #f0f, inset 0 0 4px #200; }
+        /* 方向タップ用の透明領域（画面端4辺、Canvasより手前） */
+        .chase-pad {
+            position: fixed; z-index: 10; cursor: pointer;
+        }
+        .chase-pad-up    { top: 0;    left: 0;     width: 100%; height: 110px; }
+        .chase-pad-down  { bottom: 0; left: 0;     width: 100%; height: 80px; }
+        .chase-pad-left  { top: 110px; left: 0;    width: 14%; bottom: 80px; }
+        .chase-pad-right { top: 110px; right: 0;   width: 14%; bottom: 80px; }
+        .chase-pad::after {
+            position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+            color: rgba(255,200,200,0.18); font-size: 28px; font-weight: bold; pointer-events: none;
+        }
+        .chase-pad-up::after    { content: "↑"; top: auto; bottom: 12px; }
+        .chase-pad-down::after  { content: "↓"; top: 12px; }
+        .chase-pad-left::after  { content: "←"; left: auto; right: 10px; }
+        .chase-pad-right::after { content: "→"; left: 10px; }
         @keyframes chikuwaPuni {
             0%   { transform: scale(1.15, 0.85); }
             100% { transform: scale(0.85, 1.15); }
         }
-        #chase-chikuwa::before {
-            content: ""; position: absolute; top: 6px; left: 50%; transform: translateX(-50%);
-            width: 16px; height: 16px; background: #6b3517; border-radius: 50%;
-        }
-        /* 追ってくるちくわに不気味な目 */
-        #chase-chikuwa::after {
-            content: "👁"; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%);
-            font-size: 14px;
-        }
-        /* 🏃 ちくわにげ 結果表示（おまけ単体プレイのときに使う） */
+        /* 🏃 ちくわにげ 結果表示 */
         #chase-result {
             display: none; position: absolute; inset: 0;
             background: rgba(0,0,0,0.95); z-index: 100;
@@ -2388,7 +2426,7 @@
         <div id="title-content">
         <div id="tap-notice" onclick="beginTitleAudio(event)">▶ タップして音を出す</div>
         <div class="famicom-title">はちばんちくわ</div>
-        <div id="version-label">Ver 2.1.4</div>
+        <div id="version-label">Ver 2.2.1</div>
         <button id="start-btn" class="start-btn" onclick="startGame(event)" style="display:none;">🍩 ちくわを覗く... 🍩</button>
         <button id="title-badge-btn" class="badge-link-btn" onclick="openBadgeScreen('title')" style="display:none;">🏅 称号コレクション</button>
         <button id="reset-record-btn" onclick="resetDiscoveryRecord(event)" style="display:none;">🗑 異変の記録をリセット</button>
@@ -2403,7 +2441,7 @@
             <button id="play-ijw-btn" onclick="playIjw(event)">🚪 じらじらし<span class="hassaku-sub">じらし好きの車掌になってお客さんをじらせ</span></button>
             <button id="play-noid-btn" onclick="playShinChikuwa(event)">🧱 チクワノイド<span class="hassaku-sub">ちくわのボールでおでんブロックを崩せ</span></button>
             <button id="play-beam-omake-btn" onclick="playBeamGame(event)">🔫 チクビウス<span class="hassaku-sub">チクビー戦闘機でおでん軍団を撃ち抜け</span></button>
-            <button id="play-chase-omake-btn" onclick="playChaseStandalone(event)">🏃 ちくわにげ<span class="hassaku-sub">追ってくるちくわから15秒逃げ切れ</span></button>
+            <button id="play-chase-omake-btn" onclick="playChaseStandalone(event)">🏃 ちくわにげ<span class="hassaku-sub">迷路を60秒逃げ切れ！20秒ごとに敵が増える</span></button>
             <button id="play-ichamon-btn" onclick="playIchamon(event)">🔴 めざせイチャモンスター<span class="hassaku-sub">町にかくれたボールを探して、理不尽なイチャモンを集めろ</span></button>
         </div>
         <div id="open-guide">
@@ -2849,12 +2887,19 @@
         <button id="tempt-eat-btn" onclick="failTemptation()">ちくわを食う 🍢</button>
     </div>
 
-    <div id="chase-game" onclick="chaseMove(event)">
+    <div id="chase-game">
         <div id="chase-title">🏃 ちくわにげ 🏃</div>
-        <div id="chase-hint">画面をタップして逃げろ！</div>
-        <div id="chase-timer">15</div>
-        <div id="chase-player">🏃</div>
-        <div id="chase-chikuwa"></div>
+        <div id="chase-hint">↑↓←→ で逃げろ！60秒生き残れ！</div>
+        <div id="chase-timer">60</div>
+        <div id="chase-stage">
+            <canvas id="chase-maze"></canvas>
+            <div id="chase-actors"></div>
+        </div>
+        <!-- 方向パッド（4辺） -->
+        <div class="chase-pad chase-pad-up"    data-dir="U"></div>
+        <div class="chase-pad chase-pad-down"  data-dir="D"></div>
+        <div class="chase-pad chase-pad-left"  data-dir="L"></div>
+        <div class="chase-pad chase-pad-right" data-dir="R"></div>
         <div id="chase-result">
             <div id="chase-result-text"></div>
             <button id="chase-result-btn" onclick="chaseResultClose(event)">タイトルに戻る</button>
@@ -3920,24 +3965,110 @@
     // ===== 🏃 異変33：ちくわ鬼ごっこ（15秒逃げ切れば勝ち）=====
     let chaseTimer = null;        // メインループ
     let chaseCountdown = null;    // 秒カウント
-    let chaseLeft = 15;           // 残り秒数
+    let chaseLeft = 60;           // 残り秒数
     let chaseResolved = false;
     let chaseStandalone = false; // タイトルからの単体プレイか（本編に影響しない）
     let chaseMusicTimers = [];
-    let playerX = 0, playerY = 0; // プレイヤー位置(px)
-    let chikuwaX = 0, chikuwaY = 0; // ちくわ位置(px)
-    let chaseW = 0, chaseH = 0;
 
-    // 不気味な追跡音（低音が脈打つ。青鬼風だがオリジナル）
+    // ===== 🌀 迷路（11列 × 15行）。'#'=壁 '.'=通路 'P'=プレイヤー開始 'E'=敵開始 =====
+    const CHASE_MAZE = [
+        "###########",
+        "#P...#....#",
+        "#.##.#.##.#",
+        "#.........#",
+        "##.##.##.##",
+        "#....#....#",
+        "#.##.#.##.#",
+        "#....E....#",
+        "#.##...##.#",
+        "#....#....#",
+        "##.#####.##",
+        "#....#....#",
+        "#.##.#.##.#",
+        "#.........#",
+        "###########",
+    ];
+    const CHASE_COLS = CHASE_MAZE[0].length;
+    const CHASE_ROWS = CHASE_MAZE.length;
+    let chaseCell = 28;       // 1セルのpx（JSで再計算）
+    let chasePlayer = null;   // {col,row,dir,nextDir,px,py}
+    let chaseEnemies = [];    // 敵リスト
+    let chasePlayerSpeed = 2.6; // px/frame
+    let chaseEnemyBaseSpeed = 1.8;
+
+    function chaseIsWall(c, r) {
+        if (c < 0 || c >= CHASE_COLS || r < 0 || r >= CHASE_ROWS) return true;
+        return CHASE_MAZE[r][c] === "#";
+    }
+    function chaseFindStart(ch) {
+        for (let r = 0; r < CHASE_ROWS; r++) {
+            for (let c = 0; c < CHASE_COLS; c++) {
+                if (CHASE_MAZE[r][c] === ch) return { col: c, row: r };
+            }
+        }
+        return null;
+    }
+
+    function chaseDrawMaze() {
+        const cv = document.getElementById("chase-maze");
+        const ctx = cv.getContext("2d");
+        ctx.clearRect(0, 0, cv.width, cv.height);
+        // 通路をうっすら描画
+        for (let r = 0; r < CHASE_ROWS; r++) {
+            for (let c = 0; c < CHASE_COLS; c++) {
+                const x = c * chaseCell, y = r * chaseCell;
+                if (CHASE_MAZE[r][c] === "#") {
+                    // 壁：青色（パックマン風）
+                    ctx.fillStyle = "#1a1a4a";
+                    ctx.fillRect(x, y, chaseCell, chaseCell);
+                    ctx.strokeStyle = "#3344aa";
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(x+1, y+1, chaseCell-2, chaseCell-2);
+                } else {
+                    // 通路：黒地に小さな点（パックマンの餌風）
+                    ctx.fillStyle = "#000";
+                    ctx.fillRect(x, y, chaseCell, chaseCell);
+                    ctx.fillStyle = "rgba(255,200,150,0.35)";
+                    ctx.beginPath();
+                    ctx.arc(x + chaseCell/2, y + chaseCell/2, 1.8, 0, Math.PI*2);
+                    ctx.fill();
+                }
+            }
+        }
+    }
+
+    function chaseLayout() {
+        // 画面サイズから1セルのpxを決定（上UI分・下パッド分を引く）
+        const screenW = window.innerWidth || 360;
+        const screenH = window.innerHeight || 640;
+        const availW = Math.max(100, screenW - 40);  // 左右パッド分の余裕
+        const availH = Math.max(200, screenH - 130 - 90); // 上UI 130, 下パッド 90
+        let cell = Math.floor(Math.min(availW / CHASE_COLS, availH / CHASE_ROWS));
+        if (cell < 18) cell = 18;
+        if (cell > 40) cell = 40;
+        chaseCell = cell;
+        const cv = document.getElementById("chase-maze");
+        const layer = document.getElementById("chase-actors");
+        cv.width = CHASE_COLS * chaseCell;
+        cv.height = CHASE_ROWS * chaseCell;
+        // CSSサイズは属性と同じに（高DPIでのにじみ防止）
+        cv.style.width = (CHASE_COLS * chaseCell) + "px";
+        cv.style.height = (CHASE_ROWS * chaseCell) + "px";
+        layer.style.width = (CHASE_COLS * chaseCell) + "px";
+        layer.style.height = (CHASE_ROWS * chaseCell) + "px";
+        chaseDrawMaze();
+    }
+
+    // 不気味な追跡音
     function startChaseMusic() {
         stopChaseMusic();
-        const beat = [98.0, 98.0, 110.0, 92.5]; // 低めの不安な音
+        const beat = [98.0, 98.0, 110.0, 92.5];
         let step = 0;
         const loop = () => {
             if (gameState !== "CHASE") return;
             const f = beat[step % beat.length];
             playTone(f, 0.35, 'sawtooth', 0.09);
-            playTone(f * 2.01, 0.2, 'square', 0.03); // 不協和な倍音で不気味さ
+            playTone(f * 2.01, 0.2, 'square', 0.03);
             step++;
             const t = setTimeout(loop, 320);
             chaseMusicTimers.push(t);
@@ -3949,10 +4080,9 @@
         chaseMusicTimers = [];
     }
 
-    // 🏃 タイトルから「ちくわにげ」を単体で遊ぶ
+    // タイトルから単体プレイ
     function playChaseStandalone(e) {
         if (e) e.stopPropagation();
-        // 音が未開始なら開始（AudioContextは作り直さず使い回す）
         if (!audioCtx) {
             try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(err) {}
         }
@@ -3964,32 +4094,99 @@
         startChase();
     }
 
+    function chaseSpawnEnemy(classExtra) {
+        const start = chaseFindStart("E");
+        const layer = document.getElementById("chase-actors");
+        const el = document.createElement("div");
+        el.className = "chase-actor chase-enemy" + (classExtra ? " " + classExtra : "");
+        layer.appendChild(el);
+        const en = {
+            col: start.col, row: start.row,
+            px: start.col * chaseCell, py: start.row * chaseCell,
+            dir: "L",
+            speed: chaseEnemyBaseSpeed,
+            el: el
+        };
+        chasePositionActor(en);
+        chaseEnemies.push(en);
+    }
+
+    function chasePositionActor(a) {
+        a.el.style.left = (a.px + (chaseCell - 28)/2) + "px";
+        a.el.style.top  = (a.py + (chaseCell - 28)/2) + "px";
+    }
+
+    // 4方向ベクトル
+    const CHASE_DIRS = { U:[0,-1], D:[0,1], L:[-1,0], R:[1,0] };
+    const CHASE_OPPOSITE = { U:"D", D:"U", L:"R", R:"L" };
+
+    function chaseCanMove(col, row, dir) {
+        const [dc, dr] = CHASE_DIRS[dir];
+        return !chaseIsWall(col + dc, row + dr);
+    }
+
     function startChase() {
         gameState = "CHASE";
         chaseResolved = false;
-        // 前回の結果表示が残っていたら消す
         const prevResult = document.getElementById("chase-result");
         if (prevResult) prevResult.classList.remove("show");
-        chaseLeft = 15;
-
+        chaseLeft = 60;
         if (bpmInterval) { clearInterval(bpmInterval); bpmInterval = null; }
         currentBgmMode = null;
 
         const game = document.getElementById("chase-game");
-        const player = document.getElementById("chase-player");
-        const chikuwa = document.getElementById("chase-chikuwa");
-        game.style.display = "block";
+        game.style.display = "";  // 既存の display:none をクリア
+        game.classList.add("show");
 
-        chaseW = window.innerWidth;
-        chaseH = window.innerHeight;
+        // 方向パッドのバインド（初回のみ）
+        if (!game._padBound) {
+            game._padBound = true;
+            const pads = game.querySelectorAll(".chase-pad");
+            pads.forEach(function(pad){
+                const dir = pad.getAttribute("data-dir");
+                const handler = function(ev){ ev.preventDefault(); ev.stopPropagation(); chasePadInput(dir); };
+                pad.addEventListener("touchstart", handler, { passive:false });
+                pad.addEventListener("mousedown", handler);
+            });
+            // 物理キーボードでも遊べるように矢印キー対応
+            document.addEventListener("keydown", function(ev){
+                if (gameState !== "CHASE") return;
+                const k = ev.key;
+                if (k === "ArrowUp")    chasePadInput("U");
+                else if (k === "ArrowDown")  chasePadInput("D");
+                else if (k === "ArrowLeft")  chasePadInput("L");
+                else if (k === "ArrowRight") chasePadInput("R");
+            });
+        }
 
-        // プレイヤーは中央、ちくわは左上の隅からスタート
-        playerX = chaseW / 2 - 22; playerY = chaseH / 2 - 22;
-        chikuwaX = 20; chikuwaY = 20;
-        player.style.left = playerX + "px"; player.style.top = playerY + "px";
-        chikuwa.style.left = chikuwaX + "px"; chikuwa.style.top = chikuwaY + "px";
-        document.getElementById("chase-timer").innerText = "15";
+        // レイアウト確定→迷路描画
+        chaseLayout();
 
+        // 既存アクターをクリア
+        const layer = document.getElementById("chase-actors");
+        layer.innerHTML = "";
+        chaseEnemies = [];
+
+        // プレイヤー作成
+        const pStart = chaseFindStart("P");
+        const playerEl = document.createElement("div");
+        playerEl.className = "chase-actor player";
+        playerEl.innerText = "🏃";
+        layer.appendChild(playerEl);
+        chasePlayer = {
+            col: pStart.col, row: pStart.row,
+            px: pStart.col * chaseCell, py: pStart.row * chaseCell,
+            dir: null, nextDir: null,
+            speed: chasePlayerSpeed,
+            el: playerEl
+        };
+        chasePositionActor(chasePlayer);
+
+        // 敵1体目（即時）
+        chaseSpawnEnemy("");
+        // 2体目（20秒）、3体目（40秒）は秒カウントで追加
+
+        document.getElementById("chase-timer").innerText = "60";
         startChaseMusic();
 
         // 秒カウントダウン
@@ -3997,39 +4194,130 @@
         chaseCountdown = setInterval(() => {
             chaseLeft--;
             document.getElementById("chase-timer").innerText = chaseLeft;
+            // 敵追加
+            if (chaseLeft === 40 && chaseEnemies.length < 2) {
+                chaseSpawnEnemy("e2");
+                playTone(180, 0.3, 'sawtooth', 0.12);
+            }
+            if (chaseLeft === 20 && chaseEnemies.length < 3) {
+                chaseSpawnEnemy("e3");
+                playTone(140, 0.4, 'sawtooth', 0.14);
+            }
             if (chaseLeft <= 0) { clearInterval(chaseCountdown); chaseCountdown = null; succeedChase(); }
         }, 1000);
 
-        // ちくわの追跡ループ（プレイヤーへ少しずつ近づく）
+        // メインループ（敵AIとプレイヤー移動）
         if (chaseTimer) clearInterval(chaseTimer);
-        chaseTimer = setInterval(() => {
-            // プレイヤーへ向かうベクトル
-            const dx = playerX - chikuwaX;
-            const dy = playerY - chikuwaY;
-            const dist = Math.sqrt(dx*dx + dy*dy) || 1;
-            const speed = 3.2; // ちくわの速さ（タップ移動より遅め）
-            chikuwaX += (dx / dist) * speed;
-            chikuwaY += (dy / dist) * speed;
-            chikuwa.style.left = chikuwaX + "px";
-            chikuwa.style.top = chikuwaY + "px";
-
-            // 当たり判定（中心同士が近いか）
-            const cd = Math.sqrt((playerX - chikuwaX)**2 + (playerY - chikuwaY)**2);
-            if (cd < 45) { failChase(); }
-        }, 40);
+        chaseTimer = setInterval(chaseTick, 30);
     }
 
-    // タップした位置へプレイヤーが移動
-    function chaseMove(e) {
-        if (gameState !== "CHASE" || chaseResolved) return;
-        const x = (e.clientX !== undefined) ? e.clientX : (e.touches && e.touches[0].clientX);
-        const y = (e.clientY !== undefined) ? e.clientY : (e.touches && e.touches[0].clientY);
-        if (x === undefined) return;
-        playerX = Math.max(0, Math.min(chaseW - 44, x - 22));
-        playerY = Math.max(0, Math.min(chaseH - 44, y - 22));
-        document.getElementById("chase-player").style.left = playerX + "px";
-        document.getElementById("chase-player").style.top = playerY + "px";
+    function chaseTick() {
+        if (chaseResolved) return;
+        // プレイヤー移動：方向に沿って進む。次の方向が指定されていて、その方向に曲がれるなら曲がる
+        if (chasePlayer) {
+            chaseStepActor(chasePlayer, true);
+        }
+        // 敵移動：交差点ごとにプレイヤーへ向かう方向を選ぶ
+        for (const en of chaseEnemies) {
+            chaseStepActor(en, false);
+        }
+        // 当たり判定
+        for (const en of chaseEnemies) {
+            const dx = en.px - chasePlayer.px;
+            const dy = en.py - chasePlayer.py;
+            if (dx*dx + dy*dy < (chaseCell*0.7)*(chaseCell*0.7)) {
+                failChase();
+                return;
+            }
+        }
     }
+
+    // セルの中央に十分近づいたら「セル中央に到達」と判定する
+    function chaseAtCellCenter(a) {
+        const cx = a.col * chaseCell;
+        const cy = a.row * chaseCell;
+        return Math.abs(a.px - cx) < 0.5 && Math.abs(a.py - cy) < 0.5;
+    }
+
+    function chaseStepActor(a, isPlayer) {
+        // セル中央にいたら方向選択をする
+        if (chaseAtCellCenter(a)) {
+            a.px = a.col * chaseCell;
+            a.py = a.row * chaseCell;
+            let dir = a.dir;
+            if (isPlayer) {
+                // 入力された方向に曲がれるなら採用、ダメなら現状維持。両方ダメなら停止
+                if (a.nextDir && chaseCanMove(a.col, a.row, a.nextDir)) {
+                    dir = a.nextDir;
+                    a.nextDir = null;
+                } else if (dir && !chaseCanMove(a.col, a.row, dir)) {
+                    dir = null; // 壁なので止まる
+                }
+            } else {
+                // 敵AI：4方向のうち、Uターンを避けつつプレイヤーへ最も近づく方向
+                const choices = [];
+                for (const d of ["U","D","L","R"]) {
+                    if (a.dir && d === CHASE_OPPOSITE[a.dir] && Math.random() > 0.05) continue; // 5%でUターン可
+                    if (chaseCanMove(a.col, a.row, d)) choices.push(d);
+                }
+                // 選択肢が無ければUターン可
+                const pool = choices.length ? choices : ["U","D","L","R"].filter(d => chaseCanMove(a.col, a.row, d));
+                let best = pool[0], bestDist = 1e9;
+                for (const d of pool) {
+                    const [dc, dr] = CHASE_DIRS[d];
+                    const nc = a.col + dc, nr = a.row + dr;
+                    const ddx = (nc * chaseCell) - chasePlayer.px;
+                    const ddy = (nr * chaseCell) - chasePlayer.py;
+                    const dist = ddx*ddx + ddy*ddy;
+                    if (dist < bestDist) { bestDist = dist; best = d; }
+                }
+                // たまにランダムを混ぜて単調を防ぐ
+                if (pool.length > 1 && Math.random() < 0.10) {
+                    best = pool[Math.floor(Math.random()*pool.length)];
+                }
+                dir = best;
+            }
+            a.dir = dir;
+        }
+        // 方向に沿って前進
+        if (!a.dir) { chasePositionActor(a); return; }
+        const [dc, dr] = CHASE_DIRS[a.dir];
+        const targetX = (a.col + dc) * chaseCell;
+        const targetY = (a.row + dr) * chaseCell;
+        const sp = a.speed;
+        if (dc !== 0) {
+            a.px += dc * sp;
+            if ((dc > 0 && a.px >= targetX) || (dc < 0 && a.px <= targetX)) {
+                a.px = targetX; a.col += dc;
+            }
+        } else if (dr !== 0) {
+            a.py += dr * sp;
+            if ((dr > 0 && a.py >= targetY) || (dr < 0 && a.py <= targetY)) {
+                a.py = targetY; a.row += dr;
+            }
+        }
+        chasePositionActor(a);
+    }
+
+    // 方向パッドのタップでプレイヤーの「次の方向」を予約
+    function chasePadInput(dir) {
+        if (gameState !== "CHASE" || chaseResolved || !chasePlayer) return;
+        // セル中央にいる、または同方向ならすぐ反映。それ以外はnextDirに予約
+        if (chaseCanMove(chasePlayer.col, chasePlayer.row, dir) && chaseAtCellCenter(chasePlayer)) {
+            chasePlayer.dir = dir;
+            chasePlayer.nextDir = null;
+        } else {
+            chasePlayer.nextDir = dir;
+            // 逆方向なら即時反転OK（パックマンっぽい挙動）
+            if (chasePlayer.dir && dir === CHASE_OPPOSITE[chasePlayer.dir]) {
+                chasePlayer.dir = dir;
+                chasePlayer.nextDir = null;
+            }
+        }
+    }
+
+    // 後方互換：旧chaseMoveが他から呼ばれていても落ちないようダミー
+    function chaseMove(e) { /* 旧APIスタブ */ }
 
     function stopChaseLoops() {
         if (chaseTimer) { clearInterval(chaseTimer); chaseTimer = null; }
@@ -4044,17 +4332,16 @@
         stopChaseLoops();
         playFailDoom();
         if (chaseStandalone) {
-            // 単体プレイ：chase画面の中に結果表示（本編の画面が透けないように）
             chaseStandalone = false;
             showChaseResult("ちくわに捕まった……！\nまた挑戦しよう。");
         } else {
-            document.getElementById("chase-game").style.display = "none";
+            document.getElementById("chase-game").style.display = "none"; document.getElementById("chase-game").classList.remove("show");
             currentChikuwa = 8;
             showOverlay("ちくわに捕まった……！\n（お腹がリセットされ、最初から食い直しです）", () => { initStage(); });
         }
     }
 
-    // 15秒逃げ切った → ちくわにげの称号を獲得
+    // 60秒逃げ切った → 称号
     function succeedChase() {
         if (chaseResolved) return;
         chaseResolved = true;
@@ -4070,7 +4357,7 @@
                 ? "逃げ切った……！\n見事に生き延びた！🏃\n\n【ちくわにげ】の称号を得た！"
                 : "逃げ切った……！\n見事に生き延びた！🏃");
         } else {
-            document.getElementById("chase-game").style.display = "none";
+            document.getElementById("chase-game").style.display = "none"; document.getElementById("chase-game").classList.remove("show");
             if (isAudioStarted && audioCtx) { playHorrorLoopBGM(); }
             showOverlay(isNew
                 ? "逃げ切った……！\n【ちくわにげ】の称号を得た！🏃"
@@ -4090,7 +4377,7 @@
         if (e) e.stopPropagation();
         const r = document.getElementById("chase-result");
         if (r) r.classList.remove("show");
-        document.getElementById("chase-game").style.display = "none";
+        document.getElementById("chase-game").style.display = "none"; document.getElementById("chase-game").classList.remove("show");
         goToTitle();
     };
 
