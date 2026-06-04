@@ -1193,6 +1193,18 @@
         }
         #play-kintama-btn:hover { background: #3a2410; border-color: #ffd86b; }
         #play-kintama-btn .hassaku-sub { font-size: 10px; font-weight: normal; letter-spacing: 0; opacity: 0.8; color: #d8b86b; }
+        #play-kokki-btn {
+            margin-top: 10px;
+            background: #08263a; color: #7fd0ee;
+            border: 1px solid #2f7fa8; border-radius: 8px; padding: 9px 22px;
+            font-size: 15px; font-weight: bold; cursor: pointer; z-index: 1010; letter-spacing: 1px;
+            display: flex; flex-direction: column; align-items: center; gap: 2px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+            transition: background 0.15s, border-color 0.15s;
+            font-family: inherit;
+        }
+        #play-kokki-btn:hover { background: #0e3550; border-color: #7fd0ee; }
+        #play-kokki-btn .hassaku-sub { font-size: 10px; font-weight: normal; letter-spacing: 0; opacity: 0.8; color: #bfe6f5; }
 
         /* タイトルに常設する「ブラウザで開く手順」案内ボックス */
         #open-guide {
@@ -2819,6 +2831,149 @@
   #kintama-back-btn:active{ transform:translateX(-50%) translateY(2px); }
 
 </style>
+<style id="kokki-style">
+
+  #kokki-wrap{
+    --ink:#13314a; --sky1:#5ec6e8; --sky2:#a9e2f2; --paper:#fffdf3;
+    --accent:#ff5a7a; --accent2:#ffb43e; --good:#22b07a; --bad:#e8506b; --gold:#ffd23f;
+    position:fixed; inset:0; z-index:5200; overflow-y:auto; -webkit-overflow-scrolling:touch;
+    display:none; align-items:center; justify-content:center;
+    font-family:"M PLUS Rounded 1c", system-ui, sans-serif;
+    background:
+      radial-gradient(120% 80% at 50% -10%, #bff0ff 0%, #7fd0ee 38%, #4aa6cf 75%, #2f7fa8 100%);
+    color:var(--ink); user-select:none; -webkit-user-select:none; -webkit-tap-highlight-color:transparent;
+    touch-action:manipulation;
+  }
+  #kokki-wrap *{box-sizing:border-box;}
+  #kokki-stage{
+    position:relative; width:100%; max-width:440px; min-height:100%;
+    display:flex; flex-direction:column; align-items:center;
+    padding:18px 16px 28px;
+  }
+  /* ちょっとした雲 */
+  #kokki-stage::before, #kokki-stage::after{
+    content:""; position:fixed; border-radius:50%;
+    background:rgba(255,255,255,.55); filter:blur(2px); z-index:0; pointer-events:none;
+  }
+  #kokki-stage::before{ width:120px;height:50px; left:-20px; top:60px;
+    box-shadow:60px 14px 0 -6px rgba(255,255,255,.5); }
+  #kokki-stage::after{ width:90px;height:40px; right:-10px; top:150px; opacity:.7; }
+
+  .kk-screen{ width:100%; position:relative; z-index:2; display:none; flex-direction:column; align-items:center; }
+  .kk-screen.on{ display:flex; }
+
+  /* ===== タイトル ===== */
+  #kk-logo{
+    margin-top:30px; text-align:center; font-weight:900; line-height:1.0;
+    color:#fff; text-shadow:0 4px 0 #2f7fa8, 0 7px 10px rgba(0,0,0,.25);
+    letter-spacing:1px;
+  }
+  #kk-logo .big{ font-size:46px; }
+  #kk-logo .small{ font-size:20px; display:block; margin-top:6px; color:#fff7d6; text-shadow:0 3px 0 #c98a00; }
+  #kk-globe{ font-size:64px; margin:6px 0 2px; filter:drop-shadow(0 6px 6px rgba(0,0,0,.2)); }
+  #kk-tagline{ margin:8px 0 0; font-weight:800; font-size:15px; color:#0c3550;
+    background:rgba(255,255,255,.65); padding:6px 16px; border-radius:999px; }
+  #kk-best{ margin-top:14px; font-weight:900; font-size:16px; color:#a85b00;
+    background:rgba(255,255,255,.78); border-radius:999px; padding:7px 18px; box-shadow:0 3px 0 rgba(0,0,0,.08); }
+  #kk-pick{ margin-top:18px; font-weight:900; color:#fff; font-size:16px; text-shadow:0 2px 0 #2f7fa8; }
+  .kk-lv{ width:100%; max-width:340px; margin-top:12px; border:none; cursor:pointer; font-family:inherit;
+    color:#fff; font-weight:900; font-size:21px; border-radius:18px; padding:13px 16px;
+    display:flex; flex-direction:column; align-items:center; gap:3px; line-height:1.15;
+    transition:transform .06s, box-shadow .06s; }
+  .kk-lv:active{ transform:translateY(4px); }
+  .kk-lv span{ font-size:13px; font-weight:800; opacity:.95; }
+  .kk-lv em{ font-size:12px; font-style:normal; font-weight:900; background:rgba(255,255,255,.28);
+    padding:2px 12px; border-radius:999px; margin-top:2px; }
+  .kk-lv.lv0{ background:linear-gradient(#3fd07a,#1faa5e); box-shadow:0 5px 0 #15834a; }
+  .kk-lv.lv0:active{ box-shadow:0 1px 0 #15834a; }
+  .kk-lv.lv1{ background:linear-gradient(#49a8ef,#2b7fd0); box-shadow:0 5px 0 #1c5fa0; }
+  .kk-lv.lv1:active{ box-shadow:0 1px 0 #1c5fa0; }
+  .kk-lv.lv2{ background:linear-gradient(#ff6f8c,#ef3e63); box-shadow:0 5px 0 #c32747; }
+  .kk-lv.lv2:active{ box-shadow:0 1px 0 #c32747; }
+
+  .kk-btn{
+    border:none; cursor:pointer; font-family:inherit; font-weight:900; color:#fff;
+    background:linear-gradient(#ff6f8c,#ef3e63); border-radius:18px;
+    box-shadow:0 5px 0 #c32747; padding:16px 30px; font-size:22px; letter-spacing:2px;
+    transition:transform .06s, box-shadow .06s;
+  }
+  .kk-btn:active{ transform:translateY(4px); box-shadow:0 1px 0 #c32747; }
+  .kk-btn.sub{ background:linear-gradient(#9fb4c4,#7c93a6); box-shadow:0 5px 0 #5b6f80;
+    font-size:16px; padding:11px 24px; letter-spacing:1px; }
+  #kk-start{ margin-top:24px; }
+  #kk-bgmhint{ margin-top:16px; font-size:12px; font-weight:800; color:#0c3550;
+    background:rgba(255,255,255,.6); padding:6px 14px; border-radius:999px; }
+
+  /* ===== クイズ ===== */
+  #kk-head{ width:100%; display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; gap:8px; }
+  .kk-chip{ background:rgba(255,255,255,.9); border-radius:14px; padding:6px 12px; font-weight:900;
+    box-shadow:0 2px 0 rgba(0,0,0,.08); font-size:13px; color:#13314a; text-align:center; line-height:1.1; }
+  .kk-chip b{ font-size:18px; color:#ef3e63; }
+  #kk-dots{ display:flex; align-items:center; flex:1; padding:0 10px; }
+  .kk-bar{ width:100%; height:11px; background:rgba(255,255,255,.5); border-radius:999px; overflow:hidden; box-shadow:inset 0 1px 2px rgba(0,0,0,.12); }
+  .kk-bar-fill{ height:100%; width:0%; border-radius:999px; background:linear-gradient(90deg,#ffd23f,#ff8a00); transition:width .3s ease; }
+
+  #kk-combo{ height:22px; font-weight:900; color:#ff8a00; font-size:15px; margin-bottom:4px;
+    text-shadow:0 2px 0 #fff; transition:transform .1s; }
+
+  #kk-flagcard{
+    width:100%; background:var(--paper); border-radius:20px; padding:16px;
+    box-shadow:0 10px 24px rgba(0,40,70,.25); border:3px solid #fff;
+    display:flex; align-items:center; justify-content:center; margin-bottom:6px;
+  }
+  #kk-flag{ width:80%; max-width:300px; aspect-ratio:60/40; display:block;
+    border-radius:6px; overflow:hidden; box-shadow:0 3px 8px rgba(0,0,0,.25); background:#eee; }
+  #kk-flag svg{ width:100%; height:100%; display:block; }
+  #kk-q{ font-weight:900; font-size:17px; color:#0c3550; margin:8px 0 10px; }
+  #kk-info{ width:100%; display:flex; flex-direction:column; gap:6px; margin:8px 0 2px; }
+  #kk-info:empty{ display:none; }
+  .kk-info-row{ display:flex; align-items:center; gap:9px; background:rgba(255,255,255,.9);
+    border-radius:13px; padding:8px 12px; box-shadow:0 2px 0 rgba(0,0,0,.07); }
+  .kk-info-row .mk{ width:21px; height:21px; border-radius:50%; flex:0 0 auto; color:#fff;
+    display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:900; }
+  .kk-info-row .mk.ok{ background:#22b07a; } .kk-info-row .mk.ng{ background:#e8506b; }
+  .kk-info-row .lb{ font-size:12px; font-weight:800; color:#6a7a88; min-width:40px; }
+  .kk-info-row .vl{ font-size:18px; font-weight:900; color:#13314a; }
+  #kk-next{ margin-top:14px; }
+
+  #kk-choices{ width:100%; display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .kk-choice{
+    border:none; cursor:pointer; font-family:inherit; font-weight:800; font-size:17px;
+    color:#13314a; background:#fffdf3; border-radius:14px; padding:15px 8px;
+    box-shadow:0 4px 0 #d9cfae; transition:transform .06s, box-shadow .06s, background .15s;
+  }
+  .kk-choice:active{ transform:translateY(3px); box-shadow:0 1px 0 #d9cfae; }
+  .kk-choice.correct{ background:#7ddca8; box-shadow:0 4px 0 #2f9e6e; color:#0a3a26; }
+  .kk-choice.wrong{ background:#ffa1b4; box-shadow:0 4px 0 #c73a59; color:#5a0f1e; }
+  .kk-choice:disabled{ cursor:default; }
+  #kk-feedback{ height:26px; margin-top:12px; font-weight:900; font-size:18px; }
+  #kk-feedback.good{ color:#0a8a58; }
+  #kk-feedback.bad{ color:#c73a59; }
+  #kk-quit{ align-self:flex-start; margin-bottom:8px; z-index:5;
+    background:rgba(255,255,255,.85); border:none; cursor:pointer; font-family:inherit;
+    font-weight:900; font-size:12px; color:#0c3550; border-radius:12px; padding:6px 12px; box-shadow:0 2px 0 rgba(0,0,0,.1); }
+
+  /* ===== リザルト ===== */
+  #kk-result{ margin-top:8px; }
+  #kk-stamp{ font-size:64px; margin:6px 0; filter:drop-shadow(0 6px 6px rgba(0,0,0,.2)); }
+  #kk-res-title{ font-weight:900; font-size:26px; color:#fff; text-shadow:0 3px 0 #2f7fa8; }
+  #kk-res-card{ margin-top:14px; width:100%; background:var(--paper); border-radius:20px;
+    padding:20px; box-shadow:0 10px 24px rgba(0,40,70,.25); text-align:center; }
+  #kk-res-score{ font-size:20px; font-weight:900; color:#0c3550; }
+  #kk-res-score b{ font-size:40px; color:#ef3e63; }
+  #kk-res-correct{ margin-top:6px; font-weight:800; color:#13314a; }
+  #kk-res-comment{ margin-top:10px; font-weight:900; color:#a85b00; font-size:17px; }
+  #kk-res-best{ margin-top:8px; font-weight:800; color:#0c3550; font-size:14px; }
+  #kk-res-btns{ margin-top:18px; display:flex; flex-direction:column; gap:12px; align-items:center; }
+
+  /* ハブ表示＆戻るボタン */
+  #kokki-wrap.show{ display:flex; }
+  #kokki-back-btn{ position:absolute; top:8px; left:50%; transform:translateX(-50%);
+    z-index:6000; font-family:inherit; font-size:13px; font-weight:900; cursor:pointer;
+    padding:7px 14px; border-radius:18px; border:none; background:#08263a; color:#fff; box-shadow:0 3px 0 #041521; }
+  #kokki-back-btn:active{ transform:translateX(-50%) translateY(2px); }
+
+</style>
 </head>
 <body>
 
@@ -2839,7 +2994,7 @@
         <div id="title-content">
         <div id="tap-notice" onclick="beginTitleAudio(event)">▶ タップして音を出す</div>
         <div class="famicom-title">はちばんちくわ</div>
-        <div id="version-label">Ver 2.6.0</div>
+        <div id="version-label">Ver 2.7.0</div>
         <button id="start-btn" class="start-btn" onclick="startGame(event)" style="display:none;">🍩 ちくわを覗く... 🍩</button>
         <button id="title-badge-btn" class="badge-link-btn" onclick="openBadgeScreen('title')" style="display:none;">🏅 称号コレクション</button>
         <button id="reset-record-btn" onclick="resetDiscoveryRecord(event)" style="display:none;">🗑 異変の記録をリセット</button>
@@ -2858,6 +3013,7 @@
             <button id="play-ichamon-btn" onclick="playIchamon(event)">🔴 めざせイチャモンスター<span class="hassaku-sub">町にかくれたボールを探して、理不尽なイチャモンを集めろ</span></button>
             <button id="play-saiban-btn" onclick="playSaiban(event)">⚖️ ちくわ裁判<span class="hassaku-sub">証言台で「いつ・どこで・だれが・なにをした」を組み立てろ</span></button>
             <button id="play-kintama-btn" onclick="playKintama(event)">🥚 キンタマガチャンコ<span class="hassaku-sub">動くワクに金玉をブチ込め！ラッキー金玉＆スター無敵で戦闘力を稼げ</span></button>
+            <button id="play-kokki-btn" onclick="playKokki(event)">🌍 国旗あてクイズ<span class="hassaku-sub">国旗から国名を当てよう！中級は首都、上級は名物も。20カ国でチャレンジ</span></button>
         </div>
         <div id="open-guide">
             <div class="og-title">⚠️ 音が出ない / タップできない時は</div>
@@ -11609,6 +11765,458 @@ function playKintama(e){
 function kintamaToTitle(e){
     if (e) e.stopPropagation();
     if (typeof window.kintamaShutdown === "function") window.kintamaShutdown();
+    goToTitle();
+}
+</script>
+
+
+<!-- ===== 🌍 国旗あてクイズ（組み込み）===== -->
+<div id="kokki-wrap">
+  <button id="kokki-back-btn" onclick="kokkiToTitle(event)">↩ もどる</button>
+  <div id="kokki-stage">
+
+    <!-- タイトル -->
+    <div class="kk-screen on" id="kokki-title">
+      <div id="kk-globe">🌍</div>
+      <div id="kk-logo"><span class="big">国旗あて</span><span class="small">クイズ</span></div>
+      <div id="kk-tagline">この国旗、どこの国？</div>
+      <div id="kk-pick">レベルをえらんでね</div>
+      <button class="kk-lv lv0" data-lv="0">🟢 しょきゅう<span>国旗から 国名をあてる</span><em id="kk-best0">⭐ 0</em></button>
+      <button class="kk-lv lv1" data-lv="1">🔵 ちゅうきゅう<span>国名 ＋ 首都もあてる</span><em id="kk-best1">⭐ 0</em></button>
+      <button class="kk-lv lv2" data-lv="2">🔴 じょうきゅう<span>国名 ＋ 首都 ＋ 名物</span><em id="kk-best2">⭐ 0</em></button>
+      <div id="kk-bgmhint">📣 画面タッチでBGMスタート♪</div>
+    </div>
+
+    <!-- クイズ -->
+    <div class="kk-screen" id="kokki-quiz">
+      <button id="kk-quit">↩ レベルへ</button>
+      <div id="kk-head">
+        <div class="kk-chip">スコア<br><b id="kk-score">0</b></div>
+        <div id="kk-dots"></div>
+        <div class="kk-chip">のこり<br><b id="kk-remain">10</b></div>
+      </div>
+      <div id="kk-combo"></div>
+      <div id="kk-flagcard"><div id="kk-flag"></div></div>
+      <div id="kk-info"></div>
+      <div id="kk-q">この国旗はどこの国？</div>
+      <div id="kk-choices"></div>
+      <div id="kk-feedback"></div>
+      <button class="kk-btn" id="kk-next" style="display:none;">つぎへ ▶</button>
+    </div>
+
+    <!-- リザルト -->
+    <div class="kk-screen" id="kokki-result">
+      <div id="kk-stamp">🏆</div>
+      <div id="kk-res-title">けっか</div>
+      <div id="kk-res-card">
+        <div id="kk-res-score">スコア <b id="kk-final">0</b></div>
+        <div id="kk-res-correct">正解 0 / 10</div>
+        <div id="kk-res-comment"></div>
+        <div id="kk-res-best"></div>
+      </div>
+      <div id="kk-res-btns">
+        <button class="kk-btn" id="kk-retry">もう一回</button>
+        <button class="kk-btn sub" id="kk-totitle">タイトルへ</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script>
+
+(function(){
+  "use strict";
+  var $=function(id){return document.getElementById(id);};
+
+  // ===================== 国旗データ（全てSVG自前描画）=====================
+  function rect(x,y,w,h,c){ return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="'+c+'"/>'; }
+  function vstr(cs){ var n=cs.length,w=60/n,s=''; for(var i=0;i<n;i++) s+=rect((i*w).toFixed(2),0,(w+0.4).toFixed(2),40,cs[i]); return s; }
+  function hstr(cs){ var n=cs.length,h=40/n,s=''; for(var i=0;i<n;i++) s+=rect(0,(i*h).toFixed(2),60,(h+0.4).toFixed(2),cs[i]); return s; }
+  function nordic(bg,cr){ var vx=21,w=6; return rect(0,0,60,40,bg)+rect(vx-w/2,0,w,40,cr)+rect(0,20-w/2,60,w,cr); }
+  function starPts(cx,cy,R,r,n,rot){ var p=[],i,ang,rad; rot=(rot||0)*Math.PI/180;
+    for(i=0;i<n*2;i++){ ang=Math.PI/n*i - Math.PI/2 + rot; rad=(i%2===0)?R:r;
+      p.push((cx+rad*Math.cos(ang)).toFixed(2)+','+(cy+rad*Math.sin(ang)).toFixed(2)); } return p.join(' '); }
+  function star(cx,cy,R,n,c,rot){ return '<polygon points="'+starPts(cx,cy,R,R*0.4,n,rot)+'" fill="'+c+'"/>'; }
+  function svg(inner){ return '<svg viewBox="0 0 60 40" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">'+inner+'</svg>'; }
+
+  function unionJackInner(){
+    var s = rect(0,0,60,40,'#012169');
+    s += '<path d="M0,0 L60,40 M60,0 L0,40" stroke="#fff" stroke-width="8"/>';
+    s += '<path d="M0,0 L60,40" stroke="#C8102E" stroke-width="3" transform="translate(2,0)"/>';
+    s += '<path d="M60,0 L0,40" stroke="#C8102E" stroke-width="3" transform="translate(-2,0)"/>';
+    s += rect(25,0,10,40,'#fff') + rect(0,15,60,10,'#fff');
+    s += rect(27,0,6,40,'#C8102E') + rect(0,17,60,6,'#C8102E');
+    return s;
+  }
+
+  function flagSVG(code){
+    switch(code){
+      case 'JP': return svg(rect(0,0,60,40,'#fff')+'<circle cx="30" cy="20" r="11" fill="#bc002d"/>');
+      case 'FR': return svg(vstr(['#0055A4','#fff','#EF4135']));
+      case 'IT': return svg(vstr(['#009246','#fff','#CE2B37']));
+      case 'BE': return svg(vstr(['#101010','#FAE042','#ED2939']));
+      case 'IE': return svg(vstr(['#169B62','#fff','#FF883E']));
+      case 'DE': return svg(hstr(['#101010','#DD0000','#FFCE00']));
+      case 'NL': return svg(hstr(['#AE1C28','#fff','#21468B']));
+      case 'RU': return svg(hstr(['#fff','#0039A6','#D52B1E']));
+      case 'AT': return svg(hstr(['#ED2939','#fff','#ED2939']));
+      case 'ID': return svg(hstr(['#CE1126','#fff']));
+      case 'PL': return svg(hstr(['#fff','#DC143C']));
+      case 'UA': return svg(hstr(['#0057B7','#FFDD00']));
+      case 'ES': return svg(rect(0,0,60,10,'#AA151B')+rect(0,10,60,20,'#F1BF00')+rect(0,30,60,10,'#AA151B'));
+      case 'TH': return svg(rect(0,0,60,6.67,'#A51931')+rect(0,6.67,60,6.67,'#fff')+rect(0,13.33,60,13.34,'#2D2A4A')+rect(0,26.67,60,6.67,'#fff')+rect(0,33.33,60,6.67,'#A51931'));
+      case 'SE': return svg(nordic('#006AA7','#FECC00'));
+      case 'DK': return svg(nordic('#C8102E','#fff'));
+      case 'FI': return svg(nordic('#fff','#003580'));
+      case 'CH': return svg(rect(0,0,60,40,'#D52B1E')+rect(26,11,8,18,'#fff')+rect(21,16,18,8,'#fff'));
+      case 'TR': return svg(rect(0,0,60,40,'#E30A17')+'<circle cx="23" cy="20" r="9" fill="#fff"/><circle cx="26" cy="20" r="7" fill="#E30A17"/>'+star(35,20,4,5,'#fff',8));
+      case 'CN': return svg(rect(0,0,60,40,'#DE2910')+star(10,9,5.5,5,'#FFDE00',0)+star(20,4,2,5,'#FFDE00',20)+star(24,8,2,5,'#FFDE00',40)+star(24,14,2,5,'#FFDE00',10)+star(20,18,2,5,'#FFDE00',30));
+      case 'GR': {
+        var s='',i,h=40/9; for(i=0;i<9;i++) s+=rect(0,(i*h).toFixed(2),60,(h+0.4).toFixed(2),(i%2===0)?'#0D5EAF':'#fff');
+        s+=rect(0,0,h*5,h*5,'#0D5EAF'); var c=h*5/2; s+=rect(c-2,2,4,h*5-4,'#fff')+rect(2,c-2,h*5-4,4,'#fff');
+        return svg(s);
+      }
+      case 'US': {
+        var s='',i; for(i=0;i<13;i++) s+=rect(0,(i*40/13).toFixed(2),60,(40/13+0.4).toFixed(2),(i%2===0)?'#B22234':'#fff');
+        s+=rect(0,0,24,40/13*7,'#3C3B6E');
+        var rows=5,cols=6,x,y; for(var r=0;r<rows;r++){ for(var cc=0;cc<cols;cc++){ x=2.6+cc*3.7; y=2.4+r*4.0; s+='<circle cx="'+x.toFixed(2)+'" cy="'+y.toFixed(2)+'" r="0.85" fill="#fff"/>'; } }
+        return svg(s);
+      }
+      case 'GB': return svg(unionJackInner());
+      case 'KR': {
+        var s=rect(0,0,60,40,'#fff');
+        s+='<circle cx="30" cy="20" r="8" fill="#0047A0"/>';
+        s+='<path d="M30,12 A8,8 0 0,1 30,28 A4,4 0 0,1 30,20 A4,4 0 0,0 30,12 Z" fill="#CD2E3A"/>';
+        // 四隅の卦（簡略）
+        function tg(cx,cy,ang){ var o='',k,bw=7,bh=1.3,gap=0.9; var g='<g transform="translate('+cx+','+cy+') rotate('+ang+')">';
+          for(k=-1;k<=1;k++){ o+=rect(-bw/2,(k*(bh+gap))-bh/2,bw,bh,'#101010'); } return g+o+'</g>'; }
+        s+=tg(11,9,52)+tg(49,9,-52)+tg(11,31,128)+tg(49,31,-128);
+        return svg(s);
+      }
+      case 'CA': {
+        var s=rect(0,0,15,40,'#D52B1E')+rect(15,0,30,40,'#fff')+rect(45,0,15,40,'#D52B1E');
+        s+='<path d="M30,8 L31.5,13 L35,11.5 L33,15 L38.5,15.5 L35.5,18 L40,20.5 L34,21 L35,25 L31,23.5 L31.2,28 L31,32 L29,32 L28.8,28 L29,23.5 L25,25 L26,21 L20,20.5 L24.5,18 L21.5,15.5 L27,15 L25,11.5 L28.5,13 Z" fill="#D52B1E"/>';
+        return svg(s);
+      }
+      case 'BR': {
+        var s=rect(0,0,60,40,'#009C3B');
+        s+='<polygon points="30,4 55,20 30,36 5,20" fill="#FFDF00"/>';
+        s+='<circle cx="30" cy="20" r="9.5" fill="#002776"/>';
+        s+='<path d="M22,15.5 A13,13 0 0,0 37.8,25.2" stroke="#fff" stroke-width="2" fill="none"/>';
+        s+=star(25,16,0.9,5,'#fff',0)+star(34,15.5,0.8,5,'#fff',0)+star(35,22,0.9,5,'#fff',0)
+          +star(27.5,24.5,0.8,5,'#fff',0)+star(31,12.8,0.7,5,'#fff',0)+star(23,21,0.7,5,'#fff',0);
+        return svg(s);
+      }
+      case 'IN': {
+        var s=hstr(['#FF9933','#fff','#138808']);
+        s+='<circle cx="30" cy="20" r="5" fill="none" stroke="#000080" stroke-width="0.7"/><circle cx="30" cy="20" r="0.9" fill="#000080"/>';
+        for(var i=0;i<24;i++){ var a=i*15*Math.PI/180; s+='<line x1="30" y1="20" x2="'+(30+5*Math.cos(a)).toFixed(2)+'" y2="'+(20+5*Math.sin(a)).toFixed(2)+'" stroke="#000080" stroke-width="0.35"/>'; }
+        return svg(s);
+      }
+      case 'AU': {
+        var s=rect(0,0,60,40,'#00008B');
+        s+='<g transform="scale(0.5)">'+unionJackInner()+'</g>';
+        s+=star(15,31,4,7,'#fff',0);
+        s+=star(47,11,2.2,7,'#fff',0)+star(53,20,2.2,7,'#fff',0)+star(46,29,2.2,7,'#fff',0)+star(40,21,1.6,7,'#fff',0)+star(50,25,1.2,5,'#fff',0);
+        return svg(s);
+      }
+      case 'AR': {
+        var s=hstr(['#74ACDF','#fff','#74ACDF']);
+        s+='<circle cx="30" cy="20" r="3.4" fill="#F6B40E"/>';
+        for(var i=0;i<16;i++){ var a=i*22.5*Math.PI/180; s+='<line x1="'+(30+3.4*Math.cos(a)).toFixed(2)+'" y1="'+(20+3.4*Math.sin(a)).toFixed(2)+'" x2="'+(30+5.2*Math.cos(a)).toFixed(2)+'" y2="'+(20+5.2*Math.sin(a)).toFixed(2)+'" stroke="#F6B40E" stroke-width="0.6"/>'; }
+        return svg(s);
+      }
+      case 'NO': { var s=rect(0,0,60,40,'#EF2B2D'); s+=rect(17,0,8,40,'#fff')+rect(0,16,60,8,'#fff'); s+=rect(19,0,4,40,'#002868')+rect(0,18,60,4,'#002868'); return svg(s); }
+      case 'IS': { var s=rect(0,0,60,40,'#02529C'); s+=rect(17,0,8,40,'#fff')+rect(0,16,60,8,'#fff'); s+=rect(19,0,4,40,'#DC1E35')+rect(0,18,60,4,'#DC1E35'); return svg(s); }
+      case 'MX': {
+        var s=vstr(['#006847','#fff','#CE1126']);
+        s+='<g transform="translate(30,20)"><ellipse cx="0" cy="3" rx="5" ry="1.5" fill="#1f7a3a"/>'
+          +'<ellipse cx="0" cy="-0.5" rx="3.3" ry="2.2" fill="#7a5230"/>'
+          +'<path d="M-4.5,-1.5 L0,-3.5 L4.5,-1.5 L1.5,0.5 L-1.5,0.5 Z" fill="#5e3d1e"/></g>';
+        return svg(s);
+      }
+      case 'VN': return svg(rect(0,0,60,40,'#DA251D')+star(30,20,9,5,'#FFFF00',0));
+      case 'PH': {
+        var s=rect(0,0,60,20,'#0038A8')+rect(0,20,60,20,'#CE1126')+'<polygon points="0,0 0,40 26,20" fill="#fff"/>';
+        s+='<circle cx="9" cy="20" r="2.4" fill="#FCD116"/>';
+        for(var i=0;i<8;i++){ var a=i*45*Math.PI/180; s+='<line x1="'+(9+2.6*Math.cos(a)).toFixed(2)+'" y1="'+(20+2.6*Math.sin(a)).toFixed(2)+'" x2="'+(9+4.6*Math.cos(a)).toFixed(2)+'" y2="'+(20+4.6*Math.sin(a)).toFixed(2)+'" stroke="#FCD116" stroke-width="0.7"/>'; }
+        s+=star(3.5,4.5,1.4,5,'#FCD116',0)+star(3.5,35.5,1.4,5,'#FCD116',0)+star(20,20,1.4,5,'#FCD116',0);
+        return svg(s);
+      }
+      case 'MY': {
+        var s='',i; for(i=0;i<14;i++) s+=rect(0,(i*40/14).toFixed(2),60,(40/14+0.4).toFixed(2),(i%2===0)?'#CC0001':'#fff');
+        s+=rect(0,0,30,20,'#010066');
+        s+='<circle cx="11" cy="10" r="5" fill="#FFCC00"/><circle cx="13.5" cy="9" r="4.2" fill="#010066"/>';
+        s+=star(20,11,4,14,'#FFCC00',0);
+        return svg(s);
+      }
+      case 'NZ': {
+        var s=rect(0,0,60,40,'#00247D')+'<g transform="scale(0.5)">'+unionJackInner()+'</g>';
+        var rs=function(x,y,r){ return star(x,y,r+0.7,5,'#fff',0)+star(x,y,r,5,'#CC142B',0); };
+        s+=rs(47,9,2.0)+rs(52,20,2.3)+rs(46,31,2.0)+rs(41,21,1.6);
+        return svg(s);
+      }
+      case 'CL': return svg(rect(0,0,60,20,'#fff')+rect(0,20,60,20,'#D52B1E')+rect(0,0,20,20,'#0039A6')+star(10,10,6,5,'#fff',0));
+      case 'JM': {
+        var s='<polygon points="0,0 60,0 30,20" fill="#009B3A"/><polygon points="0,40 60,40 30,20" fill="#009B3A"/>'
+             +'<polygon points="0,0 0,40 30,20" fill="#101010"/><polygon points="60,0 60,40 30,20" fill="#101010"/>'
+             +'<path d="M0,0 L60,40 M60,0 L0,40" stroke="#FED100" stroke-width="6"/>';
+        return svg(s);
+      }
+      case 'EG': {
+        var s=hstr(['#CE1126','#fff','#101010']);
+        s+='<g transform="translate(30,20)"><path d="M-5,0 L0,-2.5 L5,0 L0,2.5 Z" fill="#C09300"/><ellipse rx="2.2" ry="1.4" fill="#C09300"/></g>';
+        return svg(s);
+      }
+      case 'PE': return svg(vstr(['#D91023','#fff','#D91023']));
+      default: return svg(rect(0,0,60,40,'#ccc'));
+    }
+  }
+
+  var FLAGS = [
+    {ja:'日本', code:'JP', cap:'東京', mei:'すし'},
+    {ja:'アメリカ', code:'US', cap:'ワシントンD.C.', mei:'ハンバーガー'},
+    {ja:'イギリス', code:'GB', cap:'ロンドン', mei:'紅茶'},
+    {ja:'中国', code:'CN', cap:'ペキン', mei:'パンダ'},
+    {ja:'韓国', code:'KR', cap:'ソウル', mei:'キムチ'},
+    {ja:'フランス', code:'FR', cap:'パリ', mei:'ワイン'},
+    {ja:'ドイツ', code:'DE', cap:'ベルリン', mei:'ソーセージ'},
+    {ja:'イタリア', code:'IT', cap:'ローマ', mei:'ピザ'},
+    {ja:'カナダ', code:'CA', cap:'オタワ', mei:'メープルシロップ'},
+    {ja:'ブラジル', code:'BR', cap:'ブラジリア', mei:'コーヒー'},
+    {ja:'ロシア', code:'RU', cap:'モスクワ', mei:'マトリョーシカ'},
+    {ja:'オランダ', code:'NL', cap:'アムステルダム', mei:'チューリップ'},
+    {ja:'スイス', code:'CH', cap:'ベルン', mei:'時計'},
+    {ja:'スウェーデン', code:'SE', cap:'ストックホルム', mei:'ミートボール'},
+    {ja:'トルコ', code:'TR', cap:'アンカラ', mei:'ケバブ'},
+    {ja:'インド', code:'IN', cap:'ニューデリー', mei:'カレー'},
+    {ja:'スペイン', code:'ES', cap:'マドリード', mei:'パエリア'},
+    {ja:'インドネシア', code:'ID', cap:'ジャカルタ', mei:'オランウータン'},
+    {ja:'ベルギー', code:'BE', cap:'ブリュッセル', mei:'ワッフル'},
+    {ja:'アイルランド', code:'IE', cap:'ダブリン', mei:'じゃがいも'},
+    {ja:'ギリシャ', code:'GR', cap:'アテネ', mei:'オリーブ'},
+    {ja:'オーストラリア', code:'AU', cap:'キャンベラ', mei:'コアラ'},
+    {ja:'タイ', code:'TH', cap:'バンコク', mei:'トムヤムクン'},
+    {ja:'アルゼンチン', code:'AR', cap:'ブエノスアイレス', mei:'タンゴ'},
+    {ja:'フィンランド', code:'FI', cap:'ヘルシンキ', mei:'ムーミン'},
+    {ja:'デンマーク', code:'DK', cap:'コペンハーゲン', mei:'レゴ'},
+    {ja:'オーストリア', code:'AT', cap:'ウィーン', mei:'モーツァルト'},
+    {ja:'ポーランド', code:'PL', cap:'ワルシャワ', mei:'ショパン'},
+    {ja:'ウクライナ', code:'UA', cap:'キーウ', mei:'ひまわり'},
+    {ja:'ノルウェー', code:'NO', cap:'オスロ', mei:'フィヨルド'},
+    {ja:'アイスランド', code:'IS', cap:'レイキャビク', mei:'オーロラ'},
+    {ja:'メキシコ', code:'MX', cap:'メキシコシティ', mei:'タコス'},
+    {ja:'ベトナム', code:'VN', cap:'ハノイ', mei:'フォー'},
+    {ja:'フィリピン', code:'PH', cap:'マニラ', mei:'マンゴー'},
+    {ja:'マレーシア', code:'MY', cap:'クアラルンプール', mei:'ドリアン'},
+    {ja:'ニュージーランド', code:'NZ', cap:'ウェリントン', mei:'キウイ'},
+    {ja:'チリ', code:'CL', cap:'サンティアゴ', mei:'モアイ'},
+    {ja:'ジャマイカ', code:'JM', cap:'キングストン', mei:'レゲエ'},
+    {ja:'エジプト', code:'EG', cap:'カイロ', mei:'ピラミッド'},
+    {ja:'ペルー', code:'PE', cap:'リマ', mei:'マチュピチュ'}
+  ];
+  // レベル設定：出題する国の数 と 各国で聞く内容
+  var LEVELS = [
+    {name:'しょきゅう', flags:10, subs:['country']},
+    {name:'ちゅうきゅう', flags:7,  subs:['country','capital']},
+    {name:'じょうきゅう', flags:5,  subs:['country','capital','meibutsu']}
+  ];
+
+  // ===================== 音 =====================
+  var actx=null, bgmTimer=null, muted=false;
+  function ensureAudio(){ if(!actx){ try{ actx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} }
+    if(actx && actx.state==='suspended') actx.resume(); }
+  function tone(freq,dur,type,vol,slideTo){ if(!actx||muted) return;
+    var o=actx.createOscillator(), g=actx.createGain(), t=actx.currentTime;
+    o.type=type||'sine'; o.frequency.setValueAtTime(freq,t);
+    if(slideTo) o.frequency.exponentialRampToValueAtTime(slideTo,t+dur);
+    g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||0.2,t+0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t+dur+0.02); }
+  function sfxTap(){ tone(420,0.05,'square',0.12); }
+  function sfxCorrect(){ tone(660,0.1,'triangle',0.22); setTimeout(function(){tone(990,0.16,'triangle',0.22);},90); }
+  function sfxWrong(){ tone(200,0.22,'sawtooth',0.18,90); }
+  function sfxResult(){ [523,659,784,1047].forEach(function(f,i){ setTimeout(function(){tone(f,0.2,'triangle',0.2);}, i*130); }); }
+
+  var BGM_SEQ=[ [262,330,392], [294,349,440], [330,392,494], [294,349,440] ]; // 簡単な4和音ループ
+  var bgmStep=0;
+  function bgmTick(){ if(!actx||muted) return; var ch=BGM_SEQ[bgmStep%BGM_SEQ.length];
+    ch.forEach(function(f){ tone(f,0.9,'sine',0.045); }); tone(ch[0]/2,1.0,'triangle',0.05); bgmStep++; }
+  function startBGM(){ if(bgmTimer||muted) return; ensureAudio(); bgmTick(); bgmTimer=setInterval(bgmTick,1000); }
+  function stopBGM(){ if(bgmTimer){ clearInterval(bgmTimer); bgmTimer=null; } }
+
+  // ===================== セーブ（レベル別）=====================
+  function getBest(lv){ try{ return parseInt(localStorage.getItem('kokki_best_'+lv)||'0',10)||0; }catch(e){ return 0; } }
+  function setBest(lv,v){ try{ localStorage.setItem('kokki_best_'+lv, String(v)); }catch(e){} }
+  function refreshBest(){ for(var lv=0;lv<3;lv++){ var el=$('kk-best'+lv); if(el) el.textContent='⭐ '+getBest(lv).toLocaleString(); } }
+
+  // ===================== ゲーム =====================
+  var LEVEL=0, rounds=[], ri=0, si=0, qi=0, totalQ=0, score=0, combo=0, correctCount=0, locked=false, timer=null;
+  var roundAns=[];  // 今の国で答えた内容 {kind, ok, val}
+  var LABEL={country:'国名', capital:'首都', meibutsu:'名物'};
+
+  function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+  function uniq(a){ var o=[],s={}; a.forEach(function(v){ if(!s[v]){s[v]=1;o.push(v);} }); return o; }
+
+  function show(id){ ['kokki-title','kokki-quiz','kokki-result'].forEach(function(s){ $(s).classList.toggle('on', s===id); }); }
+
+  function showTitle(){ if(timer){clearTimeout(timer);timer=null;} stopBGM(); show('kokki-title'); refreshBest();
+    var h=$('kk-bgmhint'); if(h) h.style.display='block'; }
+
+  function fieldOf(kind){ return kind==='country'?'ja':(kind==='capital'?'cap':'mei'); }
+
+  var COUNTRIES_PER_GAME=20;
+  function startGame(level){
+    LEVEL=level; ensureAudio(); startBGM();
+    var subs=LEVELS[level].subs;
+    var chosen=shuffle(FLAGS).slice(0, COUNTRIES_PER_GAME);
+    rounds=chosen.map(function(f){ return {flag:f, subs:subs}; });
+    totalQ=chosen.length*subs.length;
+    ri=0; si=0; qi=0; score=0; combo=0; correctCount=0; locked=false; roundAns=[];
+    $('kk-score').textContent='0';
+    buildDots(totalQ);
+    show('kokki-quiz');
+    renderRound();
+  }
+
+  function buildDots(n){ $('kk-dots').innerHTML='<div class="kk-bar"><div class="kk-bar-fill" id="kk-bar-fill"></div></div>'; updateDots(); }
+  function updateDots(){ var f=$('kk-bar-fill'); if(f) f.style.width=(totalQ?Math.round(qi/totalQ*100):0)+'%'; }
+  function markDot(i,ok){ /* バーはupdateDotsで進捗表示 */ }
+
+  function infoHTML(){
+    return roundAns.map(function(a){
+      return '<div class="kk-info-row"><span class="mk '+(a.ok?'ok':'ng')+'">'+(a.ok?'◯':'✕')+'</span>'
+           + '<span class="lb">'+LABEL[a.kind]+'</span><span class="vl">'+a.val+'</span></div>';
+    }).join('');
+  }
+
+  function renderRound(){
+    locked=false;
+    var r=rounds[ri], f=r.flag, multi=r.subs.length>1;
+    $('kk-flag').innerHTML=flagSVG(f.code);
+    $('kk-remain').textContent=(totalQ-qi);
+    $('kk-combo').textContent = combo>=2 ? ('🔥 '+combo+'れんぞく！') : '';
+    $('kk-info').innerHTML = multi ? infoHTML() : '';
+    if(si < r.subs.length){
+      // 出題（これまでの正解は kk-info に残ったまま）
+      $('kk-next').style.display='none';
+      $('kk-feedback').textContent=''; $('kk-feedback').className='';
+      var kind=r.subs[si], fld=fieldOf(kind), correctVal=f[fld];
+      $('kk-q').textContent = kind==='country' ? 'この国旗はどこの国？'
+                          : kind==='capital' ? ('「'+f.ja+'」の首都は？')
+                          : ('「'+f.ja+'」の名物は？');
+      var pool=uniq(FLAGS.map(function(x){return x[fld];}).filter(function(v){return v!==correctVal;}));
+      var opts=shuffle([correctVal].concat(shuffle(pool).slice(0,3)));
+      var box=$('kk-choices'); box.innerHTML='';
+      opts.forEach(function(val){
+        var b=document.createElement('button');
+        b.className='kk-choice'; b.textContent=val; b.dataset.val=val;
+        b.onclick=function(){ answer(kind, val, b, correctVal); };
+        box.appendChild(b);
+      });
+    } else {
+      // こたえ合わせ（国名・首都・名物をまとめて確認）
+      $('kk-choices').innerHTML='';
+      $('kk-feedback').textContent=''; $('kk-feedback').className='';
+      $('kk-q').textContent='こたえ合わせ ✅';
+      var nb=$('kk-next'); nb.style.display='';
+      nb.textContent=(ri>=rounds.length-1)?'けっかへ ▶':'つぎの国へ ▶';
+    }
+    updateDots();
+  }
+
+  function answer(kind, val, btn, correctVal){
+    if(locked) return; locked=true;
+    var ok=(val===correctVal);
+    var btns=$('kk-choices').querySelectorAll('.kk-choice');
+    btns.forEach(function(b){ b.disabled=true; if(b.dataset.val===correctVal) b.classList.add('correct'); });
+    if(ok){
+      sfxCorrect();
+      var gain=100 + combo*20; score+=gain; combo++; correctCount++;
+      $('kk-score').textContent=score.toLocaleString();
+      $('kk-feedback').textContent='せいかい！ +'+gain; $('kk-feedback').className='good';
+    }else{
+      sfxWrong(); btn.classList.add('wrong'); combo=0;
+      $('kk-feedback').textContent='ざんねん… 正解は「'+correctVal+'」'; $('kk-feedback').className='bad';
+    }
+    markDot(qi, ok); qi++;
+    roundAns.push({kind:kind, ok:ok, val:correctVal});
+    var multi=rounds[ri].subs.length>1;
+    timer=setTimeout(function(){
+      si++;
+      if(si < rounds[ri].subs.length){ renderRound(); }   // 次の小問へ（正解は残る）
+      else if(multi){ renderRound(); }                    // こたえ合わせ（つぎへ）
+      else { nextRound(); }                               // 初級：自動で次へ
+    }, ok?850:1500);
+  }
+
+  function nextRound(){
+    ri++; si=0; roundAns=[];
+    if(ri>=rounds.length){ showResult(); } else { renderRound(); }
+  }
+
+  function showResult(){
+    stopBGM(); show('kokki-result'); setTimeout(sfxResult,150);
+    var total=totalQ, pct=correctCount/total;
+    $('kk-final').textContent=score.toLocaleString();
+    $('kk-res-correct').textContent='正解 '+correctCount+' / '+total;
+    $('kk-res-title').textContent=LEVELS[LEVEL].name+' けっか';
+    var msg, stamp;
+    if(pct>=1){ msg=(LEVEL===2?'国旗キング！世界制覇👑':'ぜんもん正解！すごい！'); stamp='👑'; }
+    else if(pct>=0.8){ msg='ものしりハカセ級！'; stamp='🎓'; }
+    else if(pct>=0.5){ msg='なかなかやるね！'; stamp='🌍'; }
+    else if(pct>=0.2){ msg='これから おぼえていこう！'; stamp='🧭'; }
+    else { msg='いっしょに べんきょうだ！'; stamp='📚'; }
+    $('kk-res-comment').textContent=msg; $('kk-stamp').textContent=stamp;
+    var best=getBest(LEVEL);
+    if(score>best){ setBest(LEVEL,score); $('kk-res-best').textContent='🎉 新記録！（これまで '+best.toLocaleString()+'）'; }
+    else { $('kk-res-best').textContent='最高スコア ⭐ '+best.toLocaleString(); }
+    refreshBest();
+  }
+
+  // ===================== 公開＆初期化 =====================
+  window.kokkiLaunch=function(){ showTitle(); };
+  window.kokkiShutdown=function(){ stopBGM(); };
+
+  function bind(){
+    var lvs=document.querySelectorAll('.kk-lv');
+    lvs.forEach(function(btn){ btn.addEventListener('click', function(){ ensureAudio(); sfxTap(); startGame(parseInt(btn.dataset.lv,10)); }); });
+    $('kk-retry').addEventListener('click', function(){ sfxTap(); startGame(LEVEL); });
+    $('kk-next').addEventListener('click', function(){ sfxTap(); nextRound(); });
+    $('kk-totitle').addEventListener('click', function(){ sfxTap(); showTitle(); });
+    $('kk-quit').addEventListener('click', function(){ sfxTap(); stopBGM(); showTitle(); });
+    $('kokki-title').addEventListener('pointerdown', function(){ ensureAudio(); startBGM();
+      var h=$('kk-bgmhint'); if(h) h.style.display='none'; });
+    refreshBest();
+    showTitle();
+  }
+  if(document.readyState!=='loading') bind();
+  else document.addEventListener('DOMContentLoaded', bind);
+})();
+
+</script>
+
+<script>
+/* ===== 🌍 国旗あてクイズ（ハブ起動グルー）===== */
+function playKokki(e){
+    if (e) e.stopPropagation();
+    if (!audioCtx) { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(err){} }
+    if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+    isAudioStarted = true;
+    if (titleInterval) { clearInterval(titleInterval); titleInterval = null; }
+    if (bpmInterval) { clearInterval(bpmInterval); bpmInterval = null; }
+    if (typeof stopBGM === "function") stopBGM();
+    currentBgmMode = null;
+    document.getElementById("title-screen").style.display = "none";
+    gameState = "KOKKI";
+    var w = document.getElementById("kokki-wrap");
+    w.classList.add("show"); w.scrollTop = 0;
+    firstTitleDone = true;
+    if (typeof window.kokkiLaunch === "function") window.kokkiLaunch();
+}
+function kokkiToTitle(e){
+    if (e) e.stopPropagation();
+    if (typeof window.kokkiShutdown === "function") window.kokkiShutdown();
     goToTitle();
 }
 </script>
