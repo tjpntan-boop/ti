@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>はちばんちくわ -ちくわ捕食編-</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800;900&display=swap" rel="stylesheet">
     <style>
         body {
             margin: 0; padding: 0; overflow: hidden;
@@ -1178,6 +1181,18 @@
         }
         #play-saiban-btn:hover { background: #3a2410; border-color: #ffd86b; }
         #play-saiban-btn .hassaku-sub { font-size: 10px; font-weight: normal; letter-spacing: 0; opacity: 0.8; color: #b89860; }
+        #play-kintama-btn {
+            margin-top: 10px;
+            background: #2a1808; color: #ffd86b;
+            border: 1px solid #8a6520; border-radius: 8px; padding: 9px 22px;
+            font-size: 15px; font-weight: bold; cursor: pointer; z-index: 1010; letter-spacing: 1px;
+            display: flex; flex-direction: column; align-items: center; gap: 2px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+            transition: background 0.15s, border-color 0.15s;
+            font-family: inherit;
+        }
+        #play-kintama-btn:hover { background: #3a2410; border-color: #ffd86b; }
+        #play-kintama-btn .hassaku-sub { font-size: 10px; font-weight: normal; letter-spacing: 0; opacity: 0.8; color: #d8b86b; }
 
         /* タイトルに常設する「ブラウザで開く手順」案内ボックス */
         #open-guide {
@@ -2695,6 +2710,115 @@
     </style>
 
 <script src="https://unpkg.com/@zxing/library@0.21.3/umd/index.min.js"></script>
+<style id="kintama-style">
+
+  /* ===== すべて #kintama-wrap 配下にスコープ（ハブ組み込み用） ===== */
+  #kintama-wrap{
+    --ink:#2a1a12; --gold:#ffd23f; --pink:#ff7eb3; --accent:#ff4d6d;
+    position:fixed; inset:0; overflow:hidden; z-index:5200;
+    font-family:"M PLUS Rounded 1c", system-ui, sans-serif;
+    -webkit-user-select:none; user-select:none; -webkit-touch-callout:none;
+    touch-action:none; color:var(--ink);
+    display:none; align-items:center; justify-content:center;  /* ハブが .show で表示 */
+    background:#10131c;
+  }
+  #kintama-wrap *{box-sizing:border-box;}
+  #kintama-stage{
+    position:relative;
+    aspect-ratio:400/640;
+    width:min(100%, calc(100vh * 400 / 640));
+    width:min(100%, calc(100dvh * 400 / 640));
+    height:auto; max-height:100%;
+    background:linear-gradient(#7ec8ff,#cdeeff);
+    box-shadow:0 0 60px rgba(0,0,0,.5);
+  }
+  #kintama-canvas{position:absolute; inset:0; width:100%; height:100%; display:block;}
+
+  /* HUD */
+  #kintama-hud{
+    position:absolute; top:0; left:0; right:0; padding:10px 12px;
+    display:flex; justify-content:space-between; align-items:flex-start;
+    pointer-events:none; font-weight:800; text-shadow:0 2px 0 rgba(255,255,255,.6);
+  }
+  #kintama-hud .chip{
+    background:rgba(255,255,255,.78); border:2px solid #fff; border-radius:14px;
+    padding:4px 10px; font-size:15px; line-height:1.3; box-shadow:0 3px 0 rgba(0,0,0,.12);
+  }
+  #kintama-hud .chip b{font-size:21px; color:var(--accent);}
+  #kintama-hud .chip.r{text-align:right;}
+
+  /* オーバーレイ共通 */
+  .k-overlay{
+    position:absolute; inset:0; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:16px; text-align:center;
+    padding:24px; z-index:5;
+  }
+  /* タイトルは黄色系（キンタマだけに） */
+  #kintama-title{background:radial-gradient(120% 90% at 50% 16%,#fff6c2,#ffe14d 55%,#ffc41f);}
+  #kintama-gameover{background:rgba(10,12,22,.82); color:#fff; display:none;}
+
+  .k-logo{
+    font-weight:900; line-height:.98; letter-spacing:.02em; margin:0;
+    font-size:clamp(34px,11vw,60px);
+    color:#fff;
+    text-shadow:
+      0 3px 0 var(--accent), 0 6px 0 #b5163b,
+      0 8px 14px rgba(0,0,0,.3);
+    transform:rotate(-3deg);
+    animation:k-pop 2.4s ease-in-out infinite;
+  }
+  .k-logo .em{color:#ff7a00; display:inline-block;}
+  @keyframes k-pop{0%,100%{transform:rotate(-3deg) scale(1);}50%{transform:rotate(-3deg) scale(1.05);}}
+
+  .k-sub{font-weight:800; font-size:15px; color:#7a4a12; max-width:280px;}
+  .k-rules{
+    background:rgba(255,255,255,.8); border-radius:16px; padding:12px 18px;
+    font-size:14px; font-weight:700; color:#6b4a14; line-height:1.6; max-width:330px;
+    box-shadow:0 4px 0 rgba(0,0,0,.1);
+  }
+  .k-rules p{margin:8px 0;}
+  .k-rules .small{font-size:12.5px; opacity:.92;}
+  .k-rules b{color:#c2410c;}
+  .k-btn{
+    pointer-events:auto; cursor:pointer; border:none;
+    font-family:inherit; font-weight:900; color:#fff;
+    background:linear-gradient(#ff6b8a,#ff2e57); border-radius:999px;
+    padding:16px 40px; font-size:22px;
+    box-shadow:0 6px 0 #b5163b, 0 10px 18px rgba(0,0,0,.25);
+    transition:transform .06s, box-shadow .06s;
+  }
+  .k-btn:active{transform:translateY(4px); box-shadow:0 2px 0 #b5163b;}
+  .k-btn.sub{background:linear-gradient(#7e8aa6,#566080); box-shadow:0 6px 0 #3c4256;font-size:16px;padding:12px 26px;}
+  .k-btn.sub:active{box-shadow:0 2px 0 #3c4256;}
+
+  #k-best{
+    font-weight:900; font-size:16px; color:#b45309;
+    background:rgba(255,255,255,.6); border-radius:999px; padding:6px 16px;
+    box-shadow:0 3px 0 rgba(0,0,0,.08);
+  }
+  #k-bgmhint{
+    font-weight:800; font-size:13px; color:#9a5a00;
+    background:rgba(255,255,255,.55); border-radius:999px; padding:5px 14px;
+    animation:k-blink 1.3s ease-in-out infinite;
+  }
+  @keyframes k-blink{0%,100%{opacity:.45;}50%{opacity:1;}}
+
+  #kintama-gameover .res{font-size:20px;font-weight:800;}
+  #kintama-gameover .big{font-size:74px;font-weight:900;color:var(--gold);line-height:1;text-shadow:0 4px 0 #b5163b;}
+  #kintama-gameover .rank{font-size:24px;font-weight:900;}
+
+
+  /* ↩ ハブ（8番ちくわ）へ戻るボタン（常時表示・最前面） */
+  #kintama-wrap.show{ display:flex; }
+  #kintama-back-btn{
+    position:absolute; top:8px; left:50%; transform:translateX(-50%);
+    z-index:6000; font-family:inherit; font-size:13px; font-weight:900; cursor:pointer;
+    padding:7px 14px; border-radius:18px; border:none;
+    background:#2a2438; color:#fff; box-shadow:0 3px 0 #16101f;
+  }
+  #kintama-back-btn:active{ transform:translateX(-50%) translateY(2px); }
+
+</style>
 </head>
 <body>
 
@@ -2715,7 +2839,7 @@
         <div id="title-content">
         <div id="tap-notice" onclick="beginTitleAudio(event)">▶ タップして音を出す</div>
         <div class="famicom-title">はちばんちくわ</div>
-        <div id="version-label">Ver 2.5.13</div>
+        <div id="version-label">Ver 2.6.0</div>
         <button id="start-btn" class="start-btn" onclick="startGame(event)" style="display:none;">🍩 ちくわを覗く... 🍩</button>
         <button id="title-badge-btn" class="badge-link-btn" onclick="openBadgeScreen('title')" style="display:none;">🏅 称号コレクション</button>
         <button id="reset-record-btn" onclick="resetDiscoveryRecord(event)" style="display:none;">🗑 異変の記録をリセット</button>
@@ -2733,6 +2857,7 @@
             <button id="play-chase-omake-btn" onclick="playChaseStandalone(event)">🏃 ちくわにげ<span class="hassaku-sub">迷路を60秒逃げ切れ！20秒ごとに敵が増える</span></button>
             <button id="play-ichamon-btn" onclick="playIchamon(event)">🔴 めざせイチャモンスター<span class="hassaku-sub">町にかくれたボールを探して、理不尽なイチャモンを集めろ</span></button>
             <button id="play-saiban-btn" onclick="playSaiban(event)">⚖️ ちくわ裁判<span class="hassaku-sub">証言台で「いつ・どこで・だれが・なにをした」を組み立てろ</span></button>
+            <button id="play-kintama-btn" onclick="playKintama(event)">🥚 キンタマガチャンコ<span class="hassaku-sub">動くワクに金玉をブチ込め！ラッキー金玉＆スター無敵で戦闘力を稼げ</span></button>
         </div>
         <div id="open-guide">
             <div class="og-title">⚠️ 音が出ない / タップできない時は</div>
@@ -10318,6 +10443,8 @@
             "団地のベランダで"
         ],
         who: [
+            // 👪 家族枠
+            "パパが", "ママが", "なおぴーが", "ひろくんが", "きょうにいが", "ななちゃんが", "れんにいが", "かりんが", "うーちゃんが",
             // シュール・基本
             "犯人が", "自分が", "ちくわが", "裁判官が", "8番ちくわが",
             "知らないおばさんが",
@@ -10340,6 +10467,8 @@
             "カラオケで盛り上がる人が", "演歌歌手のような人が"
         ],
         what: [
+            // 👪 追加枠
+            "うんこした", "うんこ食べた", "おけつダンスした", "おけつ丸出しだ", "おなかひっこめた", "あたまバカになった",
             // シュール・基本
             "犯行をおこなった", "ハンコをおした", "お尻を出した", "寝返りをうった",
             "ご飯をたべた", "人生の壁にぶつかった", "突然　歌い出した",
@@ -10664,6 +10793,824 @@
         // ラッパーは消さず、リロードに任せる（一瞬おでん画面が見えるのを防ぐ）
         goToTitle();
     }
+</script>
+
+
+<!-- ===== 🥚 キンタマガチャンコ（組み込み）===== -->
+<div id="kintama-wrap">
+  <button id="kintama-back-btn" onclick="kintamaToTitle(event)">↩ もどる</button>
+  <div id="kintama-stage">
+    <canvas id="kintama-canvas" width="400" height="640"></canvas>
+
+    <div id="kintama-hud">
+      <div class="chip">のこり<br><b id="k-balls">20</b> 発</div>
+      <div class="chip r">戦闘力<br><b id="k-score">0</b></div>
+    </div>
+
+
+    <!-- タイトル -->
+    <div class="k-overlay" id="kintama-title">
+      <h1 class="k-logo">キンタマ<br><span class="em">ガチャンコ</span></h1>
+      <div class="k-sub">左右に動くワクに、金玉をブチ込め！</div>
+      <div id="k-best">最高チンコ戦闘力 ⚡ 0</div>
+      <div class="k-rules">
+        <p>① <b>長押し</b>でためて、<b>はなして発射</b></p>
+        <p>② 玉ワクに <b>2個</b> そろえば <b>完成！</b></p>
+        <p>⭐ <b>ラッキー金玉</b>をキメて 金玉＋2</p>
+        <p>★ <b>スター</b>で <b>無敵タイム！</b><br>
+           <span class="small">飛びまわるちんこを連射で当てて稼げ</span></p>
+      </div>
+      <button class="k-btn" id="kintama-start">スタート</button>
+      <div id="k-bgmhint">🔊 画面タッチでBGMスタート♪</div>
+    </div>
+
+    <!-- ゲームオーバー -->
+    <div class="k-overlay" id="kintama-gameover">
+      <div class="res">弾切れ！キミのチンコ戦闘力は…</div>
+      <div class="big"><span id="k-final">0</span></div>
+      <div class="rank" id="k-rank"></div>
+      <button class="k-btn" id="kintama-retry">もう一回</button>
+      <button class="k-btn sub" id="kintama-back2">タイトルへ</button>
+    </div>
+  </div>
+</div>
+<script>
+
+(function(){
+  "use strict";
+  // ====== 定数 ======
+  var W=400, H=640;
+  var GRAV=0.35;
+  var LAUNCH_X=W/2, LAUNCH_Y=560;
+  var SLOT_Y=255;
+  var SLOT_DX=27;
+  var SLOT_R=20, BALL_R=15;
+  var CATCH=24;
+  var MIN_V=11, MAX_V=19;
+  var CHARGE_RATE=1.7;
+  var TOTAL_BALLS=20;
+  var LUCKY_CHANCE=0.16, LUCKY_BONUS=2;
+  var STAR_CHANCE=0.06;
+  var INV_FRAMES=600;        // 無敵時間（約10秒 @60fps）
+  var RAPID_V=17.6;          // 無敵連射の固定初速（画面上部まで届く）
+  var INV_SPACING=98;        // （旧）未使用
+  var INV_HITR=40;           // 飛びちんこの当たり半径
+  var INV_BX0=46, INV_BX1=W-46, INV_BY0=135, INV_BY1=435;
+
+  // ====== 状態 ======
+  var cv, ctx, raf=null, last=0;
+  var state='title';
+  var frame, ball, shots, charging, charge, fired, score, particles, risers, pops;
+  var frameDir, frameSpeed, shake, completeFlash, bonusBalls;
+  var introT=0, invincible=false, invT=0, banner=null, invSpark=0, invPenises=[];
+
+  function $(id){return document.getElementById(id);}
+
+  // ====== オーディオ（ユーザー操作で初期化／LINE対策で必ずジェスチャ起点） ======
+  var actx=null, master=null;
+  function ensureAudio(){
+    if(actx){ if(actx.state==='suspended') actx.resume(); return; }
+    var AC=window.AudioContext||window.webkitAudioContext;
+    if(!AC) return;
+    actx=new AC();
+    master=actx.createGain(); master.gain.value=0.5; master.connect(actx.destination);
+  }
+  function tone(freq,dur,type,vol,glide){
+    if(!actx) return;
+    var t=actx.currentTime;
+    var o=actx.createOscillator(), g=actx.createGain();
+    o.type=type||'sine'; o.frequency.setValueAtTime(freq,t);
+    if(glide) o.frequency.exponentialRampToValueAtTime(Math.max(1,glide),t+dur);
+    g.gain.setValueAtTime(0.0001,t);
+    g.gain.exponentialRampToValueAtTime(vol||0.3,t+0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    o.connect(g); g.connect(master); o.start(t); o.stop(t+dur+0.02);
+  }
+  function noise(dur,vol){
+    if(!actx) return;
+    var t=actx.currentTime, n=Math.floor(actx.sampleRate*dur);
+    var buf=actx.createBuffer(1,n,actx.sampleRate), d=buf.getChannelData(0);
+    for(var i=0;i<n;i++) d[i]=(Math.random()*2-1)*(1-i/n);
+    var s=actx.createBufferSource(); s.buffer=buf;
+    var g=actx.createGain(); g.gain.value=vol||0.25;
+    s.connect(g); g.connect(master); s.start(t);
+  }
+  var chargeOsc=null, chargeGain=null;
+  function chargeSoundStart(){
+    if(!actx||chargeOsc) return;
+    chargeOsc=actx.createOscillator(); chargeGain=actx.createGain();
+    chargeOsc.type='sawtooth'; chargeOsc.frequency.value=160; chargeGain.gain.value=0.12;
+    chargeOsc.connect(chargeGain); chargeGain.connect(master); chargeOsc.start();
+  }
+  function chargeSoundUpdate(c){ if(chargeOsc) chargeOsc.frequency.value=160+c*520; }
+  function chargeSoundStop(){
+    if(chargeOsc){ try{chargeOsc.stop();}catch(e){} chargeOsc.disconnect(); chargeGain.disconnect(); chargeOsc=null; chargeGain=null; }
+  }
+  function sfxFire(){ noise(0.1,0.28); tone(220,0.09,'square',0.18,520); }
+  function sfxGachanko(){ tone(880,0.1,'square',0.3,1320); setTimeout(function(){tone(1320,0.14,'triangle',0.3);},90); }
+  function sfxLucky(){
+    var notes=[784,988,1175,1568,1976];
+    notes.forEach(function(f,i){ setTimeout(function(){ tone(f,0.13,'square',0.22); tone(f*1.5,0.13,'triangle',0.1); },i*55); });
+    setTimeout(function(){ tone(2637,0.2,'triangle',0.18); },300);
+  }
+  function sfxStarGet(){
+    var n=[523,659,784,1047,1319,1568,2093];
+    n.forEach(function(f,i){ setTimeout(function(){ tone(f,0.1,'square',0.24); },i*45); });
+    setTimeout(function(){ tone(2637,0.35,'triangle',0.22); },340);
+  }
+  function sfxMiss(){ tone(150,0.2,'sine',0.22,70); }
+  function sfxBoing(){ tone(300,0.16,'sine',0.26,1000); setTimeout(function(){ tone(1000,0.12,'sine',0.2,260); },120); }
+  function sfxComplete(){
+    var notes=[523,659,784,1047,1319];
+    notes.forEach(function(f,i){ setTimeout(function(){ tone(f,0.22,'triangle',0.32); },i*70); });
+    setTimeout(function(){ tone(1568,0.5,'triangle',0.3); tone(784,0.5,'sine',0.2); },360);
+  }
+
+  // ---- BGM群（ゲーム / オープニング(長め) / スター無敵） ----
+  var gameTimer=null, opTimer=null, starTimer=null;
+  // ゲーム中BGM（軽い）
+  function startGameBGM(){
+    if(!actx||gameTimer) return;
+    var seq=[262,330,392,330,294,349,440,349], s=0;
+    gameTimer=setInterval(function(){
+      var f=seq[s%seq.length]; tone(f,0.18,'triangle',0.06); tone(f/2,0.18,'sine',0.05); s++;
+    },230);
+  }
+  function stopGameBGM(){ if(gameTimer){ clearInterval(gameTimer); gameTimer=null; } }
+
+  // オープニングBGM：エキサイトバイク風（疾走感／長め2セクションのオリジナル）
+  var OP_LEAD=[
+    // Aセクション
+    1047,988,1047,1319, 1047,784,1047,0,
+    880,1047,1319,1568, 1319,1047,784,0,
+    1175,1047,988,1047, 880,784,880,1047,
+    784,659,587,659,    784,1047,784,0,
+    // Bセクション
+    1319,0,1319,1568, 1319,1047,880,0,
+    1568,0,1568,1760, 1568,1319,1047,0,
+    1760,1568,1319,1047, 988,1047,1175,1319,
+    1568,1319,1047,784, 880,1047,1319,0
+  ];
+  var OP_BASS=[131,110,87,98, 131,110,98,82,  98,87,110,131, 98,82,98,131];
+  function startOpeningBGM(){
+    if(!actx||opTimer) return;
+    var s=0;
+    opTimer=setInterval(function(){
+      var i=s%64, f=OP_LEAD[i];
+      if(f) tone(f,0.11,'square',0.085);
+      if(i%2===0){
+        var root=OP_BASS[Math.floor(i/4)%16];
+        tone(root,0.13,'square',0.07);
+        noise(0.025,0.018);
+      }
+      if(i%8===0) tone(68,0.12,'sine',0.09);
+      s++;
+    },120);
+  }
+  function stopOpeningBGM(){ if(opTimer){ clearInterval(opTimer); opTimer=null; } }
+
+  // スター無敵BGM：マリオのスター風（速くて忙しいオリジナル）
+  var STAR_LEAD=[1047,1175,1319,1568, 1319,1175,1047,1319, 1175,1319,1568,1760, 1568,1319,1047,1319];
+  var STAR_BASS=[262,196,220,262];
+  function startStarBGM(){
+    if(!actx||starTimer) return;
+    var s=0;
+    starTimer=setInterval(function(){
+      var i=s%16;
+      tone(STAR_LEAD[i],0.085,'square',0.09);
+      tone(STAR_BASS[Math.floor(i/4)%4],0.1,'square',0.06);
+      noise(0.018,0.02);
+      s++;
+    },95);
+  }
+  function stopStarBGM(){ if(starTimer){ clearInterval(starTimer); starTimer=null; } }
+
+  function stopAllBGM(){ stopGameBGM(); stopOpeningBGM(); stopStarBGM(); chargeSoundStop(); }
+
+  // ====== ゲーム制御 ======
+  function totalBalls(){ return TOTAL_BALLS + bonusBalls; }
+  function unitSlotX(u,i){ return frame.x + u.dx + (i===0? -SLOT_DX : SLOT_DX); }
+  function frameMargin(){
+    var m=0; for(var k=0;k<frame.units.length;k++) m=Math.max(m, Math.abs(frame.units[k].dx));
+    return m + SLOT_DX + SLOT_R + 6;
+  }
+
+  function resetGame(){
+    frame={x:W/2, units:[{dx:0, fills:[false,false]}]};
+    frameDir=1; frameSpeed=2.0;
+    ball=null; shots=[]; charging=false; charge=0;
+    fired=0; score=0; bonusBalls=0;
+    particles=[]; risers=[]; pops=[]; shake=0; completeFlash=0;
+    invincible=false; invT=0; invSpark=0; banner=null;
+    loadBall();
+    updateHUD();
+  }
+  function loadBall(){
+    if(invincible){ ball={state:'ready', x:LAUNCH_X, y:LAUNCH_Y, type:'normal', free:true}; return; }
+    if(fired>=totalBalls()){ ball=null; return; }
+    var r=Math.random(), type='normal';
+    if(r<STAR_CHANCE) type='star';
+    else if(r<STAR_CHANCE+LUCKY_CHANCE) type='lucky';
+    ball={state:'ready', x:LAUNCH_X, y:LAUNCH_Y, type:type};
+    if(type==='lucky') setBanner('⭐ ラッキー金玉だ！ねらえ！','#e8a200');
+    if(type==='star')  setBanner('★ スター出現！はめろ！','#ff3df0');
+  }
+  function updateHUD(){
+    $('k-balls').textContent = invincible ? '∞' : Math.max(0, totalBalls()-fired);
+    $('k-score').textContent = power(score).toLocaleString();
+  }
+  function power(s){ return s*100; }
+  function setBanner(text,color){ banner={text:text, color:color||'#fff', life:95}; }
+
+  // スタート → カウントダウン（オープニングBGM）→ プレイ
+  function openingIntro(){
+    ensureAudio();
+    resetGame();
+    startOpeningBGM();
+    state='intro'; introT=0;
+    $('kintama-title').style.display='none';
+    $('kintama-gameover').style.display='none';
+    tone(660,0.12,'square',0.18);
+    last=performance.now();
+    if(!raf) raf=requestAnimationFrame(loop);
+  }
+  var INTRO_BEAT=24;
+  function updateIntro(dt){
+    frame.x += frameDir*frameSpeed*dt;
+    var mg=frameMargin();
+    if(frame.x>W-mg){ frame.x=W-mg; frameDir=-1; }
+    if(frame.x<mg){ frame.x=mg; frameDir=1; }
+    var prev=introT; introT+=dt;
+    if(prev<INTRO_BEAT   && introT>=INTRO_BEAT)   tone(660,0.12,'square',0.18);
+    if(prev<2*INTRO_BEAT && introT>=2*INTRO_BEAT) tone(660,0.12,'square',0.18);
+    if(prev<3*INTRO_BEAT && introT>=3*INTRO_BEAT) tone(1320,0.28,'square',0.24);
+    if(introT>=4*INTRO_BEAT) beginPlay();
+  }
+  function beginPlay(){
+    stopOpeningBGM();
+    startGameBGM();
+    state='playing';
+    last=performance.now();
+  }
+
+  function endGame(){
+    state='gameover'; stopAllBGM();
+    var pw=power(score);
+    $('k-final').textContent = pw.toLocaleString();
+    var best=getBest();
+    if(pw>best){
+      setBest(pw);
+      $('k-rank').innerHTML = '🎉 新記録！ 🎉' +
+        '<div style="font-size:16px;font-weight:800;color:#ffd23f;margin-top:6px;">「'+randomWord()+'」</div>';
+    }else{
+      $('k-rank').innerHTML = '<div style="font-size:16px;font-weight:800;opacity:.9;">最高記録 ⚡ '+best.toLocaleString()+'</div>';
+    }
+    refreshBest();
+    $('kintama-gameover').style.display='flex';
+  }
+  // 新記録のときの小粋なひとこと（ランダム）
+  var WORDS=[
+    'フッ…まだ底は見せていない',
+    '天をも衝く、その実力',
+    'キミのチンコ、宇宙一かもしれん',
+    '歴史が、また一本そびえ立った',
+    'もはや人類の限界を超えている',
+    'ナメてた…正直スマンかった',
+    '金玉が、キミを選んだ',
+    '伝説は、こうして作られる',
+    'この戦闘力…バケモンか',
+    '神々も天を仰いだ'
+  ];
+  function randomWord(){ return WORDS[Math.floor(Math.random()*WORDS.length)]; }
+
+  // ベスト記録（localStorage）
+  function getBest(){ try{ return parseInt(localStorage.getItem('kintama_best')||'0',10)||0; }catch(e){ return 0; } }
+  function setBest(v){ try{ localStorage.setItem('kintama_best', String(v)); }catch(e){} }
+  function refreshBest(){ var el=$('k-best'); if(el) el.textContent='最高チンコ戦闘力 ⚡ '+getBest().toLocaleString(); }
+  function backToTitle(){
+    state='title'; stopAllBGM();
+    invincible=false;
+    $('kintama-gameover').style.display='none';
+    $('kintama-title').style.display='flex';
+    var h=$('k-bgmhint'); if(h) h.style.display='block';
+    refreshBest();
+  }
+
+  // ====== 入力 ======
+  function fireDown(){
+    if(state!=='playing') return;
+    if(invincible){            // 連射：タップで即発射（少し左右に散らす）
+      spawnShot('normal', RAPID_V, (Math.random()-0.5)*6); sfxFire(); return;
+    }
+    if(!ball || ball.state!=='ready') return;
+    charging=true; charge=0; chargeSoundStart();
+  }
+  function fireUp(){
+    if(invincible) return;
+    if(!charging) return;
+    charging=false; chargeSoundStop();
+    if(!ball || ball.state!=='ready') return;
+    var v=MIN_V + charge*(MAX_V-MIN_V);
+    spawnShot(ball.type, v, 0); sfxFire();
+    if(!ball.free){ fired++; updateHUD(); }
+    ball=null;
+    setTimeout(loadBall,60);
+  }
+  function spawnShot(type,v,vx){ shots.push({x:LAUNCH_X, y:LAUNCH_Y, vx:vx||0, vy:-v, type:type, locked:false}); }
+
+  // ====== 無敵モード ======
+  function startInvincible(){
+    invincible=true; invT=INV_FRAMES;
+    // 3本のちんこを画面に放つ（回転しながら飛び回る）
+    invPenises=[];
+    for(var k=0;k<3;k++){
+      var ang=Math.random()*Math.PI*2, sp=1.7+Math.random()*1.8;
+      invPenises.push({
+        x:INV_BX0+Math.random()*(INV_BX1-INV_BX0),
+        y:INV_BY0+Math.random()*(INV_BY1-INV_BY0),
+        vx:Math.cos(ang)*sp, vy:Math.sin(ang)*sp,
+        angle:Math.random()*Math.PI*2, spin:(Math.random()<0.5?-1:1)*(0.04+Math.random()*0.06),
+        stretch:0, hue:Math.random()*360
+      });
+    }
+    stopGameBGM(); startStarBGM();
+    setBanner('★ 無敵！飛びちんこを撃て！ ★','#ff3df0');
+    ball={state:'ready', x:LAUNCH_X, y:LAUNCH_Y, type:'normal', free:true};
+    updateHUD();
+  }
+  function endInvincible(){
+    invincible=false; invT=0; invPenises=[];
+    shots.length=0;
+    // バグ修正：無敵から戻るとき枠を必ずまっさらに（ハマったまま残らない）
+    frame={x:W/2, units:[{dx:0,fills:[false,false]}]}; frameDir=1;
+    stopStarBGM(); startGameBGM();
+    setBanner('もどった！','#ff7eb3');
+    updateHUD();
+    loadBall();
+  }
+
+  // ====== 更新 ======
+  function update(dt){
+    // ワク移動
+    var mg=frameMargin();
+    frame.x += frameDir*frameSpeed*dt;
+    if(frame.x>W-mg){ frame.x=W-mg; frameDir=-1; }
+    if(frame.x<mg){ frame.x=mg; frameDir=1; }
+
+    // チャージ
+    if(charging){ charge=Math.min(1,charge+CHARGE_RATE*dt/60); chargeSoundUpdate(charge); }
+
+    // 無敵タイマー＆飛びちんこの移動＆キラキラ
+    if(invincible){
+      invT-=dt;
+      for(var pi=0; pi<invPenises.length; pi++){
+        var pe=invPenises[pi];
+        pe.x+=pe.vx*dt; pe.y+=pe.vy*dt; pe.angle+=pe.spin*dt;
+        if(pe.x<INV_BX0){ pe.x=INV_BX0; pe.vx=Math.abs(pe.vx); }
+        if(pe.x>INV_BX1){ pe.x=INV_BX1; pe.vx=-Math.abs(pe.vx); }
+        if(pe.y<INV_BY0){ pe.y=INV_BY0; pe.vy=Math.abs(pe.vy); }
+        if(pe.y>INV_BY1){ pe.y=INV_BY1; pe.vy=-Math.abs(pe.vy); }
+        if(pe.stretch>0) pe.stretch=Math.max(0,pe.stretch-0.06*dt);
+      }
+      invSpark-=dt;
+      if(invSpark<=0){ burst(40+Math.random()*(W-80), 120+Math.random()*340, 'hsl('+((performance.now()/4)%360)+',90%,65%)', 4); invSpark=4; }
+      if(invT<=0) endInvincible();
+    }
+
+    // 飛んでる玉（配列）
+    for(var si=shots.length-1; si>=0; si--){
+      var sh=shots[si];
+      sh.vy+=GRAV*dt; sh.y+=sh.vy*dt; sh.x+=(sh.vx||0)*dt;
+      if(!sh.locked){
+        if(invincible){
+          // 飛びちんこに当たれば＝ビョーンと伸びて＋1本
+          for(var pj=0; pj<invPenises.length; pj++){
+            var p2=invPenises[pj];
+            if(Math.hypot(sh.x-p2.x, sh.y-p2.y)<INV_HITR){
+              sh.locked=true;
+              score++; updateHUD();
+              p2.stretch=1; p2.vy-=1.2; p2.hue=(p2.hue+60)%360;
+              sfxBoing(); burst(p2.x,p2.y,'hsl('+p2.hue+',95%,62%)',16);
+              addPop(p2.x, p2.y-34, 'ビョーン＋1本！', '#ff3df0'); shake=5;
+              break;
+            }
+          }
+        }else{
+          for(var ui=0; ui<frame.units.length && !sh.locked; ui++){
+            var u=frame.units[ui];
+            for(var i=0;i<2;i++){
+              if(u.fills[i]) continue;
+              var sx=unitSlotX(u,i);
+              if(Math.hypot(sh.x-sx, sh.y-SLOT_Y)<CATCH){
+                u.fills[i]=true; sh.locked=true;
+                onLock(sh, sx, SLOT_Y, u);
+                break;
+              }
+            }
+          }
+        }
+      }
+      if(sh.locked){ shots.splice(si,1); continue; }
+      if(sh.y>H+40){ shots.splice(si,1); if(!invincible) sfxMiss(); }
+    }
+
+    // 弾切れ判定（無敵中は対象外）
+    if(state==='playing' && !invincible && fired>=totalBalls() && !ball && shots.length===0 && risers.length===0){
+      if(!update._t){ update._t=setTimeout(function(){ update._t=null; if(state==='playing'&&!invincible) endGame(); },800); }
+    }
+
+    // パーティクル
+    for(var p=particles.length-1;p>=0;p--){
+      var q=particles[p];
+      q.vy+=0.25*dt; q.x+=q.vx*dt; q.y+=q.vy*dt; q.life-=dt;
+      if(q.life<=0) particles.splice(p,1);
+    }
+    // 浮き出るテキスト
+    for(var fp=pops.length-1;fp>=0;fp--){
+      var o=pops[fp]; o.y+=o.vy*dt; o.vy*=0.96; o.life-=dt;
+      if(o.life<=0) pops.splice(fp,1);
+    }
+    // そびえ立つ完成演出
+    for(var r=risers.length-1;r>=0;r--){
+      var u=risers[r]; u.t+=dt; u.rise=Math.min(1,u.t/55);
+      if(u.t>120) risers.splice(r,1);
+    }
+    if(banner){ banner.life-=dt; if(banner.life<=0) banner=null; }
+    if(shake>0) shake=Math.max(0,shake-0.5*dt);
+    if(completeFlash>0) completeFlash=Math.max(0,completeFlash-0.04*dt);
+  }
+
+  function onLock(sh,sx,sy,u){
+    if(sh.type==='star'){
+      sfxStarGet(); burst(sx,sy,'#ff3df0',32);
+      addPop(sx,sy-20,'スターげっと！','#ff3df0'); shake=10;
+      startInvincible();
+      return;
+    }
+    if(sh.type==='lucky'){
+      bonusBalls+=LUCKY_BONUS; updateHUD();
+      sfxLucky(); burst(sx,sy,'#ffd23f',26);
+      addPop(sx,sy-20,'キンタマげっと！','#ffd23f'); shake=9;
+      // バグ修正：弾切れ後にラッキーで残弾が復活したら手玉を装填し直す
+      if(!invincible && !ball && fired<totalBalls()) loadBall();
+    }else{
+      sfxGachanko(); burst(sx,sy,'#ffd23f',12); shake=4;
+    }
+    completeUnit(u);
+  }
+
+  function completeUnit(u){
+    if(u.fills[0] && u.fills[1]){
+      score++; updateHUD(); sfxComplete();
+      completeFlash=1; shake=8;
+      var ux=frame.x+u.dx;
+      burst(ux,SLOT_Y-30,'#fff',26);
+      risers.push({x:ux, t:0, rise:0, rainbow:invincible});
+      u.fills[0]=false; u.fills[1]=false;
+      if(!invincible) frameSpeed=Math.min(4.2, frameSpeed+0.18);
+    }
+  }
+
+  function burst(x,y,color,n){
+    for(var i=0;i<n;i++){
+      var a=Math.random()*Math.PI*2, s=2+Math.random()*5;
+      particles.push({x:x,y:y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-2,life:30+Math.random()*20,color:color});
+    }
+  }
+  function addPop(x,y,text,color){ pops.push({x:x,y:y,vy:-1.6,life:64,text:text,color:color||'#fff'}); }
+
+  // ====== 描画 ======
+  function roundRect(c,x,y,w,h,r){
+    c.beginPath();
+    c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r);
+    c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath();
+  }
+  function star(c,cx,cy,n,rOut,rIn){
+    c.beginPath();
+    for(var i=0;i<n*2;i++){
+      var r=(i%2===0)?rOut:rIn, a=Math.PI/n*i - Math.PI/2;
+      var px=cx+Math.cos(a)*r, py=cy+Math.sin(a)*r;
+      if(i===0) c.moveTo(px,py); else c.lineTo(px,py);
+    }
+    c.closePath();
+  }
+
+  // ちんこ1本＋玉ワク2個（rainbowで虹色）
+  function drawUnit(c,x,baseY,shaftH,opt){
+    opt=opt||{};
+    var fills=opt.fills||[false,false];
+    var glow=opt.glow, alpha=opt.alpha==null?1:opt.alpha, rainbow=opt.rainbow;
+    c.save(); c.globalAlpha=alpha;
+    var shaftCol='#ffcaa6', glansCol='#ff9d8a', edge='#cc7e5c';
+    if(rainbow){ var hue=(performance.now()/6)%360; shaftCol='hsl('+hue+',85%,72%)'; glansCol='hsl('+((hue+40)%360)+',90%,68%)'; edge='hsl('+hue+',60%,45%)'; }
+    if(glow){ c.shadowColor= rainbow? glansCol : '#ffe98a'; c.shadowBlur=rainbow?24:30; }
+    // 竿
+    var sw=30;
+    c.fillStyle=shaftCol; c.strokeStyle=edge; c.lineWidth=4;
+    roundRect(c, x-sw/2, baseY-shaftH, sw, shaftH+22, sw/2); c.fill(); c.stroke();
+    // 亀頭
+    c.beginPath(); c.arc(x, baseY-shaftH, sw/2+4, 0, Math.PI*2);
+    c.fillStyle=glansCol; c.fill(); c.stroke();
+    c.shadowBlur=0;
+    // 玉ワク2個
+    for(var i=0;i<2;i++){
+      var sx=x+(i===0?-SLOT_DX:SLOT_DX), filled=fills[i];
+      if(filled){
+        c.save(); if(glow){ c.shadowColor='#ffd23f'; c.shadowBlur=18; }
+        var g=c.createRadialGradient(sx-5,baseY-5,2,sx,baseY,SLOT_R);
+        g.addColorStop(0,'#fff1c4'); g.addColorStop(.5,'#ffd23f'); g.addColorStop(1,'#e0992a');
+        c.fillStyle=g; c.beginPath(); c.arc(sx,baseY,SLOT_R,0,Math.PI*2); c.fill(); c.restore();
+      }else{
+        c.save(); c.setLineDash([6,5]); c.lineWidth=3; c.strokeStyle='#b56b4a';
+        c.fillStyle='rgba(140,70,45,.18)';
+        c.beginPath(); c.arc(sx,baseY,SLOT_R,0,Math.PI*2); c.fill(); c.stroke(); c.restore();
+      }
+    }
+    c.restore();
+  }
+
+  // 玉／星
+  function drawBall(c,x,y,type){
+    c.save();
+    if(type==='star'){
+      var t=performance.now()/1000, hue=(performance.now()/4)%360;
+      c.shadowColor='hsl('+hue+',95%,60%)'; c.shadowBlur=22;
+      c.fillStyle='hsl('+hue+',95%,60%)'; c.strokeStyle='#fff'; c.lineWidth=2.5;
+      c.translate(x,y); c.rotate(Math.sin(t*2)*0.25);
+      star(c,0,0,5,BALL_R+5,BALL_R-3); c.fill(); c.stroke();
+    }else if(type==='lucky'){
+      c.shadowColor='#ffd23f'; c.shadowBlur=20;
+      var g=c.createRadialGradient(x-4,y-5,2,x,y,BALL_R+2);
+      g.addColorStop(0,'#fffbe0'); g.addColorStop(.45,'#ffe14d'); g.addColorStop(1,'#e8a200');
+      c.fillStyle=g; c.beginPath(); c.arc(x,y,BALL_R+1,0,Math.PI*2); c.fill();
+      c.shadowBlur=0; c.strokeStyle='#c98400'; c.lineWidth=2; c.stroke();
+      c.fillStyle='#fff'; star(c,x,y,5,6.5,3); c.fill();
+      var tt=performance.now()/1000;
+      for(var k=0;k<4;k++){ var a=tt*2+k*Math.PI/2, rr=BALL_R+9+Math.sin(tt*4+k)*2;
+        c.fillStyle='rgba(255,255,255,.9)'; c.beginPath(); c.arc(x+Math.cos(a)*rr,y+Math.sin(a)*rr,2,0,Math.PI*2); c.fill(); }
+    }else{
+      var g2=c.createRadialGradient(x-4,y-4,2,x,y,BALL_R);
+      g2.addColorStop(0,'#fff'); g2.addColorStop(.4,'#ffd9b0'); g2.addColorStop(1,'#d98a5e');
+      c.fillStyle=g2; c.beginPath(); c.arc(x,y,BALL_R,0,Math.PI*2); c.fill();
+      c.strokeStyle='#b56b4a'; c.lineWidth=2; c.stroke();
+    }
+    c.restore();
+  }
+
+  // 無敵中の飛びちんこ（回転＋当たるとビョーン）
+  function drawFlyPenis(c,pe){
+    var len = 50 + pe.stretch*72;     // 当たると伸びる
+    var hue = (pe.hue + performance.now()/8)%360;
+    var sw=26;
+    c.save();
+    c.translate(pe.x, pe.y); c.rotate(pe.angle);
+    c.shadowColor='hsl('+hue+',95%,60%)'; c.shadowBlur=18;
+    c.fillStyle='hsl('+hue+',85%,72%)'; c.strokeStyle='hsl('+hue+',60%,42%)'; c.lineWidth=4;
+    roundRect(c, -sw/2, -len/2, sw, len, sw/2); c.fill(); c.stroke();
+    c.beginPath(); c.arc(0, -len/2, sw/2+4, 0, Math.PI*2);
+    c.fillStyle='hsl('+((hue+40)%360)+',90%,68%)'; c.fill(); c.stroke();
+    c.shadowBlur=0;
+    for(var i=0;i<2;i++){
+      var bx=(i===0?-12:12);
+      var g=c.createRadialGradient(bx-3,len/2-3,2,bx,len/2,13);
+      g.addColorStop(0,'#fff1c4'); g.addColorStop(.5,'#ffd23f'); g.addColorStop(1,'#e0992a');
+      c.fillStyle=g; c.beginPath(); c.arc(bx,len/2,13,0,Math.PI*2); c.fill();
+      c.strokeStyle='hsl('+hue+',60%,42%)'; c.lineWidth=2; c.stroke();
+    }
+    c.restore();
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ctx.save();
+    if(shake>0){ ctx.translate((Math.random()-0.5)*shake,(Math.random()-0.5)*shake); }
+
+    // 空
+    var sky=ctx.createLinearGradient(0,0,0,H);
+    sky.addColorStop(0,'#7ec8ff'); sky.addColorStop(.6,'#bfe7ff'); sky.addColorStop(1,'#eaf7ff');
+    ctx.fillStyle=sky; ctx.fillRect(0,0,W,H);
+
+    // ラッキー金玉中は金色に、無敵中は虹色に画面を染める
+    var goldMode = onField() && ((ball&&ball.type==='lucky') || shots.some(function(s){return s.type==='lucky';}));
+    if(invincible){
+      var hue=(performance.now()/5)%360;
+      ctx.fillStyle='hsla('+hue+',90%,60%,0.14)'; ctx.fillRect(0,0,W,H);
+    }else if(goldMode){
+      var gg=ctx.createRadialGradient(W/2,H*0.4,40,W/2,H*0.4,H*0.7);
+      gg.addColorStop(0,'rgba(255,225,80,0.22)'); gg.addColorStop(1,'rgba(255,225,80,0)');
+      ctx.fillStyle=gg; ctx.fillRect(0,0,W,H);
+    }
+    if(completeFlash>0){ ctx.fillStyle='rgba(255,255,210,'+(completeFlash*0.5)+')'; ctx.fillRect(0,0,W,H); }
+
+    // 雲
+    ctx.fillStyle='rgba(255,255,255,.7)';
+    cloud(60,90,34); cloud(310,140,28); cloud(200,60,22);
+    // 地面
+    ctx.fillStyle='#9fe08a'; ctx.fillRect(0,H-60,W,60);
+    ctx.fillStyle='#7fc96a'; ctx.fillRect(0,H-60,W,8);
+
+    if(onField() && !invincible){
+      // ガイド線
+      ctx.save(); ctx.setLineDash([4,8]); ctx.strokeStyle='rgba(255,255,255,.55)'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(0,SLOT_Y); ctx.lineTo(W,SLOT_Y); ctx.stroke(); ctx.restore();
+    }
+
+    // 無敵中：飛び回る3本のちんこ
+    if(invincible){ for(var pp=0; pp<invPenises.length; pp++) drawFlyPenis(ctx, invPenises[pp]); }
+
+    // 完成演出（上昇）
+    for(var r=0;r<risers.length;r++){
+      var u=risers[r], hh=70 + u.rise*460;
+      drawUnit(ctx, u.x, SLOT_Y, hh, {glow:true, fills:[true,true], alpha:1-u.rise*0.15, rainbow:u.rainbow});
+      if(u.rise>0.2){
+        ctx.save(); ctx.globalAlpha=1-u.rise;
+        ctx.font='900 30px "M PLUS Rounded 1c",sans-serif'; ctx.textAlign='center';
+        ctx.fillStyle='#ff2e57'; ctx.strokeStyle='#fff'; ctx.lineWidth=5;
+        ctx.strokeText('完成！', u.x, SLOT_Y-hh-20); ctx.fillText('完成！', u.x, SLOT_Y-hh-20);
+        ctx.restore();
+      }
+    }
+
+    if(onField()){
+      // ちんこ（通常モードのみ：無敵中は飛びちんこを別途描画）
+      if(!invincible){
+        for(var fu=0; fu<frame.units.length; fu++){
+          var uu=frame.units[fu];
+          drawUnit(ctx, frame.x+uu.dx, SLOT_Y, 60, {fills:uu.fills, rainbow:false, glow:false});
+        }
+      }
+      // 発射台
+      ctx.fillStyle='#5a4a42'; roundRect(ctx, LAUNCH_X-26, LAUNCH_Y+8, 52, 40, 8); ctx.fill();
+      ctx.fillStyle='#7a665c'; roundRect(ctx, LAUNCH_X-14, LAUNCH_Y-6, 28, 26, 6); ctx.fill();
+      // 飛んでる玉
+      for(var s2=0;s2<shots.length;s2++){ drawBall(ctx, shots[s2].x, shots[s2].y, shots[s2].type); }
+      // 構えてる玉
+      if(ball){
+        var by = charging? LAUNCH_Y - charge*6 : ball.y;
+        drawBall(ctx, ball.x, by, ball.type);
+        if(ball.state==='ready' && (ball.type==='lucky'||ball.type==='star')){
+          var lab = ball.type==='star' ? '★スター！' : '⭐ラッキー金玉！';
+          var col = ball.type==='star' ? '#ff3df0' : '#e8a200';
+          var ly=by-30+Math.sin(performance.now()/240)*3;
+          ctx.save(); ctx.font='800 14px "M PLUS Rounded 1c",sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+          ctx.lineWidth=4; ctx.strokeStyle='#fff'; ctx.fillStyle=col;
+          ctx.strokeText(lab,ball.x,ly); ctx.fillText(lab,ball.x,ly); ctx.restore();
+        }
+      }
+      // チャージゲージ
+      if(charging){
+        var gx=LAUNCH_X-50, gy=LAUNCH_Y-2, gw=12, gh=120;
+        ctx.fillStyle='rgba(0,0,0,.25)'; roundRect(ctx,gx,gy-gh,gw,gh,6); ctx.fill();
+        var fh=gh*charge, cg=ctx.createLinearGradient(0,gy,0,gy-gh);
+        cg.addColorStop(0,'#6dff7a'); cg.addColorStop(.6,'#ffd23f'); cg.addColorStop(1,'#ff2e57');
+        ctx.fillStyle=cg; roundRect(ctx,gx,gy-fh,gw,fh,6); ctx.fill();
+      }
+    }
+
+    // 操作ヒント（最初の1発まで・通常時）
+    if(state==='playing' && !invincible && fired===0 && shots.length===0) drawHint(ctx);
+    // カウントダウン
+    if(state==='intro') drawCountdown(ctx);
+    // 無敵の残り時間
+    if(invincible) drawInvHUD(ctx);
+    // 上部バナー
+    if(banner) drawBanner(ctx);
+
+    // パーティクル
+    for(var p=0;p<particles.length;p++){
+      var q=particles[p]; ctx.globalAlpha=Math.max(0,q.life/40);
+      ctx.fillStyle=q.color; ctx.beginPath(); ctx.arc(q.x,q.y,3,0,Math.PI*2); ctx.fill();
+    }
+    ctx.globalAlpha=1;
+    // ポップ
+    for(var fp=0;fp<pops.length;fp++){
+      var o=pops[fp]; ctx.save(); ctx.globalAlpha=Math.min(1,o.life/30);
+      ctx.font='900 26px "M PLUS Rounded 1c",sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.lineWidth=6; ctx.strokeStyle='#fff'; ctx.fillStyle=o.color;
+      ctx.strokeText(o.text,o.x,o.y); ctx.fillText(o.text,o.x,o.y); ctx.restore();
+    }
+    ctx.globalAlpha=1;
+    ctx.restore();
+  }
+  function onField(){ return state==='playing'||state==='intro'; }
+  function cloud(x,y,r){ ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.arc(x+r,y+6,r*0.8,0,Math.PI*2); ctx.arc(x-r,y+6,r*0.8,0,Math.PI*2); ctx.fill(); }
+
+  function drawHint(c){
+    var bob=Math.sin(performance.now()/280)*5;
+    var msg = charging ? 'はなすと発射！' : '長押しでためて…はなす！';
+    var bx=LAUNCH_X, by=LAUNCH_Y-92+bob;
+    c.save();
+    c.font='800 17px "M PLUS Rounded 1c",sans-serif'; c.textAlign='center'; c.textBaseline='middle';
+    var w=c.measureText(msg).width+30, h=34;
+    c.fillStyle='rgba(255,255,255,.94)'; c.strokeStyle='#ff7eb3'; c.lineWidth=3;
+    roundRect(c, bx-w/2, by-h/2, w, h, 16); c.fill(); c.stroke();
+    c.beginPath(); c.moveTo(bx-10,by+h/2-1); c.lineTo(bx+10,by+h/2-1); c.lineTo(bx,by+h/2+12); c.closePath();
+    c.fillStyle='rgba(255,255,255,.94)'; c.fill();
+    c.fillStyle='#d6336c'; c.fillText(msg, bx, by);
+    var ay=by+h/2+22+bob*0.5; c.fillStyle='#ff4d6d';
+    c.beginPath(); c.moveTo(bx-9,ay); c.lineTo(bx+9,ay); c.lineTo(bx,ay+12); c.closePath(); c.fill();
+    c.restore();
+  }
+  function drawCountdown(c){
+    var label, big=true;
+    if(introT<INTRO_BEAT) label='3';
+    else if(introT<2*INTRO_BEAT) label='2';
+    else if(introT<3*INTRO_BEAT) label='1';
+    else { label='スタート！'; big=false; }
+    var ph=introT%INTRO_BEAT, sc=1+Math.max(0,(1-ph/INTRO_BEAT))*0.6;
+    c.save(); c.translate(W/2,H*0.42); c.scale(sc,sc);
+    c.textAlign='center'; c.textBaseline='middle'; c.lineWidth=8; c.strokeStyle='#fff';
+    c.fillStyle=big?'#ff2e57':'#ffd23f';
+    c.font='900 '+(big?96:54)+'px "M PLUS Rounded 1c",sans-serif';
+    c.strokeText(label,0,0); c.fillText(label,0,0); c.restore();
+  }
+  function drawInvHUD(c){
+    var sec=Math.max(0,Math.ceil(invT/60));
+    var hue=(performance.now()/5)%360;
+    c.save(); c.textAlign='center'; c.textBaseline='middle';
+    c.font='900 22px "M PLUS Rounded 1c",sans-serif';
+    c.lineWidth=6; c.strokeStyle='#fff'; c.fillStyle='hsl('+hue+',90%,55%)';
+    var msg='★ 無敵 のこり'+sec+'秒 ★';
+    c.strokeText(msg, W/2, 150); c.fillText(msg, W/2, 150);
+    c.restore();
+  }
+  function drawBanner(c){
+    var a=Math.min(1, banner.life/30);
+    c.save(); c.globalAlpha=a;
+    c.font='900 22px "M PLUS Rounded 1c",sans-serif'; c.textAlign='center'; c.textBaseline='middle';
+    var w=c.measureText(banner.text).width+36, x=W/2, y=112;
+    c.fillStyle='rgba(0,0,0,.35)'; roundRect(c, x-w/2, y-20, w, 40, 20); c.fill();
+    c.lineWidth=5; c.strokeStyle='#fff'; c.fillStyle=banner.color;
+    c.strokeText(banner.text,x,y); c.fillText(banner.text,x,y);
+    c.restore();
+  }
+
+  // ====== ループ ======
+  function loop(ts){
+    var dt=(ts-last)/16.67; last=ts; if(dt>3) dt=3;
+    if(state==='playing') update(dt);
+    else if(state==='intro') updateIntro(dt);
+    draw();
+    raf=requestAnimationFrame(loop);
+  }
+
+  // ====== 公開API（ハブ組み込み用） ======
+  window.kintamaLaunch=function(){
+    backToTitle();
+    if(!raf){ last=performance.now(); raf=requestAnimationFrame(loop); }
+  };
+  window.kintamaShutdown=function(){ state='title'; stopAllBGM(); if(raf){ cancelAnimationFrame(raf); raf=null; } };
+
+  // ====== 初期化 ======
+  function bind(){
+    cv=$('kintama-canvas'); ctx=cv.getContext('2d');
+    cv.addEventListener('pointerdown',function(e){ e.preventDefault(); fireDown(); });
+    window.addEventListener('pointerup',function(){ fireUp(); });
+    window.addEventListener('pointercancel',function(){ charging=false; chargeSoundStop(); });
+    // タイトルに触れたらオープニングBGMスタート（明示要素＝タイトルオーバーレイ起点）
+    $('kintama-title').addEventListener('pointerdown',function(){
+      ensureAudio(); startOpeningBGM();
+      var h=$('k-bgmhint'); if(h) h.style.display='none';
+    });
+    $('kintama-start').addEventListener('click',openingIntro);
+    $('kintama-retry').addEventListener('click',openingIntro);
+    $('kintama-back2').addEventListener('click',backToTitle);
+    // 初回描画前に初期化
+    frame={x:W/2, units:[{dx:0,fills:[false,false]}]};
+    ball=null; shots=[]; particles=[]; risers=[]; pops=[]; charging=false; charge=0;
+    shake=0; completeFlash=0; bonusBalls=0; invincible=false; invT=0; banner=null;
+    state='title';
+    refreshBest();
+  }
+  if(document.readyState!=='loading') bind();
+  else document.addEventListener('DOMContentLoaded',bind);
+})();
+
+</script>
+
+<script>
+/* ===== 🥚 キンタマガチャンコ（ハブ起動グルー：イチャモンと同型）===== */
+function playKintama(e){
+    if (e) e.stopPropagation();
+    if (!audioCtx) { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(err){} }
+    if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+    isAudioStarted = true;
+    if (titleInterval) { clearInterval(titleInterval); titleInterval = null; }
+    if (bpmInterval) { clearInterval(bpmInterval); bpmInterval = null; }
+    if (typeof stopBGM === "function") stopBGM();
+    currentBgmMode = null;
+    document.getElementById("title-screen").style.display = "none";
+    gameState = "KINTAMA";
+    var w = document.getElementById("kintama-wrap");
+    w.classList.add("show"); w.scrollTop = 0;
+    firstTitleDone = true;
+    if (typeof window.kintamaLaunch === "function") window.kintamaLaunch();
+}
+function kintamaToTitle(e){
+    if (e) e.stopPropagation();
+    if (typeof window.kintamaShutdown === "function") window.kintamaShutdown();
+    goToTitle();
+}
 </script>
 
 </body>
