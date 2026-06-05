@@ -2966,6 +2966,56 @@
   #kk-res-best{ margin-top:8px; font-weight:800; color:#0c3550; font-size:14px; }
   #kk-res-btns{ margin-top:18px; display:flex; flex-direction:column; gap:12px; align-items:center; }
 
+
+  .kk-lv.lv3{ background:linear-gradient(#b07cff,#8a4bdf); box-shadow:0 5px 0 #6a36b0; }
+  .kk-lv.lv3:active{ box-shadow:0 1px 0 #6a36b0; }
+  #kk-zukan-btn{ width:100%; max-width:340px; margin-top:16px; border:none; cursor:pointer; font-family:inherit;
+    color:#0c3550; font-weight:900; font-size:18px; border-radius:16px; padding:12px 16px;
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    background:linear-gradient(#fff7d6,#ffe79a); box-shadow:0 5px 0 #c9a544; transition:transform .06s, box-shadow .06s; }
+  #kk-zukan-btn:active{ transform:translateY(4px); box-shadow:0 1px 0 #c9a544; }
+  #kk-zukan-btn em{ font-style:normal; font-weight:900; font-size:13px; color:#fff;
+    background:#ef7d1a; padding:3px 12px; border-radius:999px; }
+
+  /* ===== こっきずかん ===== */
+  #kz-top{ width:100%; display:flex; flex-direction:column; align-items:center; gap:8px; margin-top:34px; }
+  #kz-back{ align-self:flex-start; background:rgba(255,255,255,.85); border:none; cursor:pointer; font-family:inherit;
+    font-weight:900; font-size:12px; color:#0c3550; border-radius:12px; padding:6px 12px; box-shadow:0 2px 0 rgba(0,0,0,.1); }
+  #kz-back:active{ transform:translateY(2px); }
+  #kz-title{ font-weight:900; font-size:26px; color:#fff; text-shadow:0 3px 0 #2f7fa8; }
+  #kz-count{ font-weight:900; color:#a85b00; background:rgba(255,255,255,.85); padding:6px 18px; border-radius:999px; font-size:15px; }
+  #kz-count b{ color:#ef3e63; font-size:19px; }
+  #kz-hint{ font-size:11px; font-weight:800; color:#0c3550; background:rgba(255,255,255,.55); padding:5px 12px; border-radius:999px; }
+  #kz-grid{ width:100%; display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:16px; }
+  .kz-cell{ background:var(--paper); border-radius:14px; padding:8px 6px 7px; box-shadow:0 4px 0 #d9cfae;
+    cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:5px; transition:transform .06s, box-shadow .06s; }
+  .kz-cell:active{ transform:translateY(3px); box-shadow:0 1px 0 #d9cfae; }
+  .kz-cell .kz-fl{ width:100%; aspect-ratio:60/40; border-radius:5px; overflow:hidden;
+    box-shadow:0 2px 5px rgba(0,0,0,.25); background:#eee; }
+  .kz-cell .kz-fl svg{ width:100%; height:100%; display:block; }
+  .kz-cell .kz-nm{ font-weight:900; font-size:12px; color:#13314a; line-height:1.1; text-align:center; }
+  .kz-cell.lock{ cursor:default; box-shadow:0 4px 0 #c4cbd2; background:rgba(255,255,255,.5); }
+  .kz-cell.lock .kz-fl{ display:flex; align-items:center; justify-content:center;
+    background:rgba(20,49,74,.12); font-size:26px; color:#8aa0b3; box-shadow:none; }
+  .kz-cell.lock .kz-nm{ color:#9aabb8; }
+  #kz-detail{ position:fixed; inset:0; z-index:6100; display:none; align-items:center; justify-content:center;
+    background:rgba(8,38,58,.55); padding:24px; }
+  #kz-detail.on{ display:flex; }
+  #kz-card{ width:100%; max-width:320px; background:var(--paper); border-radius:22px; padding:18px;
+    box-shadow:0 14px 30px rgba(0,40,70,.4); text-align:center; }
+  #kz-card .kz-bigfl{ width:78%; max-width:240px; margin:4px auto 12px; aspect-ratio:60/40; border-radius:8px;
+    overflow:hidden; box-shadow:0 4px 10px rgba(0,0,0,.3); }
+  #kz-card .kz-bigfl svg{ width:100%; height:100%; display:block; }
+  #kz-card .kz-cname{ font-weight:900; font-size:24px; color:#0c3550; margin-bottom:8px; }
+  #kz-card .kz-row{ display:flex; align-items:center; gap:9px; background:rgba(255,255,255,.85);
+    border-radius:12px; padding:8px 12px; margin-top:7px; text-align:left; }
+  #kz-card .kz-row .e{ font-size:18px; flex:0 0 auto; }
+  #kz-card .kz-row .l{ font-size:11px; font-weight:800; color:#6a7a88; min-width:34px; }
+  #kz-card .kz-row .v{ font-size:16px; font-weight:900; color:#13314a; }
+  #kz-card .kz-close{ margin-top:16px; }
+
+  /* 図鑑のように縦長のときは上揃えにして上端が切れないようにする */
+  #kokki-wrap.kktall{ align-items:flex-start; }
   /* ハブ表示＆戻るボタン */
   #kokki-wrap.show{ display:flex; }
   #kokki-back-btn{ position:absolute; top:8px; left:50%; transform:translateX(-50%);
@@ -2994,7 +3044,7 @@
         <div id="title-content">
         <div id="tap-notice" onclick="beginTitleAudio(event)">▶ タップして音を出す</div>
         <div class="famicom-title">はちばんちくわ</div>
-        <div id="version-label">Ver 2.7.0</div>
+        <div id="version-label">Ver 2.8.0</div>
         <button id="start-btn" class="start-btn" onclick="startGame(event)" style="display:none;">🍩 ちくわを覗く... 🍩</button>
         <button id="title-badge-btn" class="badge-link-btn" onclick="openBadgeScreen('title')" style="display:none;">🏅 称号コレクション</button>
         <button id="reset-record-btn" onclick="resetDiscoveryRecord(event)" style="display:none;">🗑 異変の記録をリセット</button>
@@ -3013,7 +3063,7 @@
             <button id="play-ichamon-btn" onclick="playIchamon(event)">🔴 めざせイチャモンスター<span class="hassaku-sub">町にかくれたボールを探して、理不尽なイチャモンを集めろ</span></button>
             <button id="play-saiban-btn" onclick="playSaiban(event)">⚖️ ちくわ裁判<span class="hassaku-sub">証言台で「いつ・どこで・だれが・なにをした」を組み立てろ</span></button>
             <button id="play-kintama-btn" onclick="playKintama(event)">🥚 キンタマガチャンコ<span class="hassaku-sub">動くワクに金玉をブチ込め！ラッキー金玉＆スター無敵で戦闘力を稼げ</span></button>
-            <button id="play-kokki-btn" onclick="playKokki(event)">🌍 国旗あてクイズ<span class="hassaku-sub">国旗から国名を当てよう！中級は首都、上級は名物も。20カ国でチャレンジ</span></button>
+            <button id="play-kokki-btn" onclick="playKokki(event)">🌍 国旗あてクイズ<span class="hassaku-sub">国旗から国名を当てよう！首都・名物・自然/地形も。45カ国＋こっきずかん</span></button>
         </div>
         <div id="open-guide">
             <div class="og-title">⚠️ 音が出ない / タップできない時は</div>
@@ -4958,7 +5008,7 @@
         if (e) e.stopPropagation();
         const r = document.getElementById("chase-result");
         if (r) r.classList.remove("show");
-        document.getElementById("chase-game").style.display = "none"; document.getElementById("chase-game").classList.remove("show");
+        // ★ #chase-game は隠さずに reload する（隠すと裏のおでん鍋が一瞬見えてしまうため）
         goToTitle();
     };
 
@@ -11784,6 +11834,8 @@ function kintamaToTitle(e){
       <button class="kk-lv lv0" data-lv="0">🟢 しょきゅう<span>国旗から 国名をあてる</span><em id="kk-best0">⭐ 0</em></button>
       <button class="kk-lv lv1" data-lv="1">🔵 ちゅうきゅう<span>国名 ＋ 首都もあてる</span><em id="kk-best1">⭐ 0</em></button>
       <button class="kk-lv lv2" data-lv="2">🔴 じょうきゅう<span>国名 ＋ 首都 ＋ 名物</span><em id="kk-best2">⭐ 0</em></button>
+      <button class="kk-lv lv3" data-lv="3">🟣 さいじょうきゅう<span>国名 ＋ 首都 ＋ 名物 ＋ 自然</span><em id="kk-best3">⭐ 0</em></button>
+      <button id="kk-zukan-btn">📖 こっきずかん<em id="kk-seen">0 / 45</em></button>
       <div id="kk-bgmhint">📣 画面タッチでBGMスタート♪</div>
     </div>
 
@@ -11818,6 +11870,18 @@ function kintamaToTitle(e){
         <button class="kk-btn" id="kk-retry">もう一回</button>
         <button class="kk-btn sub" id="kk-totitle">タイトルへ</button>
       </div>
+    </div>
+
+    <!-- こっきずかん -->
+    <div class="kk-screen" id="kokki-zukan">
+      <div id="kz-top">
+        <button id="kz-back">↩ タイトルへ</button>
+        <div id="kz-title">📖 こっき ずかん</div>
+        <div id="kz-count">みつけた <b id="kz-num">0</b> / <b id="kz-tot">45</b></div>
+        <div id="kz-hint">クイズで出会った国がずかんに記録されるよ</div>
+      </div>
+      <div id="kz-grid"></div>
+      <div id="kz-detail"><div id="kz-card"></div></div>
     </div>
 
   </div>
@@ -11969,57 +12033,82 @@ function kintamaToTitle(e){
         return svg(s);
       }
       case 'PE': return svg(vstr(['#D91023','#fff','#D91023']));
+      case 'HU': return svg(hstr(['#CD2A3E','#FFFFFF','#436F4D']));
+      case 'CO': return svg(rect(0,0,60,20,'#FCD116')+rect(0,20,60,10,'#003893')+rect(0,30,60,10,'#CE1126'));
+      case 'MA': return svg(rect(0,0,60,40,'#C1272D')+star(30,20,9,5,'#006233',0));
+      case 'ZA': {
+        var s=rect(0,0,60,20,'#E03C31')+rect(0,20,60,20,'#001489');
+        var fork=22;
+        s+='<path d="M-1,-1 L'+fork+',20 L61,20" fill="none" stroke="#fff" stroke-width="12"/>'
+          +'<path d="M-1,41 L'+fork+',20" fill="none" stroke="#fff" stroke-width="12"/>';
+        s+='<path d="M-1,-1 L'+fork+',20 L61,20" fill="none" stroke="#007A4D" stroke-width="7"/>'
+          +'<path d="M-1,41 L'+fork+',20" fill="none" stroke="#007A4D" stroke-width="7"/>';
+        s+='<polygon points="-1,2 18,20 -1,38" fill="#FFB915"/>';
+        s+='<polygon points="-1,5.5 12.5,20 -1,34.5" fill="#000"/>';
+        return svg(s);
+      }
+      case 'VE': {
+        var s=rect(0,0,60,13.33,'#FFCC00')+rect(0,13.33,60,13.34,'#00247D')+rect(0,26.67,60,13.33,'#CF142B');
+        for(var i=0;i<8;i++){ var d=(50+80*i/7)*Math.PI/180; s+=star(30+20*Math.cos(d),6+20*Math.sin(d),1.3,5,'#fff',0); }
+        return svg(s);
+      }
       default: return svg(rect(0,0,60,40,'#ccc'));
     }
   }
 
   var FLAGS = [
-    {ja:'日本', code:'JP', cap:'東京', mei:'すし'},
-    {ja:'アメリカ', code:'US', cap:'ワシントンD.C.', mei:'ハンバーガー'},
-    {ja:'イギリス', code:'GB', cap:'ロンドン', mei:'紅茶'},
-    {ja:'中国', code:'CN', cap:'ペキン', mei:'パンダ'},
-    {ja:'韓国', code:'KR', cap:'ソウル', mei:'キムチ'},
-    {ja:'フランス', code:'FR', cap:'パリ', mei:'ワイン'},
-    {ja:'ドイツ', code:'DE', cap:'ベルリン', mei:'ソーセージ'},
-    {ja:'イタリア', code:'IT', cap:'ローマ', mei:'ピザ'},
-    {ja:'カナダ', code:'CA', cap:'オタワ', mei:'メープルシロップ'},
-    {ja:'ブラジル', code:'BR', cap:'ブラジリア', mei:'コーヒー'},
-    {ja:'ロシア', code:'RU', cap:'モスクワ', mei:'マトリョーシカ'},
-    {ja:'オランダ', code:'NL', cap:'アムステルダム', mei:'チューリップ'},
-    {ja:'スイス', code:'CH', cap:'ベルン', mei:'時計'},
-    {ja:'スウェーデン', code:'SE', cap:'ストックホルム', mei:'ミートボール'},
-    {ja:'トルコ', code:'TR', cap:'アンカラ', mei:'ケバブ'},
-    {ja:'インド', code:'IN', cap:'ニューデリー', mei:'カレー'},
-    {ja:'スペイン', code:'ES', cap:'マドリード', mei:'パエリア'},
-    {ja:'インドネシア', code:'ID', cap:'ジャカルタ', mei:'オランウータン'},
-    {ja:'ベルギー', code:'BE', cap:'ブリュッセル', mei:'ワッフル'},
-    {ja:'アイルランド', code:'IE', cap:'ダブリン', mei:'じゃがいも'},
-    {ja:'ギリシャ', code:'GR', cap:'アテネ', mei:'オリーブ'},
-    {ja:'オーストラリア', code:'AU', cap:'キャンベラ', mei:'コアラ'},
-    {ja:'タイ', code:'TH', cap:'バンコク', mei:'トムヤムクン'},
-    {ja:'アルゼンチン', code:'AR', cap:'ブエノスアイレス', mei:'タンゴ'},
-    {ja:'フィンランド', code:'FI', cap:'ヘルシンキ', mei:'ムーミン'},
-    {ja:'デンマーク', code:'DK', cap:'コペンハーゲン', mei:'レゴ'},
-    {ja:'オーストリア', code:'AT', cap:'ウィーン', mei:'モーツァルト'},
-    {ja:'ポーランド', code:'PL', cap:'ワルシャワ', mei:'ショパン'},
-    {ja:'ウクライナ', code:'UA', cap:'キーウ', mei:'ひまわり'},
-    {ja:'ノルウェー', code:'NO', cap:'オスロ', mei:'フィヨルド'},
-    {ja:'アイスランド', code:'IS', cap:'レイキャビク', mei:'オーロラ'},
-    {ja:'メキシコ', code:'MX', cap:'メキシコシティ', mei:'タコス'},
-    {ja:'ベトナム', code:'VN', cap:'ハノイ', mei:'フォー'},
-    {ja:'フィリピン', code:'PH', cap:'マニラ', mei:'マンゴー'},
-    {ja:'マレーシア', code:'MY', cap:'クアラルンプール', mei:'ドリアン'},
-    {ja:'ニュージーランド', code:'NZ', cap:'ウェリントン', mei:'キウイ'},
-    {ja:'チリ', code:'CL', cap:'サンティアゴ', mei:'モアイ'},
-    {ja:'ジャマイカ', code:'JM', cap:'キングストン', mei:'レゲエ'},
-    {ja:'エジプト', code:'EG', cap:'カイロ', mei:'ピラミッド'},
-    {ja:'ペルー', code:'PE', cap:'リマ', mei:'マチュピチュ'}
+    {ja:'日本', code:'JP', cap:'東京', mei:'すし', geo:'富士山', gtype:'山'},
+    {ja:'アメリカ', code:'US', cap:'ワシントンD.C.', mei:'ハンバーガー', geo:'グランドキャニオン', gtype:'地形'},
+    {ja:'イギリス', code:'GB', cap:'ロンドン', mei:'紅茶', geo:'テムズ川', gtype:'川'},
+    {ja:'中国', code:'CN', cap:'ペキン', mei:'パンダ', geo:'長江(チャンチヤン)', gtype:'川'},
+    {ja:'韓国', code:'KR', cap:'ソウル', mei:'キムチ', geo:'済州島(チェジュとう)', gtype:'島'},
+    {ja:'フランス', code:'FR', cap:'パリ', mei:'ワイン', geo:'セーヌ川', gtype:'川'},
+    {ja:'ドイツ', code:'DE', cap:'ベルリン', mei:'ソーセージ', geo:'ライン川', gtype:'川'},
+    {ja:'イタリア', code:'IT', cap:'ローマ', mei:'ピザ', geo:'ベスビオ火山', gtype:'山'},
+    {ja:'カナダ', code:'CA', cap:'オタワ', mei:'メープルシロップ', geo:'ナイアガラの滝', gtype:'滝'},
+    {ja:'ブラジル', code:'BR', cap:'ブラジリア', mei:'コーヒー', geo:'アマゾン川', gtype:'川'},
+    {ja:'ロシア', code:'RU', cap:'モスクワ', mei:'マトリョーシカ', geo:'バイカル湖', gtype:'湖'},
+    {ja:'オランダ', code:'NL', cap:'アムステルダム', mei:'チューリップ', geo:'干拓地(ポルダー)', gtype:'地形'},
+    {ja:'スイス', code:'CH', cap:'ベルン', mei:'時計', geo:'マッターホルン', gtype:'山'},
+    {ja:'スウェーデン', code:'SE', cap:'ストックホルム', mei:'ミートボール', geo:'バルト海', gtype:'海'},
+    {ja:'トルコ', code:'TR', cap:'アンカラ', mei:'ケバブ', geo:'カッパドキア', gtype:'地形'},
+    {ja:'インド', code:'IN', cap:'ニューデリー', mei:'カレー', geo:'ガンジス川', gtype:'川'},
+    {ja:'スペイン', code:'ES', cap:'マドリード', mei:'パエリア', geo:'ピレネー山脈', gtype:'山'},
+    {ja:'インドネシア', code:'ID', cap:'ジャカルタ', mei:'オランウータン', geo:'バリ島', gtype:'島'},
+    {ja:'ベルギー', code:'BE', cap:'ブリュッセル', mei:'ワッフル', geo:'アルデンヌの森', gtype:'地形'},
+    {ja:'アイルランド', code:'IE', cap:'ダブリン', mei:'じゃがいも', geo:'モハーの断崖', gtype:'地形'},
+    {ja:'ギリシャ', code:'GR', cap:'アテネ', mei:'オリーブ', geo:'エーゲ海', gtype:'海'},
+    {ja:'オーストラリア', code:'AU', cap:'キャンベラ', mei:'コアラ', geo:'エアーズロック', gtype:'地形'},
+    {ja:'タイ', code:'TH', cap:'バンコク', mei:'トムヤムクン', geo:'チャオプラヤ川', gtype:'川'},
+    {ja:'アルゼンチン', code:'AR', cap:'ブエノスアイレス', mei:'タンゴ', geo:'パタゴニア', gtype:'地形'},
+    {ja:'フィンランド', code:'FI', cap:'ヘルシンキ', mei:'ムーミン', geo:'サイマー湖', gtype:'湖'},
+    {ja:'デンマーク', code:'DK', cap:'コペンハーゲン', mei:'レゴ', geo:'ユトランド半島', gtype:'地形'},
+    {ja:'オーストリア', code:'AT', cap:'ウィーン', mei:'モーツァルト', geo:'アルプス山脈', gtype:'山'},
+    {ja:'ポーランド', code:'PL', cap:'ワルシャワ', mei:'ショパン', geo:'ヴィスワ川', gtype:'川'},
+    {ja:'ウクライナ', code:'UA', cap:'キーウ', mei:'ひまわり', geo:'ドニエプル川', gtype:'川'},
+    {ja:'ノルウェー', code:'NO', cap:'オスロ', mei:'フィヨルド', geo:'ソグネフィヨルド', gtype:'地形'},
+    {ja:'アイスランド', code:'IS', cap:'レイキャビク', mei:'オーロラ', geo:'ゲイシール間欠泉', gtype:'地形'},
+    {ja:'メキシコ', code:'MX', cap:'メキシコシティ', mei:'タコス', geo:'ユカタン半島', gtype:'地形'},
+    {ja:'ベトナム', code:'VN', cap:'ハノイ', mei:'フォー', geo:'メコン川', gtype:'川'},
+    {ja:'フィリピン', code:'PH', cap:'マニラ', mei:'マンゴー', geo:'マヨン火山', gtype:'山'},
+    {ja:'マレーシア', code:'MY', cap:'クアラルンプール', mei:'ドリアン', geo:'キナバル山', gtype:'山'},
+    {ja:'ニュージーランド', code:'NZ', cap:'ウェリントン', mei:'キウイ', geo:'サザンアルプス', gtype:'山'},
+    {ja:'チリ', code:'CL', cap:'サンティアゴ', mei:'モアイ', geo:'アタカマ砂漠', gtype:'砂漠'},
+    {ja:'ジャマイカ', code:'JM', cap:'キングストン', mei:'レゲエ', geo:'ブルーマウンテン', gtype:'山'},
+    {ja:'エジプト', code:'EG', cap:'カイロ', mei:'ピラミッド', geo:'ナイル川', gtype:'川'},
+    {ja:'ペルー', code:'PE', cap:'リマ', mei:'マチュピチュ', geo:'チチカカ湖', gtype:'湖'},
+    {ja:'ハンガリー', code:'HU', cap:'ブダペスト', mei:'パプリカ', geo:'ドナウ川', gtype:'川'},
+    {ja:'コロンビア', code:'CO', cap:'ボゴタ', mei:'エメラルド', geo:'アンデス山脈', gtype:'山'},
+    {ja:'モロッコ', code:'MA', cap:'ラバト', mei:'タジン', geo:'サハラ砂漠', gtype:'砂漠'},
+    {ja:'南アフリカ', code:'ZA', cap:'プレトリア', mei:'ダイヤモンド', geo:'テーブルマウンテン', gtype:'山'},
+    {ja:'ベネズエラ', code:'VE', cap:'カラカス', mei:'カカオ', geo:'アンヘルの滝', gtype:'滝'}
   ];
   // レベル設定：出題する国の数 と 各国で聞く内容
   var LEVELS = [
     {name:'しょきゅう', flags:10, subs:['country']},
     {name:'ちゅうきゅう', flags:7,  subs:['country','capital']},
-    {name:'じょうきゅう', flags:5,  subs:['country','capital','meibutsu']}
+    {name:'じょうきゅう', flags:5,  subs:['country','capital','meibutsu']},
+    {name:'さいじょうきゅう', flags:5, subs:['country','capital','meibutsu','geo']}
   ];
 
   // ===================== 音 =====================
@@ -12048,28 +12137,64 @@ function kintamaToTitle(e){
   // ===================== セーブ（レベル別）=====================
   function getBest(lv){ try{ return parseInt(localStorage.getItem('kokki_best_'+lv)||'0',10)||0; }catch(e){ return 0; } }
   function setBest(lv,v){ try{ localStorage.setItem('kokki_best_'+lv, String(v)); }catch(e){} }
-  function refreshBest(){ for(var lv=0;lv<3;lv++){ var el=$('kk-best'+lv); if(el) el.textContent='⭐ '+getBest(lv).toLocaleString(); } }
+  function refreshBest(){ for(var lv=0;lv<4;lv++){ var el=$('kk-best'+lv); if(el) el.textContent='⭐ '+getBest(lv).toLocaleString(); } }
+
+  // ===================== こっきずかん =====================
+  var GEMO={'山':'⛰️','川':'🏞️','海':'🌊','湖':'💧','地形':'🗺️','砂漠':'🏜️','滝':'💦','島':'🏝️'};
+  function getSeen(){ try{ return JSON.parse(localStorage.getItem('kokki_seen')||'[]')||[]; }catch(e){ return []; } }
+  function addSeen(code){ try{ var a=getSeen(); if(a.indexOf(code)<0){ a.push(code); localStorage.setItem('kokki_seen', JSON.stringify(a)); updateSeenCount(); } }catch(e){} }
+  function updateSeenCount(){ var el=$('kk-seen'); if(el) el.textContent=getSeen().length+' / '+FLAGS.length; }
+  function flagByCode(code){ for(var i=0;i<FLAGS.length;i++){ if(FLAGS[i].code===code) return FLAGS[i]; } return null; }
+  function renderZukan(){
+    var seen=getSeen(), grid=$('kz-grid'); if(!grid) return; grid.innerHTML='';
+    $('kz-num').textContent=seen.length; $('kz-tot').textContent=FLAGS.length;
+    FLAGS.forEach(function(f){
+      var got=seen.indexOf(f.code)>=0, cell=document.createElement('div');
+      cell.className='kz-cell'+(got?'':' lock');
+      if(got){ cell.innerHTML='<div class="kz-fl">'+flagSVG(f.code)+'</div><div class="kz-nm">'+f.ja+'</div>';
+        cell.onclick=function(){ sfxTap(); openZukanDetail(f.code); }; }
+      else { cell.innerHTML='<div class="kz-fl">❓</div><div class="kz-nm">？？？</div>'; }
+      grid.appendChild(cell);
+    });
+  }
+  function openZukanDetail(code){
+    var f=flagByCode(code); if(!f) return; var emo=GEMO[f.gtype]||'🗺️';
+    $('kz-card').innerHTML=
+      '<div class="kz-bigfl">'+flagSVG(f.code)+'</div>'
+     +'<div class="kz-cname">'+f.ja+'</div>'
+     +'<div class="kz-row"><span class="e">🏙️</span><span class="l">首都</span><span class="v">'+f.cap+'</span></div>'
+     +'<div class="kz-row"><span class="e">🍴</span><span class="l">名物</span><span class="v">'+f.mei+'</span></div>'
+     +'<div class="kz-row"><span class="e">'+emo+'</span><span class="l">自然</span><span class="v">'+f.geo+'（'+f.gtype+'）</span></div>'
+     +'<button class="kk-btn sub kz-close">とじる</button>';
+    var cb=$('kz-card').querySelector('.kz-close');
+    if(cb) cb.onclick=function(){ sfxTap(); closeZukanDetail(); };
+    $('kz-detail').classList.add('on');
+  }
+  function closeZukanDetail(){ var d=$('kz-detail'); if(d) d.classList.remove('on'); }
+  function showZukan(){ renderZukan(); closeZukanDetail(); show('kokki-zukan'); }
 
   // ===================== ゲーム =====================
   var LEVEL=0, rounds=[], ri=0, si=0, qi=0, totalQ=0, score=0, combo=0, correctCount=0, locked=false, timer=null;
   var roundAns=[];  // 今の国で答えた内容 {kind, ok, val}
-  var LABEL={country:'国名', capital:'首都', meibutsu:'名物'};
+  var LABEL={country:'国名', capital:'首都', meibutsu:'名物', geo:'自然'};
 
   function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
   function uniq(a){ var o=[],s={}; a.forEach(function(v){ if(!s[v]){s[v]=1;o.push(v);} }); return o; }
 
-  function show(id){ ['kokki-title','kokki-quiz','kokki-result'].forEach(function(s){ $(s).classList.toggle('on', s===id); }); }
+  function show(id){ ['kokki-title','kokki-quiz','kokki-result','kokki-zukan'].forEach(function(s){ $(s).classList.toggle('on', s===id); });
+    var w=document.getElementById('kokki-wrap'); if(w){ w.classList.toggle('kktall', id==='kokki-zukan'); w.scrollTop=0; } }
 
-  function showTitle(){ if(timer){clearTimeout(timer);timer=null;} stopBGM(); show('kokki-title'); refreshBest();
+  function showTitle(){ if(timer){clearTimeout(timer);timer=null;} stopBGM(); show('kokki-title'); refreshBest(); updateSeenCount();
     var h=$('kk-bgmhint'); if(h) h.style.display='block'; }
 
-  function fieldOf(kind){ return kind==='country'?'ja':(kind==='capital'?'cap':'mei'); }
+  function fieldOf(kind){ return kind==='country'?'ja':(kind==='capital'?'cap':(kind==='meibutsu'?'mei':'geo')); }
 
   var COUNTRIES_PER_GAME=20;
   function startGame(level){
     LEVEL=level; ensureAudio(); startBGM();
     var subs=LEVELS[level].subs;
-    var chosen=shuffle(FLAGS).slice(0, COUNTRIES_PER_GAME);
+    var per=[20,20,20,12][level]||COUNTRIES_PER_GAME;
+    var chosen=shuffle(FLAGS).slice(0, per);
     rounds=chosen.map(function(f){ return {flag:f, subs:subs}; });
     totalQ=chosen.length*subs.length;
     ri=0; si=0; qi=0; score=0; combo=0; correctCount=0; locked=false; roundAns=[];
@@ -12086,13 +12211,14 @@ function kintamaToTitle(e){
   function infoHTML(){
     return roundAns.map(function(a){
       return '<div class="kk-info-row"><span class="mk '+(a.ok?'ok':'ng')+'">'+(a.ok?'◯':'✕')+'</span>'
-           + '<span class="lb">'+LABEL[a.kind]+'</span><span class="vl">'+a.val+'</span></div>';
+           + '<span class="lb">'+(a.lb||LABEL[a.kind])+'</span><span class="vl">'+a.val+'</span></div>';
     }).join('');
   }
 
   function renderRound(){
     locked=false;
     var r=rounds[ri], f=r.flag, multi=r.subs.length>1;
+    addSeen(f.code);
     $('kk-flag').innerHTML=flagSVG(f.code);
     $('kk-remain').textContent=(totalQ-qi);
     $('kk-combo').textContent = combo>=2 ? ('🔥 '+combo+'れんぞく！') : '';
@@ -12104,7 +12230,8 @@ function kintamaToTitle(e){
       var kind=r.subs[si], fld=fieldOf(kind), correctVal=f[fld];
       $('kk-q').textContent = kind==='country' ? 'この国旗はどこの国？'
                           : kind==='capital' ? ('「'+f.ja+'」の首都は？')
-                          : ('「'+f.ja+'」の名物は？');
+                          : kind==='meibutsu' ? ('「'+f.ja+'」の名物は？')
+                          : ('「'+f.ja+'」で有名な自然・地形は？');
       var pool=uniq(FLAGS.map(function(x){return x[fld];}).filter(function(v){return v!==correctVal;}));
       var opts=shuffle([correctVal].concat(shuffle(pool).slice(0,3)));
       var box=$('kk-choices'); box.innerHTML='';
@@ -12140,7 +12267,7 @@ function kintamaToTitle(e){
       $('kk-feedback').textContent='ざんねん… 正解は「'+correctVal+'」'; $('kk-feedback').className='bad';
     }
     markDot(qi, ok); qi++;
-    roundAns.push({kind:kind, ok:ok, val:correctVal});
+    roundAns.push({kind:kind, ok:ok, val:correctVal, lb:(kind==='geo'?rounds[ri].flag.gtype:LABEL[kind])});
     var multi=rounds[ri].subs.length>1;
     timer=setTimeout(function(){
       si++;
@@ -12162,7 +12289,7 @@ function kintamaToTitle(e){
     $('kk-res-correct').textContent='正解 '+correctCount+' / '+total;
     $('kk-res-title').textContent=LEVELS[LEVEL].name+' けっか';
     var msg, stamp;
-    if(pct>=1){ msg=(LEVEL===2?'国旗キング！世界制覇👑':'ぜんもん正解！すごい！'); stamp='👑'; }
+    if(pct>=1){ msg=(LEVEL===3?'地理マスター！世界はキミのもの🌐':(LEVEL===2?'国旗キング！世界制覇👑':'ぜんもん正解！すごい！')); stamp=(LEVEL===3?'🌐':'👑'); }
     else if(pct>=0.8){ msg='ものしりハカセ級！'; stamp='🎓'; }
     else if(pct>=0.5){ msg='なかなかやるね！'; stamp='🌍'; }
     else if(pct>=0.2){ msg='これから おぼえていこう！'; stamp='🧭'; }
@@ -12187,7 +12314,10 @@ function kintamaToTitle(e){
     $('kk-quit').addEventListener('click', function(){ sfxTap(); stopBGM(); showTitle(); });
     $('kokki-title').addEventListener('pointerdown', function(){ ensureAudio(); startBGM();
       var h=$('kk-bgmhint'); if(h) h.style.display='none'; });
-    refreshBest();
+    var zb=$('kk-zukan-btn'); if(zb) zb.addEventListener('click', function(e){ e.stopPropagation(); sfxTap(); showZukan(); });
+    var kzb=$('kz-back'); if(kzb) kzb.addEventListener('click', function(){ sfxTap(); showTitle(); });
+    var kzd=$('kz-detail'); if(kzd) kzd.addEventListener('click', function(e){ if(e.target===kzd) closeZukanDetail(); });
+    refreshBest(); updateSeenCount();
     showTitle();
   }
   if(document.readyState!=='loading') bind();
