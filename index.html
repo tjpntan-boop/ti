@@ -1217,6 +1217,18 @@
         }
         #play-hae-btn:hover { background: #3a2016; border-color: #ffae5e; }
         #play-hae-btn .hassaku-sub { font-size: 10px; font-weight: normal; letter-spacing: 0; opacity: 0.8; color: #e0a266; }
+        #play-tan-btn {
+            margin-top: 10px;
+            background: #15242c; color: #ffce6b;
+            border: 1px solid #4f7180; border-radius: 8px; padding: 9px 22px;
+            font-size: 15px; font-weight: bold; cursor: pointer; z-index: 1010; letter-spacing: 1px;
+            display: flex; flex-direction: column; align-items: center; gap: 2px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+            transition: background 0.15s, border-color 0.15s;
+            font-family: inherit;
+        }
+        #play-tan-btn:hover { background: #1d333e; border-color: #ffce6b; }
+        #play-tan-btn .hassaku-sub { font-size: 10px; font-weight: normal; letter-spacing: 0; opacity: 0.8; color: #cfe0ea; }
 
         /* タイトルに常設する「ブラウザで開く手順」案内ボックス */
         #open-guide {
@@ -3158,6 +3170,100 @@
   #hae-res-best{ margin-top:10px; font-weight:800; font-size:14px; color:#9a4b12; }
   #hae-res-btns{ margin-top:18px; display:flex; flex-direction:column; gap:12px; align-items:center; }
 
+  /* ====================== 🕵️ パンツにウンコついてる？（モウリ探偵）====================== */
+  #tan-wrap{
+    --paper:#fff8ec; --ink:#2a2017; --amber:#ffce6b; --amber2:#e8a52e; --good:#2fae6b; --bad:#e8506b;
+    position:fixed; inset:0; z-index:5400; overflow-y:auto; -webkit-overflow-scrolling:touch;
+    display:none; align-items:flex-start; justify-content:center;
+    font-family:"M PLUS Rounded 1c", system-ui, sans-serif; color:var(--ink); user-select:none; -webkit-user-select:none;
+    -webkit-tap-highlight-color:transparent; touch-action:manipulation;
+    background:radial-gradient(120% 70% at 50% 0%, #38515f 0%, #243640 45%, #18242c 100%);
+  }
+  #tan-wrap.show{ display:flex; }
+  #tan-wrap *{ box-sizing:border-box; }
+  #tan-stage{ position:relative; width:100%; max-width:470px; min-height:100%; display:flex; flex-direction:column; align-items:center; padding:48px 12px 26px; }
+  #tan-back-btn{ position:absolute; top:8px; left:50%; transform:translateX(-50%); z-index:6600; font-family:inherit; font-size:13px; font-weight:900;
+    cursor:pointer; padding:7px 14px; border-radius:18px; border:none; background:#0e1c24; color:#ffce6b; box-shadow:0 3px 0 #06121a; }
+  #tan-back-btn:active{ transform:translateX(-50%) translateY(2px); }
+
+  .tan-screen{ width:100%; display:none; flex-direction:column; align-items:center; }
+  .tan-screen.on{ display:flex; }
+  .tan-btn{ border:none; cursor:pointer; font-family:inherit; font-weight:900; color:#3a2a10;
+    background:linear-gradient(#ffd574,#f0ab30); border-radius:16px; box-shadow:0 5px 0 #b97d18;
+    padding:13px 28px; font-size:19px; letter-spacing:1px; transition:transform .06s, box-shadow .06s; }
+  .tan-btn:active{ transform:translateY(4px); box-shadow:0 1px 0 #b97d18; }
+  .tan-btn.sub{ background:linear-gradient(#9fb0bb,#74899a); box-shadow:0 5px 0 #4f6473; color:#fff; font-size:15px; padding:10px 22px; }
+  .tan-btn:disabled{ opacity:.5; box-shadow:0 5px 0 #b97d18; }
+
+  /* タイトル */
+  #tan-logo{ margin-top:8px; text-align:center; font-weight:900; line-height:1.1; color:#fff; text-shadow:0 2px 0 #b97d18,0 5px 8px rgba(0,0,0,.4); }
+  #tan-logo .l1{ font-size:24px; white-space:nowrap; } #tan-logo .l2{ font-size:26px; color:#ffce6b; white-space:nowrap; } #tan-logo .l3{ font-size:13px; opacity:.9; white-space:nowrap; }
+  #tan-detective{ width:128px; height:128px; margin:6px 0; }
+  #tan-detective svg{ width:100%; height:100%; }
+  #tan-tagline{ font-weight:800; font-size:14px; text-align:center; color:#1c2a32; background:rgba(255,248,236,.92); padding:9px 16px; border-radius:14px; line-height:1.5; max-width:340px; }
+  #tan-best{ margin-top:12px; font-weight:900; font-size:15px; color:#3a2a10; background:var(--amber); border-radius:999px; padding:7px 18px; box-shadow:0 3px 0 #b97d18; }
+  #tan-start{ margin-top:16px; }
+  #tan-howto{ margin-top:14px; font-size:12px; font-weight:700; color:#dfe9ef; text-align:center; line-height:1.6; max-width:340px; }
+
+  /* プレイ */
+  #tan-qcount{ font-weight:900; font-size:14px; color:#1c2a32; background:var(--amber); border-radius:999px; padding:5px 16px; box-shadow:0 2px 0 #b97d18; margin-bottom:8px; }
+  #tan-students{ width:100%; max-width:430px; display:flex; justify-content:space-around; gap:6px;
+    background:linear-gradient(#f5efe0 0%, #efe6d0 60%, #d8c7a4 60%, #cbb893 100%);
+    border-radius:14px; padding:12px 6px 8px; box-shadow:0 6px 16px rgba(0,0,0,.35), inset 0 2px 0 rgba(255,255,255,.4); }
+  .tan-st{ flex:1; display:flex; flex-direction:column; align-items:center; border-radius:16px; padding:6px 2px 4px; transition:transform .1s, background .1s; }
+  .tan-st .av{ width:84px; height:94px; }
+  .tan-st .av svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 4px 4px rgba(0,0,0,.3)); }
+  .tan-st .np{ margin-top:2px; font-weight:900; font-size:13px; color:#fff; background:#0e1c24; border-radius:999px; padding:3px 12px; box-shadow:0 2px 0 rgba(0,0,0,.35); white-space:nowrap; }
+  .tan-st .np .g{ font-size:11px; opacity:.85; }
+  #tan-students.pickmode .tan-st{ cursor:pointer; background:rgba(232,120,30,.18); }
+  #tan-students.pickmode .tan-st:active{ transform:scale(.96); }
+  #tan-students.pickmode .tan-st::after{ content:"👆 指名"; margin-top:3px; font-size:11px; font-weight:900; color:#a8521a; }
+  .tan-st.accused{ background:rgba(255,206,107,.3); box-shadow:0 0 0 3px var(--amber) inset; }
+
+  #tan-board{ width:100%; max-width:430px; margin-top:12px; background:var(--paper); border-radius:18px; padding:14px; box-shadow:0 10px 24px rgba(0,0,0,.35); }
+  #tan-msg{ font-weight:900; font-size:15px; text-align:center; color:#5a3a14; line-height:1.5; }
+  #tan-answers{ margin-top:10px; display:flex; flex-direction:column; gap:9px; }
+  .tan-ans{ display:flex; align-items:flex-start; gap:8px; }
+  .tan-ans .nm{ flex:0 0 auto; font-weight:900; font-size:12px; color:#fff; background:#7a5a30; border-radius:8px; padding:4px 8px; white-space:nowrap; }
+  .tan-ans .bub{ position:relative; flex:1; background:#fff; border:2px solid #e7d8bd; border-radius:12px; padding:7px 11px; font-weight:700; font-size:13.5px; line-height:1.45; color:#2a2017; }
+  .tan-ans .bub::before{ content:""; position:absolute; left:-8px; top:11px; border:6px solid transparent; border-right-color:#e7d8bd; }
+  .tan-ans .bub::after{ content:""; position:absolute; left:-5px; top:11px; border:6px solid transparent; border-right-color:#fff; }
+  #tan-choices{ margin-top:6px; display:flex; flex-direction:column; gap:9px; }
+  .tan-q{ border:none; cursor:pointer; font-family:inherit; font-weight:800; font-size:14px; text-align:left; color:#2a2017;
+    background:#fff3da; border:2px solid #e8c987; border-radius:12px; padding:11px 13px; box-shadow:0 3px 0 #d7b061; transition:transform .06s, box-shadow .06s; }
+  .tan-q:active{ transform:translateY(3px); box-shadow:0 0 0 #d7b061; }
+  #tan-next{ margin-top:12px; width:100%; }
+  .tan-hide{ display:none !important; }
+
+  /* リザルト */
+  #tan-verdict{ font-weight:900; font-size:26px; text-align:center; color:#fff; text-shadow:0 3px 0 #b97d18; line-height:1.3; margin-top:4px; }
+  #tan-verdict .em{ font-size:60px; display:block; }
+  #tan-reveal-card{ margin-top:12px; width:100%; max-width:360px; background:var(--paper); border-radius:18px; padding:16px; text-align:center; box-shadow:0 10px 24px rgba(0,0,0,.35); }
+  #tan-reveal-card .who{ font-weight:900; font-size:17px; color:#5a3a14; line-height:1.55; }
+  #tan-reveal-card .who .nb{ display:block; white-space:nowrap; }
+  #tan-reveal-card .pants{ width:130px; height:104px; margin:8px auto 4px; }
+  #tan-reveal-card .pants svg{ width:100%; height:100%; }
+  #tan-reveal-card .label{ font-weight:900; font-size:14px; margin-top:2px; }
+  #tan-streak{ margin-top:14px; font-weight:900; font-size:15px; color:#3a2a10; background:var(--amber); border-radius:999px; padding:7px 18px; box-shadow:0 3px 0 #b97d18; }
+  #tan-res-btns{ margin-top:16px; display:flex; flex-direction:column; gap:11px; align-items:center; }
+
+  /* レア犯人（ゲーム中の名札） */
+  .tan-st.rare .np{ background:linear-gradient(#b9601a,#8a4a12); box-shadow:0 0 0 2px #ffce6b, 0 2px 0 rgba(0,0,0,.35); }
+
+  /* 犯人コレクション */
+  #tan-col-title{ font-weight:900; font-size:24px; color:#fff; text-shadow:0 2px 0 #b97d18; margin-top:6px; }
+  #tan-col-total{ margin-top:8px; font-weight:800; font-size:13px; color:#1c2a32; background:var(--amber); border-radius:999px; padding:6px 16px; box-shadow:0 2px 0 #b97d18; text-align:center; }
+  #tan-col-grid{ width:100%; max-width:430px; margin:14px 0 16px; display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .tan-col-cell{ background:var(--paper); border-radius:14px; padding:8px 4px 6px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,.3); border:2px solid transparent; }
+  .tan-col-cell.rare{ background:linear-gradient(#fff8ec,#ffefce); box-shadow:0 0 0 2px #ffce6b, 0 4px 12px rgba(0,0,0,.4); }
+  .tan-col-cell.lock{ opacity:.9; background:#e7e1d3; box-shadow:0 3px 8px rgba(0,0,0,.25); }
+  .tan-col-cell .cav{ width:62px; height:70px; margin:0 auto; }
+  .tan-col-cell .cav svg{ width:100%; height:100%; }
+  .tan-col-cell .cav.lockq{ font-size:30px; line-height:70px; color:#b6ac98; }
+  .tan-col-cell .cnm{ font-weight:900; font-size:12px; color:#5a3a14; margin-top:2px; white-space:nowrap; }
+  .tan-col-cell .ccnt{ font-weight:800; font-size:12px; color:#c0392b; }
+  .tan-col-cell.lock .cnm{ color:#9a8f7a; } .tan-col-cell.lock .ccnt{ color:#9a8f7a; }
+
 </style>
 </head>
 <body>
@@ -3179,7 +3285,7 @@
         <div id="title-content">
         <div id="tap-notice" onclick="beginTitleAudio(event)">▶ タップして音を出す</div>
         <div class="famicom-title">はちばんちくわ</div>
-        <div id="version-label">Ver 2.9.1</div>
+        <div id="version-label">Ver 2.11.2</div>
         <button id="start-btn" class="start-btn" onclick="startGame(event)" style="display:none;">🍩 ちくわを覗く... 🍩</button>
         <button id="title-badge-btn" class="badge-link-btn" onclick="openBadgeScreen('title')" style="display:none;">🏅 称号コレクション</button>
         <button id="reset-record-btn" onclick="resetDiscoveryRecord(event)" style="display:none;">🗑 異変の記録をリセット</button>
@@ -3200,6 +3306,7 @@
             <button id="play-kintama-btn" onclick="playKintama(event)">🥚 キンタマガチャンコ<span class="hassaku-sub">動くワクに金玉をブチ込め！ラッキー金玉＆スター無敵で戦闘力を稼げ</span></button>
             <button id="play-kokki-btn" onclick="playKokki(event)">🌍 国旗あてクイズ<span class="hassaku-sub">国旗から国名を当てよう！首都・名物・自然/地形も。45カ国＋こっきずかん</span></button>
             <button id="play-hae-btn" onclick="playHae(event)">🦟 はえたたきオバハン<span class="hassaku-sub">パンチパーマのオバハンのはえたたきを60秒よけろ！💩アイテムで何かが起こる</span></button>
+            <button id="play-tan-btn" onclick="playTan(event)">🕵️ パンツにウンコついてる？<span class="hassaku-sub">モウリ探偵になって質問→推理！3人の中学生から犯人を一発で当てろ</span></button>
         </div>
         <div id="open-guide">
             <div class="og-title">⚠️ 音が出ない / タップできない時は</div>
@@ -12801,6 +12908,409 @@ function playHae(e){
 function haeToTitle(e){
   if(e) e.stopPropagation();
   if(typeof window.haeShutdown==='function') window.haeShutdown();
+  goToTitle();
+}
+
+</script>
+
+
+<!-- ===== 🕵️ パンツにウンコついてる？（組み込み）===== -->
+<div id="tan-wrap">
+  <button id="tan-back-btn" onclick="tanToTitle(event)">↩ もどる</button>
+  <div id="tan-stage">
+
+    <!-- タイトル -->
+    <div class="tan-screen on" id="tan-title">
+      <div id="tan-logo"><div class="l1">🕵️ パンツに</div><div class="l2">ウンコついてる？</div><div class="l3">〜モウリ探偵の推理〜</div></div>
+      <div id="tan-detective"></div>
+      <div id="tan-tagline">3人の中学生のうち1人、<br>パンツにウンコがついている・・・！<br>質問で追い詰めて、犯人を一発で指名せよ。</div>
+      <div id="tan-best">…</div>
+      <button class="tan-btn" id="tan-start">▶ そうさ開始</button>
+      <button class="tan-btn sub" id="tan-col-btn" style="margin-top:10px;">📕 犯人コレクション</button>
+      <div id="tan-howto">質問は3択から選ぶ → 全員が答える → 3問たずねたら推理して1人を指名！</div>
+    </div>
+
+    <!-- プレイ -->
+    <div class="tan-screen" id="tan-play">
+      <div id="tan-qcount">取り調べ</div>
+      <div id="tan-students"></div>
+      <div id="tan-board">
+        <div id="tan-msg"></div>
+        <div id="tan-answers"></div>
+        <div id="tan-choices"></div>
+        <button class="tan-btn" id="tan-next"></button>
+      </div>
+    </div>
+
+    <!-- 犯人コレクション -->
+    <div class="tan-screen" id="tan-collection">
+      <div id="tan-col-title">📕 犯人コレクション</div>
+      <div id="tan-col-total">…</div>
+      <div id="tan-col-grid"></div>
+      <button class="tan-btn sub" id="tan-col-back">↩ タイトルへ</button>
+    </div>
+
+    <!-- リザルト -->
+    <div class="tan-screen" id="tan-result">
+      <div id="tan-verdict"></div>
+      <div id="tan-reveal-card">
+        <div class="who" id="tan-who"></div>
+        <div class="pants" id="tan-pants"></div>
+        <div class="label" id="tan-label"></div>
+      </div>
+      <div id="tan-streak"></div>
+      <div id="tan-res-btns">
+        <button class="tan-btn" id="tan-retry">もう一回</button>
+        <button class="tan-btn sub" id="tan-totitle">タイトルへ</button>
+        <button class="tan-btn sub" id="tan-col-btn2">📕 犯人コレクション</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ===== 🕵️ パンツにウンコついてる？（ロジック）===== */
+(function(){ "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+  var AC=null, bound=false;
+  var students=[], culprit=0, asked=0, qpool=[], picking=false;
+
+  /* ---------- オーディオ ---------- */
+  function tone(f,d,t,v,sl,dl){ if(!AC) return; var s=AC.currentTime+(dl||0); var o=AC.createOscillator(),g=AC.createGain();
+    o.type=t||'square'; o.frequency.setValueAtTime(f,s); if(sl) o.frequency.exponentialRampToValueAtTime(Math.max(1,sl),s+d);
+    g.gain.setValueAtTime(v||0.06,s); g.gain.exponentialRampToValueAtTime(0.0008,s+d); o.connect(g); g.connect(AC.destination); o.start(s); o.stop(s+d+0.05); }
+  function sfxTap(){ tone(560,0.06,'square',0.05,720); }
+  function sfxAsk(){ tone(330,0.1,'triangle',0.05,520); }
+  function sfxAnswer(){ tone(440,0.07,'sine',0.05,560); }
+  function sfxAccuse(){ tone(180,0.18,'sawtooth',0.08,90); tone(140,0.3,'sawtooth',0.06,70,0.1); }
+  function sfxWin(){ [523,659,784,1046].forEach(function(f,i){ tone(f,0.22,'square',0.07,null,i*0.12); }); }
+  function sfxLose(){ [392,330,262].forEach(function(f,i){ tone(f,0.3,'sawtooth',0.07,null,i*0.14); }); }
+  function sfxReveal(){ tone(120,0.5,'sawtooth',0.07,200); }
+
+  /* ---------- 捜査中BGM（控えめなノワール調ウォーキングベース）---------- */
+  var bgmTimer=null, bgmStep=0;
+  function noiseTick(){ if(!AC) return; var n=Math.floor(AC.sampleRate*0.03); var bf=AC.createBuffer(1,n,AC.sampleRate);
+    var d=bf.getChannelData(0); for(var i=0;i<n;i++) d[i]=(Math.random()*2-1)*(1-i/n);
+    var sc=AC.createBufferSource(); sc.buffer=bf; var g=AC.createGain(); g.gain.setValueAtTime(0.04,AC.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,AC.currentTime+0.03); sc.connect(g); g.connect(AC.destination); sc.start(); }
+  function startBGM(){ stopBGM(); if(!AC) return; bgmStep=0;
+    var bass=[110,110,131,147,165,147,131,123], mel=[null,330,null,392,null,294,null,247];
+    bgmTimer=setInterval(function(){ if(!AC) return; var i=bgmStep%8;
+      tone(bass[i],0.24,'triangle',0.10);          // ウォーキングベース
+      if(mel[i]) tone(mel[i],0.18,'sine',0.045);   // 控えめメロ
+      if(i%2===1) noiseTick();                     // 軽いハイハット
+      bgmStep++; }, 250); }
+  function stopBGM(){ if(bgmTimer){ clearInterval(bgmTimer); bgmTimer=null; } }
+
+  /* ---------- SVGアート ---------- */
+  function skin(){ return '#ffe0c2'; }
+  function detectiveSVG(){ return '<svg viewBox="0 0 100 116" xmlns="http://www.w3.org/2000/svg">'
+    +'<path d="M50,66 C26,66 20,86 18,116 L82,116 C80,86 74,66 50,66 Z" fill="#8a7350"/>'
+    +'<path d="M40,66 L50,80 L60,66 Z" fill="#cdb893"/>'
+    +'<path d="M48,68 l4,0 l1,16 l-3,5 l-3,-5 z" fill="#a83a3a"/>'
+    +'<rect x="45" y="58" width="10" height="10" fill="'+skin()+'"/>'
+    +'<ellipse cx="50" cy="42" rx="21" ry="23" fill="'+skin()+'"/>'
+    +'<path d="M29,40 C29,18 71,18 71,40 C71,26 62,21 50,21 C38,21 29,26 29,40 Z" fill="#3a3530"/>'
+    +'<path d="M30,36 Q35,33 41,35" stroke="#2a2520" stroke-width="2.4" fill="none" stroke-linecap="round"/>'
+    +'<path d="M59,35 Q65,33 70,36" stroke="#2a2520" stroke-width="2.4" fill="none" stroke-linecap="round"/>'
+    +'<ellipse cx="40" cy="43" rx="2.8" ry="3.2" fill="#222"/><ellipse cx="60" cy="43" rx="2.8" ry="3.2" fill="#222"/>'
+    +'<path d="M38,55 Q50,60 62,55 Q56,53 50,53 Q44,53 38,55 Z" fill="#3a3530"/>'
+    +'<path d="M44,63 Q50,66 56,63" stroke="#9a5b48" stroke-width="1.8" fill="none" stroke-linecap="round"/>'
+    +'<g opacity=".5" fill="#7a6a55"><circle cx="36" cy="60" r="0.8"/><circle cx="40" cy="63" r="0.8"/><circle cx="60" cy="63" r="0.8"/><circle cx="64" cy="60" r="0.8"/></g>'
+    +'</svg>'; }
+
+  function sparkle(x,y,r){ return '<path transform="translate('+x+','+y+')" d="M0,-'+r+' L'+(r*0.3)+',-'+(r*0.3)+' L'+r+',0 L'+(r*0.3)+','+(r*0.3)+' L0,'+r+' L-'+(r*0.3)+','+(r*0.3)+' L-'+r+',0 L-'+(r*0.3)+',-'+(r*0.3)+' Z" fill="#fff7a8" stroke="#ffd34d" stroke-width="0.6"/>'; }
+  function boyHair(h){ return '<path d="M28,42 C28,18 72,18 72,42 C72,30 63,33 50,33 C37,33 28,30 28,42 Z" fill="'+h+'"/>'; }
+  function girlHair(h){ return '<path d="M27,46 C25,16 75,16 73,46 L73,62 L66,62 C69,40 64,25 50,25 C36,25 31,40 34,62 L27,62 Z" fill="'+h+'"/>'
+    +'<path d="M31,33 Q50,21 69,33 Q60,29 50,29 Q40,29 31,33 Z" fill="'+h+'"/>'; }
+  function studentSVG(g, hair, expr, special){
+    var s='<svg viewBox="0 0 100 112" xmlns="http://www.w3.org/2000/svg">';
+    if(g==='m'){ s+='<path d="M50,64 C30,64 25,82 23,112 L77,112 C75,82 70,64 50,64 Z" fill="#33384a"/>'
+      +'<path d="M44,66 L50,80 L56,66 Z" fill="#eef2f6"/>'
+      +'<line x1="50" y1="80" x2="50" y2="112" stroke="#222733" stroke-width="2"/>'
+      +'<circle cx="50" cy="90" r="1.5" fill="#c9ced6"/><circle cx="50" cy="100" r="1.5" fill="#c9ced6"/>';
+    } else { s+='<path d="M50,64 C30,64 25,82 23,112 L77,112 C75,82 70,64 50,64 Z" fill="#2f4a6b"/>'
+      +'<path d="M37,65 L50,82 L63,65 L59,63 L50,75 L41,63 Z" fill="#eef2f6"/>'
+      +'<path d="M50,75 l-7,4 l7,3 l7,-3 z" fill="#e0445a"/>'
+      +'<rect x="40" y="92" width="20" height="3" fill="#1f3551"/>';
+    }
+    var sk = (special==='alien') ? '#a6dd98' : skin();
+    s+='<rect x="45" y="57" width="10" height="10" fill="'+sk+'"/>';
+    s+='<ellipse cx="50" cy="41" rx="21" ry="23" fill="'+sk+'"/>';
+    if(special==='mask'){
+      s+='<ellipse cx="50" cy="41" rx="22" ry="24" fill="#d23a3a"/>'
+       +'<path d="M28,40 Q50,30 72,40" stroke="#fff" stroke-width="3" fill="none"/>'
+       +'<path d="M50,21 L50,58" stroke="#fff" stroke-width="2.4"/>'
+       +'<ellipse cx="41" cy="42" rx="6" ry="7.5" fill="#fff"/><ellipse cx="59" cy="42" rx="6" ry="7.5" fill="#fff"/>'
+       +'<circle cx="41" cy="43" r="2.7" fill="#222"/><circle cx="59" cy="43" r="2.7" fill="#222"/>'
+       +'<path d="M43,55 L57,55" stroke="#7a1f1f" stroke-width="2.4" stroke-linecap="round"/>';
+    } else {
+      if(special==='alien'){
+        s+='<line x1="42" y1="20" x2="38" y2="9" stroke="#6fae5e" stroke-width="2"/><circle cx="37" cy="8" r="3" fill="#d6ff9e"/>'
+         +'<line x1="58" y1="20" x2="62" y2="9" stroke="#6fae5e" stroke-width="2"/><circle cx="63" cy="8" r="3" fill="#d6ff9e"/>';
+      } else {
+        s+= (g==='m' ? boyHair(hair) : girlHair(hair));
+        if(special==='idol'){ s+= sparkle(73,25,5)+sparkle(29,30,4)
+          +'<path d="M65,19 l2,4 l4.5,.6 l-3.2,3.1 l.8,4.4 l-4.1,-2.1 l-4.1,2.1 l.8,-4.4 l-3.2,-3.1 l4.5,-.6 z" fill="#ffd34d" stroke="#e0a800" stroke-width="0.5"/>'; }
+      }
+      if(special==='alien'){
+        s+='<ellipse cx="41" cy="42" rx="4.2" ry="6" fill="#16240f"/><ellipse cx="59" cy="42" rx="4.2" ry="6" fill="#16240f"/>'
+         +'<circle cx="40" cy="40" r="1.4" fill="#fff"/><circle cx="58" cy="40" r="1.4" fill="#fff"/>'
+         +'<path d="M44,53 Q50,56 56,53" stroke="#3a6a2a" stroke-width="2" fill="none" stroke-linecap="round"/>';
+      } else {
+        s+='<circle cx="41" cy="41" r="2.7" fill="#222"/><circle cx="59" cy="41" r="2.7" fill="#222"/>'
+         +'<circle cx="35" cy="47" r="3.4" fill="#ff9db0" opacity=".55"/><circle cx="65" cy="47" r="3.4" fill="#ff9db0" opacity=".55"/>';
+        if(expr==='nervous'){
+          s+='<path d="M43,51 q3.5,-3 7,0 q3.5,3 7,0" stroke="#a35b4a" stroke-width="2" fill="none" stroke-linecap="round"/>'
+           +'<path d="M36,36 Q40,34 44,37" stroke="#5a3a2a" stroke-width="1.6" fill="none"/><path d="M56,37 Q60,34 64,36" stroke="#5a3a2a" stroke-width="1.6" fill="none"/>'
+           +'<path d="M70,38 q4,7 0,11 q-4,-4 0,-11 Z" fill="#7fd0ee" opacity=".9"/>';
+        } else if(expr==='happy'){ s+='<path d="M43,51 Q50,58 57,51 Z" fill="#a35b4a"/>'; }
+        else { s+='<path d="M44,52 Q50,55 56,52" stroke="#a35b4a" stroke-width="2" fill="none" stroke-linecap="round"/>'; }
+      }
+    }
+    s+='</svg>'; return s;
+  }
+  function pantsSVG(poop){ var s='<svg viewBox="0 0 100 82" xmlns="http://www.w3.org/2000/svg">'
+    +'<rect x="22" y="20" width="56" height="9" rx="4" fill="#dfe6ec"/>'
+    +'<path d="M22,28 L78,28 L78,40 C78,64 62,72 50,52 C38,72 22,64 22,40 Z" fill="#fff" stroke="#cbd3da" stroke-width="2"/>';
+    if(poop){ s+='<ellipse cx="50" cy="46" rx="14" ry="10" fill="#8a5a24" opacity=".9"/>'
+      +'<text x="50" y="53" font-size="24" text-anchor="middle">💩</text>'; }
+    s+='</svg>'; return s; }
+
+  /* ---------- 質問バンク ---------- */
+  var QUESTIONS=[
+    { q:'朝おきて何をしましたか？',
+      innocent:['歯をみがきました','ごはんを食べました','二度寝しました','スーパーサイヤ人のマネをしました','犬の散歩です'],
+      tell:['いそいでトイレに…いや、なにもしてません！','おしりがムズムズして目がさめました','パンツは…とくに見てないです'] },
+    { q:'昨日の夜ごはんは？',
+      innocent:['カレーをたべました','ラーメンです','おかしばっかり食べました','給食ののこりです','焼き肉でした'],
+      tell:['カレー…そのこと、関係ないですよね！？','食べすぎてお腹こわして…あ、なんでもないです','やきいもを5本たべました'] },
+    { q:'最近はまっているものは？',
+      innocent:['ゲームです','アニメ鑑賞','筋トレ','鬼ごっこ','ダンスの練習'],
+      tell:['ファブリーズ集めです','息を止める練習です','うしろを見せない練習をしてます'] },
+    { q:'きのうトイレは何回いった？',
+      innocent:['3回くらい','ふつうです','数えてません','休み時間に1回'],
+      tell:['生まれてから一度もトイレに入っていません','0回です。ぜったいに0回','トイレ？なんのことですか？'] },
+    { q:'いま一番きになることは？',
+      innocent:['テストの点数','好きな人のこと','次のゲーム','身長がのびるか'],
+      tell:['うしろから変なニオイが…気のせいですよね','はやく家に帰りたいです','この椅子、かえてもらえます？'] },
+    { q:'体育の時間はどうだった？',
+      innocent:['サッカーしました','マラソンでバテた','たのしかったです','バスケで勝った'],
+      tell:['ずっと立ってました。座りたくなくて','見学しました。おしりが痛くて','急いで着がえました、見ないで！'] },
+    { q:'好きな色は？',
+      innocent:['青です','ピンク','赤がすき','みどり','むらさき'],
+      tell:['ち、茶色…あっ、ちがう、白です白！','茶色いものが気になって…','最近、茶色をよく見ます'] },
+    { q:'休み時間は何してた？',
+      innocent:['友だちとしゃべってた','本を読んでた','ねてた','外で遊んでた'],
+      tell:['ずっと一人で壁ぎわに…','トイレの前をうろうろ…してません！','だれにも近づかないようにしてました'] },
+    { q:'ちょっと、うしろ向いてくれる？',
+      innocent:['いいですよ（くるっ）','はい、どうぞ','べつにいいけど？','こう？'],
+      tell:['えっ、なんでですか！？ぜったいイヤです','う、うしろは…かんべんしてください','い、今はちょっと…！'] },
+    { q:'すきな教科は？',
+      innocent:['体育がすき','音楽です','理科の実験','図工','給食の時間'],
+      tell:['トイレ掃除の当番は…べつに','保健で「おなか」の話を…','家庭科のにおい？気のせいです'] },
+    { q:'休みの日は何してる？',
+      innocent:['ゲームしてる','家族とおでかけ','友だちと公園','ずっと寝てる','動画みてる'],
+      tell:['一日中おふろにいます','トイレの近くから動きません','人に会わないようにしてます'] },
+    { q:'かばんに何が入ってる？',
+      innocent:['教科書とノート','水とう','まんが本','体操着','ふでばこ'],
+      tell:['よ、予備のパンツ…なんでもない！','ティッシュたくさん','ファブリーズ…入れてません！'] },
+    { q:'朝ごはんは食べた？',
+      innocent:['パンを食べた','ごはんとみそ汁','食べてないです','バナナだけ','コーンフレーク'],
+      tell:['食べたらお腹が…あっ、なんでも','食べすぎてトイレが心配で','におうもの食べてない、たぶん'] },
+    { q:'いちばん仲のいい友だちは？',
+      innocent:['たくさんいます','となりの席の子','部活の先輩','ひみつです','幼なじみ'],
+      tell:['今は…はなれて歩いてもらってます','近づかれると、こまる','最近きらわれてる気がして…'] },
+    { q:'すきな動物は？',
+      innocent:['犬です','ねこ','うさぎ','パンダ','イルカ'],
+      tell:['カブトムシ…フンの話はやめて','うんち拾いがにが手で','スカンクに親近感が…'] },
+    { q:'最近うれしかったことは？',
+      innocent:['テストで良い点','ゲームをクリア','友だちと遊んだ','おこづかいアップ','新しい服'],
+      tell:['まだ気づかれてないこと','ぶじに座れたこと','だれにもバレてないこと'] },
+    { q:'体育のあと、着がえた？',
+      innocent:['もちろん','さっと着がえた','ちょっとおくれた','すぐ着がえた','ふつうに'],
+      tell:['き、着がえてません！見ないで','下は…そのままで','急いでトイレに…行ってない！'] },
+    { q:'いま、立ってる？座ってる？',
+      innocent:['座ってます','立ってます','どっちでも','足がつかれた','ふつうに座ってる'],
+      tell:['ずっと立ってます。理由はナイショ','座ると…ちょっと','うきぎみで座ってます'] },
+    { q:'におい、する？',
+      innocent:['しないよ','給食のにおいかな','花のにおい','べつに','せっけんのにおい'],
+      tell:['し、しません！ぜったいに！','風のせいです','それ、別の人です！'] }
+  ];
+  var CHARS=[
+    {name:'ミサキ',g:'f',hair:'#2a2330'},{name:'アヤカ',g:'f',hair:'#5a3a2a'},{name:'ユイ',g:'f',hair:'#caa15f'},
+    {name:'サクラ',g:'f',hair:'#7a4a8a'},{name:'リナ',g:'f',hair:'#b04a6a'},{name:'ハナ',g:'f',hair:'#8a5a2a'},
+    {name:'タケシ',g:'m',hair:'#2a2330'},{name:'ケンタ',g:'m',hair:'#5a3a2a'},{name:'リョウ',g:'m',hair:'#3a3f4a'},
+    {name:'ダイキ',g:'m',hair:'#2f6a8a'},{name:'ソウタ',g:'m',hair:'#caa15f'},{name:'ハルト',g:'m',hair:'#8a5a2a'}
+  ];
+  var RARES=[
+    {name:'ナオピ',g:'m',hair:'#3a3f4a',special:'alien',rare:true},
+    {name:'パピ',g:'m',hair:'#2a2330',special:'mask',rare:true},
+    {name:'カリン',g:'f',hair:'#e08bb0',special:'idol',rare:true}
+  ];
+  var RARE_P=0.05;
+  var CTELL=[0.8,0.9,1.0], ITELL=[0.3,0.38,0.46]; // 犯人=高確率 / 無実=たまに怪しい（かく乱）
+
+  function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
+  function pickUnique(pool, used){ var ans,_t=0; do{ ans=pick(pool); } while(used[ans] && pool.length>1 && ++_t<14); return ans; }
+  function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+  function pickN(a,n){ return shuffle(a).slice(0,n); }
+
+  /* ---------- 画面 ---------- */
+  function show(id){ ['tan-title','tan-play','tan-result','tan-collection'].forEach(function(s){ $(s).classList.toggle('on', s===id); });
+    var w=$('tan-wrap'); if(w) w.scrollTop=0; }
+
+  function renderStudents(reveal){ var c=$('tan-students'); c.className=''; c.innerHTML='';
+    students.forEach(function(st,i){ var d=document.createElement('div'); d.className='tan-st'; d.dataset.i=i;
+      var expr = reveal ? (i===culprit?'nervous':'happy') : 'normal';
+      d.className='tan-st'+(st.rare?' rare':'');
+      d.innerHTML='<div class="av">'+studentSVG(st.g, st.hair, expr, st.special)+'</div>'
+        +'<div class="np">'+(st.rare?'⭐':'')+st.name+' <span class="g">'+(st.g==='m'?'♂':'♀')+'</span></div>';
+      c.appendChild(d); }); }
+
+  function setupGame(){
+    // 容疑者3人（まれにレアが1人まざる。レアでも犯人になる確率は通常どおり）
+    var roster = shuffle(CHARS).slice(0,3);
+    if(Math.random()<RARE_P){ roster[Math.floor(Math.random()*3)] = pick(RARES); }
+    students = roster.map(function(c){ return { name:c.name, g:c.g, hair:c.hair, special:c.special||null, rare:!!c.rare }; });
+    // 犯人は60%女子・40%男子（容疑者の性別の中から選ぶ）
+    var want = Math.random()<0.6 ? 'f' : 'm';
+    var cand=[]; students.forEach(function(st,i){ if(st.g===want) cand.push(i); });
+    if(!cand.length){ students.forEach(function(st,i){ cand.push(i); }); }
+    culprit = cand[Math.floor(Math.random()*cand.length)];
+    asked=0; qpool=shuffle(QUESTIONS.slice()); picking=false;
+  }
+
+  function start(){ setupGame(); show('tan-play'); startBGM(); renderStudents(false);
+    $('tan-qcount').textContent='取り調べ かいし';
+    $('tan-msg').innerHTML='3人とも「ついていない」と言いはっている…<br>質問で ボロを出させろ！';
+    $('tan-answers').innerHTML=''; students.forEach(function(st){ addAns(st.name, st.g==='m'?'ぼくはついていません！':'わたしもついていません！'); });
+    $('tan-choices').innerHTML=''; $('tan-choices').classList.add('tan-hide');
+    var b=$('tan-next'); b.classList.remove('tan-hide'); b.textContent='質問を始める ▶'; b.disabled=false; b.onclick=function(){ sfxTap(); showChoices(); };
+  }
+
+  function addAns(name, text){ var row=document.createElement('div'); row.className='tan-ans';
+    row.innerHTML='<div class="nm">'+name+'</div><div class="bub">'+text+'</div>'; $('tan-answers').appendChild(row); }
+
+  function showChoices(){ picking=true;
+    $('tan-qcount').textContent='質問 '+(asked+1)+' / 3';
+    $('tan-msg').textContent='どの質問をする？';
+    $('tan-answers').innerHTML='';
+    var opts = qpool.slice(0,3); // 残りから3つ提示
+    var box=$('tan-choices'); box.classList.remove('tan-hide'); box.innerHTML='';
+    opts.forEach(function(q){ var btn=document.createElement('button'); btn.className='tan-q'; btn.textContent='Q. '+q.q;
+      btn.onclick=function(){ sfxAsk(); ask(q); }; box.appendChild(btn); });
+    $('tan-next').classList.add('tan-hide');
+  }
+
+  function ask(q){ picking=false;
+    qpool = qpool.filter(function(x){ return x!==q; });
+    $('tan-choices').classList.add('tan-hide'); $('tan-choices').innerHTML='';
+    $('tan-msg').innerHTML='探偵：「'+q.q+'」';
+    $('tan-answers').innerHTML='';
+    var used={};
+    students.forEach(function(st,i){
+      var p = (i===culprit) ? CTELL[asked] : ITELL[asked];   // 無実の子もたまに怪しい答え（レッドへリング）
+      var pool = (Math.random()<p) ? q.tell : q.innocent;
+      var ans = pickUnique(pool, used);
+      used[ans]=1; addAns(st.name, ans);
+    });
+    sfxAnswer();
+    asked++;
+    var b=$('tan-next'); b.classList.remove('tan-hide'); b.disabled=false;
+    if(asked<3){ b.textContent='次の質問へ ▶'; b.onclick=function(){ sfxTap(); showChoices(); }; }
+    else { b.textContent='🕵️ 推理して指名する'; b.onclick=function(){ sfxTap(); beginAccuse(); }; }
+  }
+
+  function beginAccuse(){ $('tan-qcount').textContent='最終推理';
+    $('tan-msg').innerHTML='パンツにウンコがついているのは…？<br><b>1人を指名せよ！</b>';
+    $('tan-answers').innerHTML=''; $('tan-next').classList.add('tan-hide');
+    var c=$('tan-students'); c.classList.add('pickmode');
+    Array.prototype.forEach.call(c.children, function(d){ d.onclick=function(){ onAccuse(parseInt(d.dataset.i,10), d); }; });
+  }
+
+  function onAccuse(i, el){ var c=$('tan-students'); c.classList.remove('pickmode');
+    Array.prototype.forEach.call(c.children, function(d){ d.onclick=null; });
+    if(el) el.classList.add('accused');
+    sfxAccuse();
+    var correct = (i===culprit);
+    setTimeout(function(){ reveal(correct); }, 500);
+  }
+
+  /* ---------- 記録 ---------- */
+  function getRec(){ try{ return JSON.parse(localStorage.getItem('tan_best')||'{}')||{}; }catch(e){ return {}; } }
+  function setRec(r){ try{ localStorage.setItem('tan_best', JSON.stringify(r)); }catch(e){} }
+  function getCol(){ try{ return JSON.parse(localStorage.getItem('tan_col')||'{}')||{}; }catch(e){ return {}; } }
+  function setCol(o){ try{ localStorage.setItem('tan_col', JSON.stringify(o)); }catch(e){} }
+  function addCol(c){ var o=getCol(),k=c.name; if(!o[k]) o[k]={n:0}; o[k].n++; setCol(o); }
+
+  function reveal(correct){ stopBGM(); show('tan-result'); renderStudents(true); sfxReveal();
+    var rec=getRec(); var streak=rec.streak||0, best=rec.best||0;
+    if(correct){ streak++; if(streak>best) best=streak; sfxWin(); } else { streak=0; sfxLose(); }
+    setRec({streak:streak, best:best});
+    var cul=students[culprit]; addCol(cul);
+    $('tan-verdict').innerHTML = correct
+      ? '<span class="em">🎉</span>ズバリ正解！'
+      : '<span class="em">💦</span>ハズレ…！';
+    $('tan-who').innerHTML = correct
+      ? '<span class="nb">さすがモウリ探偵！</span><span class="nb">犯人は <b>'+cul.name+'</b> だった！</span>'
+      : '<span class="nb">ざんねん！犯人は</span><span class="nb"><b>'+cul.name+'</b> だった！</span>';
+    $('tan-pants').innerHTML = pantsSVG(true);
+    $('tan-label').innerHTML = correct ? '<span style="color:#2fae6b">パンツにウンコ、ハッケン！<br>あたらしいパンツをプレゼントした</span>' : '<span style="color:#e8506b">見のがした…！</span>';
+    $('tan-streak').textContent = correct ? ('🔥 '+streak+'連勝中！（ベスト '+best+'）') : ('連勝ストップ… ベスト '+best+'連勝');
+  }
+
+  function updateBest(){ var rec=getRec(), el=$('tan-best'); if(!el) return;
+    var st=rec.streak||0, best=rec.best||0;
+    el.textContent = best>0 ? ('🔥 ベスト '+best+'連勝'+(st>0?'（いま '+st+'連勝中）':'')) : 'まだ記録なし'; }
+
+  function showCollection(){ show('tan-collection'); renderCollection(); }
+  function renderCollection(){ var o=getCol(), grid=$('tan-col-grid'); if(!grid) return; grid.innerHTML='';
+    var roster=CHARS.concat(RARES), total=0; for(var k in o){ if(o.hasOwnProperty(k)) total+=(o[k].n||0); }
+    var tt=$('tan-col-total'); if(tt) tt.textContent='これまで犯人になったのは ぜんぶで '+total+' 回';
+    roster.forEach(function(c){ var rec=o[c.name], cnt=rec?rec.n:0;
+      var cell=document.createElement('div'); cell.className='tan-col-cell'+(c.rare?' rare':'')+(cnt>0?'':' lock');
+      if(cnt>0){ cell.innerHTML='<div class="cav">'+studentSVG(c.g,c.hair,'happy',c.special)+'</div>'
+        +'<div class="cnm">'+(c.rare?'⭐':'')+c.name+'</div><div class="ccnt">💩 ×'+cnt+'</div>'; }
+      else { cell.innerHTML='<div class="cav lockq">'+(c.rare?'⭐':'')+'❓</div><div class="cnm">？？？</div><div class="ccnt">みはっけん</div>'; }
+      grid.appendChild(cell); }); }
+  function showTitle(){ stopBGM(); show('tan-title'); $('tan-detective').innerHTML=detectiveSVG(); updateBest(); }
+
+  function bind(){ if(bound) return; bound=true;
+    $('tan-start').addEventListener('click', function(e){ e.stopPropagation(); sfxTap(); start(); });
+    $('tan-retry').addEventListener('click', function(e){ e.stopPropagation(); sfxTap(); start(); });
+    $('tan-totitle').addEventListener('click', function(e){ e.stopPropagation(); sfxTap(); showTitle(); });
+    var cb=$('tan-col-btn'); if(cb) cb.addEventListener('click', function(e){ e.stopPropagation(); sfxTap(); showCollection(); });
+    var cb2=$('tan-col-btn2'); if(cb2) cb2.addEventListener('click', function(e){ e.stopPropagation(); sfxTap(); showCollection(); });
+    var cbk=$('tan-col-back'); if(cbk) cbk.addEventListener('click', function(e){ e.stopPropagation(); sfxTap(); showTitle(); }); }
+
+  window.tanLaunch=function(ctx){ AC=ctx||AC; bind(); showTitle(); };
+  window.tanShutdown=function(){ stopBGM(); };
+  if(document.readyState!=='loading') bind(); else document.addEventListener('DOMContentLoaded', bind);
+})();
+
+</script>
+<script>
+/* ===== 🕵️ パンツにウンコついてる？（グルー：ハブ連携）===== */
+function playTan(e){
+  if(e) e.stopPropagation();
+  if(!audioCtx){ try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(err){} }
+  if(audioCtx && audioCtx.state==='suspended'){ try{ audioCtx.resume(); }catch(err){} }
+  isAudioStarted = true;
+  if(typeof titleInterval!=='undefined' && titleInterval){ clearInterval(titleInterval); titleInterval=null; }
+  if(typeof bpmInterval!=='undefined' && bpmInterval){ clearInterval(bpmInterval); bpmInterval=null; }
+  if(typeof stopBGM==='function'){ try{ stopBGM(); }catch(err){} }
+  if(typeof currentBgmMode!=='undefined'){ currentBgmMode=null; }
+  document.getElementById('title-screen').style.display='none';
+  gameState='TAN';
+  var w=document.getElementById('tan-wrap'); w.classList.add('show'); w.scrollTop=0;
+  if(typeof firstTitleDone!=='undefined'){ firstTitleDone=true; }
+  if(typeof window.tanLaunch==='function') window.tanLaunch(audioCtx);
+}
+function tanToTitle(e){
+  if(e) e.stopPropagation();
+  if(typeof window.tanShutdown==='function') window.tanShutdown();
   goToTitle();
 }
 
