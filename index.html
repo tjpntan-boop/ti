@@ -1205,6 +1205,18 @@
         }
         #play-kokki-btn:hover { background: #0e3550; border-color: #7fd0ee; }
         #play-kokki-btn .hassaku-sub { font-size: 10px; font-weight: normal; letter-spacing: 0; opacity: 0.8; color: #bfe6f5; }
+        #play-hae-btn {
+            margin-top: 10px;
+            background: #2a1712; color: #ffae5e;
+            border: 1px solid #c07a32; border-radius: 8px; padding: 9px 22px;
+            font-size: 15px; font-weight: bold; cursor: pointer; z-index: 1010; letter-spacing: 1px;
+            display: flex; flex-direction: column; align-items: center; gap: 2px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+            transition: background 0.15s, border-color 0.15s;
+            font-family: inherit;
+        }
+        #play-hae-btn:hover { background: #3a2016; border-color: #ffae5e; }
+        #play-hae-btn .hassaku-sub { font-size: 10px; font-weight: normal; letter-spacing: 0; opacity: 0.8; color: #e0a266; }
 
         /* タイトルに常設する「ブラウザで開く手順」案内ボックス */
         #open-guide {
@@ -3023,6 +3035,129 @@
     padding:7px 14px; border-radius:18px; border:none; background:#08263a; color:#fff; box-shadow:0 3px 0 #041521; }
   #kokki-back-btn:active{ transform:translateX(-50%) translateY(2px); }
 
+  /* ====================== 🦟 はえたたきオバハン ====================== */
+  #hae-wrap{
+    --skin:#ffd9b3; --lip:#d63a5e; --perm:#9a5fb0; --wood:#b87a3e; --paper:#fffdf3;
+    --pink:#ff7da0; --good:#2fae6b; --bad:#e8506b;
+    position:fixed; inset:0; z-index:5300; overflow-y:auto; -webkit-overflow-scrolling:touch;
+    display:none; align-items:flex-start; justify-content:center;
+    font-family:"M PLUS Rounded 1c", system-ui, sans-serif;
+    background:linear-gradient(#ffe9c0 0%, #ffe1a8 46%, #f3c87f 46%, #e7b066 100%);
+    color:#3a2415; user-select:none; -webkit-user-select:none; -webkit-tap-highlight-color:transparent; touch-action:manipulation;
+  }
+  #hae-wrap.show{ display:flex; }
+  #hae-wrap *{ box-sizing:border-box; }
+  #hae-stage{ position:relative; width:100%; max-width:440px; min-height:100%;
+    display:flex; flex-direction:column; align-items:center; padding:48px 14px 24px; }
+  #hae-back-btn{ position:absolute; top:8px; left:50%; transform:translateX(-50%); z-index:6500;
+    font-family:inherit; font-size:13px; font-weight:900; cursor:pointer; padding:7px 14px; border-radius:18px;
+    border:none; background:#7a3b12; color:#fff; box-shadow:0 3px 0 #4d2509; }
+  #hae-back-btn:active{ transform:translateX(-50%) translateY(2px); }
+
+  .hae-screen{ width:100%; display:none; flex-direction:column; align-items:center; }
+  .hae-screen.on{ display:flex; }
+
+  .hae-btn{ border:none; cursor:pointer; font-family:inherit; font-weight:900; color:#fff;
+    background:linear-gradient(#ff8a4a,#ef5f2a); border-radius:18px; box-shadow:0 5px 0 #b8431a;
+    padding:15px 34px; font-size:22px; letter-spacing:2px; transition:transform .06s, box-shadow .06s; }
+  .hae-btn:active{ transform:translateY(4px); box-shadow:0 1px 0 #b8431a; }
+  .hae-btn.sub{ background:linear-gradient(#b79a82,#94785f); box-shadow:0 5px 0 #6a5340; font-size:16px; padding:11px 24px; }
+
+  /* タイトル */
+  #hae-logo{ margin-top:10px; text-align:center; font-weight:900; line-height:1.05; font-size:26px;
+    color:#fff; text-shadow:0 3px 0 #b8431a, 0 6px 8px rgba(0,0,0,.25); }
+  #hae-logo .big{ font-size:40px; display:inline-block; margin-top:2px; }
+  #hae-titleface{ width:140px; height:140px; margin:8px 0 2px; }
+  #hae-titleface svg{ width:100%; height:100%; }
+  #hae-tagline{ margin:4px 0 0; font-weight:800; font-size:15px; text-align:center; color:#5a3414;
+    background:rgba(255,255,255,.7); padding:8px 16px; border-radius:16px; line-height:1.4; }
+  #hae-best{ margin-top:12px; font-weight:900; font-size:15px; color:#9a4b12;
+    background:rgba(255,255,255,.85); border-radius:999px; padding:7px 18px; box-shadow:0 3px 0 rgba(0,0,0,.08); }
+  #hae-start{ margin-top:18px; }
+  #hae-howto{ margin-top:16px; font-size:12px; font-weight:800; color:#5a3414; text-align:center; line-height:1.5;
+    background:rgba(255,255,255,.6); padding:8px 14px; border-radius:14px; max-width:330px; }
+
+  /* ゲーム */
+  #hae-hud{ width:100%; max-width:380px; display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+  .hae-chip{ background:rgba(255,255,255,.92); border-radius:14px; padding:6px 14px; font-weight:900; font-size:14px;
+    box-shadow:0 2px 0 rgba(0,0,0,.1); color:#5a3414; }
+  .hae-chip b{ font-size:22px; color:#ef5f2a; }
+  #hae-hearts{ letter-spacing:2px; font-size:18px; }
+
+  #hae-field{ position:relative; width:100%; max-width:400px; height:60vh; max-height:540px; min-height:380px;
+    border-radius:22px; overflow:hidden; border:4px solid #fff;
+    background:
+      radial-gradient(120% 60% at 50% 6%, #fff6df 0%, #ffeccb 40%, transparent 60%),
+      linear-gradient(#fde9c4 0%, #fbdfa6 52%, #d7a866 52%, #c9954f 100%);
+    box-shadow:0 12px 26px rgba(120,70,20,.3); }
+
+  #hae-aunt{ position:absolute; left:50%; top:2%; width:130px; transform:translateX(-50%); z-index:4;
+    filter:drop-shadow(0 5px 5px rgba(0,0,0,.22)); transition:transform .12s; }
+  #hae-aunt svg{ width:100%; height:auto; display:block; }
+  #hae-aunt.lean0{ transform:translateX(-50%) translateX(-18px) rotate(-7deg); }
+  #hae-aunt.lean1{ transform:translateX(-50%) rotate(0deg); }
+  #hae-aunt.lean2{ transform:translateX(-50%) translateX(18px) rotate(7deg); }
+
+  .hae-table{ position:absolute; width:104px; height:38px; transform:translate(-50%,-50%); z-index:2; }
+  .hae-table .top{ width:100%; height:100%; border-radius:50%;
+    background:radial-gradient(ellipse at 50% 32%, #e6b277, #b97f43 70%, #9c6531);
+    border:2px solid #834f24; box-shadow:0 9px 0 #6f421d, 0 13px 12px rgba(0,0,0,.28); transition:transform .12s; }
+  .hae-table.aim .top{ box-shadow:0 0 0 5px rgba(255,55,55,.75), 0 0 20px 5px rgba(255,55,55,.5), 0 9px 0 #6f421d, 0 13px 12px rgba(0,0,0,.28);
+    animation:haeAim .16s infinite alternate; }
+  .hae-table.hitfx .top{ animation:haeHit .18s; }
+  @keyframes haeAim{ from{ transform:translateY(0);} to{ transform:translateY(-3px);} }
+  @keyframes haeHit{ 0%{ transform:translateY(0);} 40%{ transform:translateY(4px) scaleY(.86);} 100%{ transform:translateY(0);} }
+
+  #hae-fly{ position:absolute; width:62px; transform:translate(-50%,-50%); z-index:6;
+    transition:left .14s cubic-bezier(.34,1.5,.5,1), top .14s, width .15s; }
+  #hae-fly svg{ width:100%; height:auto; display:block; }
+  #hae-fly .pud{ font-size:46px; line-height:1; text-align:center; }
+  #hae-fly.giant{ width:108px; }
+  #hae-fly.hurt{ animation:haeHurt .4s; }
+  @keyframes haeHurt{ 0%,100%{ filter:none;} 30%{ filter:brightness(1.8) saturate(2);}
+    50%{ transform:translate(-50%,-50%) scale(1.12) rotate(10deg);} }
+
+  #hae-item{ position:absolute; width:46px; height:46px; transform:translate(-50%,-50%); z-index:5; display:none; }
+  #hae-item .hae-item-emo{ font-size:34px; line-height:1; text-align:center; position:relative; z-index:2;
+    filter:drop-shadow(0 3px 3px rgba(0,0,0,.3)); animation:haeBob .7s infinite alternate ease-in-out; }
+  #hae-item .hae-item-aura{ position:absolute; left:50%; top:46%; width:62px; height:62px; transform:translate(-50%,-50%);
+    border-radius:50%; z-index:1;
+    background:radial-gradient(circle, rgba(255,228,120,.9), rgba(255,200,60,.3) 58%, transparent 72%);
+    box-shadow:0 0 18px 7px rgba(255,210,80,.75); animation:haeAura 1s infinite alternate ease-in-out; }
+  #hae-item .hae-item-tag{ position:absolute; left:50%; top:-18px; transform:translateX(-50%); z-index:3; white-space:nowrap;
+    font-size:10px; font-weight:900; color:#fff; background:linear-gradient(#ffb13b,#ff8a1e);
+    padding:2px 9px; border-radius:999px; box-shadow:0 2px 0 rgba(0,0,0,.2); animation:haeTag .8s infinite alternate ease-in-out; }
+  @keyframes haeBob{ from{ margin-top:0;} to{ margin-top:-7px;} }
+  @keyframes haeAura{ from{ opacity:.55; transform:translate(-50%,-50%) scale(.88);} to{ opacity:1; transform:translate(-50%,-50%) scale(1.14);} }
+  @keyframes haeTag{ from{ transform:translateX(-50%) translateY(0);} to{ transform:translateX(-50%) translateY(-3px);} }
+
+  #hae-swat{ position:absolute; width:50px; transform:translate(-50%,0) rotate(0deg); opacity:0; z-index:7;
+    transform-origin:center bottom; pointer-events:none; filter:drop-shadow(0 3px 3px rgba(0,0,0,.35));
+    transition:top .13s ease-in, transform .13s ease; }
+  #hae-swat svg{ width:100%; height:auto; display:block; }
+  #hae-swat.wind{ opacity:1; transform:translate(-50%,0) rotate(-22deg); }
+  #hae-swat.slam{ opacity:1; transform:translate(-50%,0) rotate(2deg); transition:top .06s ease-in, transform .06s ease-in; }
+
+  #hae-banner{ position:absolute; left:50%; top:30%; transform:translate(-50%,-50%) scale(.6); z-index:9;
+    font-weight:900; font-size:18px; text-align:center; width:90%; opacity:0; pointer-events:none;
+    text-shadow:0 2px 0 #fff, 0 0 8px rgba(255,255,255,.9); }
+  #hae-banner.show{ animation:haeBanner 1.6s ease forwards; }
+  @keyframes haeBanner{ 0%{ opacity:0; transform:translate(-50%,-50%) scale(.5);}
+    14%{ opacity:1; transform:translate(-50%,-50%) scale(1.12);}
+    24%{ transform:translate(-50%,-50%) scale(1);} 78%{ opacity:1;} 100%{ opacity:0; transform:translate(-50%,-70%) scale(1);} }
+
+  #hae-hint{ margin-top:12px; font-size:13px; font-weight:900; color:#fff; text-shadow:0 2px 0 #b8431a;
+    background:rgba(0,0,0,.12); padding:6px 18px; border-radius:999px; letter-spacing:2px; }
+
+  /* リザルト */
+  #hae-stamp{ font-size:66px; margin:6px 0; filter:drop-shadow(0 6px 6px rgba(0,0,0,.2)); }
+  #hae-res-title{ font-weight:900; font-size:28px; color:#fff; text-shadow:0 3px 0 #b8431a; }
+  #hae-res-card{ margin-top:14px; width:100%; max-width:340px; background:var(--paper); border-radius:20px;
+    padding:18px; box-shadow:0 10px 24px rgba(120,70,20,.25); text-align:center; }
+  #hae-res-sub{ font-weight:900; font-size:18px; color:#5a3414; }
+  #hae-res-best{ margin-top:10px; font-weight:800; font-size:14px; color:#9a4b12; }
+  #hae-res-btns{ margin-top:18px; display:flex; flex-direction:column; gap:12px; align-items:center; }
+
 </style>
 </head>
 <body>
@@ -3044,7 +3179,7 @@
         <div id="title-content">
         <div id="tap-notice" onclick="beginTitleAudio(event)">▶ タップして音を出す</div>
         <div class="famicom-title">はちばんちくわ</div>
-        <div id="version-label">Ver 2.8.0</div>
+        <div id="version-label">Ver 2.9.1</div>
         <button id="start-btn" class="start-btn" onclick="startGame(event)" style="display:none;">🍩 ちくわを覗く... 🍩</button>
         <button id="title-badge-btn" class="badge-link-btn" onclick="openBadgeScreen('title')" style="display:none;">🏅 称号コレクション</button>
         <button id="reset-record-btn" onclick="resetDiscoveryRecord(event)" style="display:none;">🗑 異変の記録をリセット</button>
@@ -3064,6 +3199,7 @@
             <button id="play-saiban-btn" onclick="playSaiban(event)">⚖️ ちくわ裁判<span class="hassaku-sub">証言台で「いつ・どこで・だれが・なにをした」を組み立てろ</span></button>
             <button id="play-kintama-btn" onclick="playKintama(event)">🥚 キンタマガチャンコ<span class="hassaku-sub">動くワクに金玉をブチ込め！ラッキー金玉＆スター無敵で戦闘力を稼げ</span></button>
             <button id="play-kokki-btn" onclick="playKokki(event)">🌍 国旗あてクイズ<span class="hassaku-sub">国旗から国名を当てよう！首都・名物・自然/地形も。45カ国＋こっきずかん</span></button>
+            <button id="play-hae-btn" onclick="playHae(event)">🦟 はえたたきオバハン<span class="hassaku-sub">パンチパーマのオバハンのはえたたきを60秒よけろ！💩アイテムで何かが起こる</span></button>
         </div>
         <div id="open-guide">
             <div class="og-title">⚠️ 音が出ない / タップできない時は</div>
@@ -12349,6 +12485,325 @@ function kokkiToTitle(e){
     if (typeof window.kokkiShutdown === "function") window.kokkiShutdown();
     goToTitle();
 }
+</script>
+
+
+<!-- ===== 🦟 はえたたきオバハン（組み込み）===== -->
+<div id="hae-wrap">
+  <button id="hae-back-btn" onclick="haeToTitle(event)">↩ もどる</button>
+  <div id="hae-stage">
+
+    <!-- タイトル -->
+    <div class="hae-screen on" id="hae-title">
+      <div id="hae-logo">🦟 はえたたき<br><span class="big">オバハン</span></div>
+      <div id="hae-titleface"></div>
+      <div id="hae-tagline">大阪のオバハンの「はえたたき」を<br><b>60びょう</b> よけきれ！</div>
+      <div id="hae-best">…</div>
+      <button class="hae-btn" id="hae-start">▶ スタート</button>
+      <div id="hae-howto">タップで 左右のつくえへ にげろ／ときどき出る <b>💩</b> をとると…なにかが起こる！？</div>
+    </div>
+
+    <!-- ゲーム -->
+    <div class="hae-screen" id="hae-game">
+      <div id="hae-hud">
+        <div class="hae-chip">のこり <b id="hae-time">60</b> びょう</div>
+        <div class="hae-chip" id="hae-hearts">❤️❤️❤️</div>
+      </div>
+      <div id="hae-field">
+        <div id="hae-aunt"></div>
+        <div class="hae-table" id="hae-t0"><div class="top"></div></div>
+        <div class="hae-table" id="hae-t1"><div class="top"></div></div>
+        <div class="hae-table" id="hae-t2"><div class="top"></div></div>
+        <div id="hae-item">
+          <div class="hae-item-aura"></div>
+          <div class="hae-item-emo">💩</div>
+          <div class="hae-item-tag">✨ラッキー✨</div>
+        </div>
+        <div id="hae-fly"></div>
+        <div id="hae-swat"></div>
+        <div id="hae-banner"></div>
+      </div>
+      <div id="hae-hint">← タップで にげろ →</div>
+    </div>
+
+    <!-- リザルト -->
+    <div class="hae-screen" id="hae-result">
+      <div id="hae-stamp">🏆</div>
+      <div id="hae-res-title">にげきった！</div>
+      <div id="hae-res-card">
+        <div id="hae-res-sub"></div>
+        <div id="hae-res-best"></div>
+      </div>
+      <div id="hae-res-btns">
+        <button class="hae-btn" id="hae-retry">もう一回</button>
+        <button class="hae-btn sub" id="hae-totitle">タイトルへ</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ===== 🦟 はえたたきオバハン（ロジック）===== */
+(function(){ "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+  var AC = null, bound = false;
+  var TX = [18, 50, 82];                 // 3つの机の横位置(%)
+  var pos, lives, tLeft, running, raf, lastTs, lastSig;
+  var attackTimer=null, itemTimer=null, bgmTimer=null, bannerTO=null, bgmStep=0;
+  var atkTarget=-1, itemActive=false, itemPos=-1, itemExpire=0;
+  var eff = { giant:0, hammer:0, pudding:0, ikemen:0, auntUntil:0, auntMode:'oba' };
+
+  /* ---------- オーディオ ---------- */
+  function tone(freq,dur,type,vol,slideTo,delay){ if(!AC) return; var t=AC.currentTime+(delay||0);
+    var o=AC.createOscillator(), g=AC.createGain(); o.type=type||'square';
+    o.frequency.setValueAtTime(freq,t); if(slideTo) o.frequency.exponentialRampToValueAtTime(Math.max(1,slideTo),t+dur);
+    g.gain.setValueAtTime(vol||0.07,t); g.gain.exponentialRampToValueAtTime(0.0008,t+dur);
+    o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t+dur+0.05); }
+  function noise(dur,vol){ if(!AC) return; var n=Math.floor(AC.sampleRate*dur); var b=AC.createBuffer(1,n,AC.sampleRate);
+    var d=b.getChannelData(0); for(var i=0;i<n;i++) d[i]=(Math.random()*2-1)*(1-i/n);
+    var s=AC.createBufferSource(); s.buffer=b; var g=AC.createGain(); g.gain.setValueAtTime(vol||0.12,AC.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,AC.currentTime+dur); s.connect(g); g.connect(AC.destination); s.start(); }
+  function sfxMove(){ tone(520,0.06,'square',0.05,700); }
+  function sfxWind(){ tone(260,0.16,'sawtooth',0.035,560); }
+  function sfxSlam(){ noise(0.12,0.16); tone(130,0.13,'square',0.08,60); }
+  function sfxHit(){ tone(210,0.26,'square',0.12,70); noise(0.1,0.12); }
+  function sfxBlip(){ tone(740,0.07,'triangle',0.05,980); }
+  function sfxItem(){ tone(820,0.07,'triangle',0.06,1240); tone(1240,0.08,'triangle',0.05,1660,0.06); }
+  function sfxGiant(){ tone(180,0.12,'square',0.08,360); tone(360,0.12,'square',0.07,720,0.1); }
+  function sfxHammer(){ tone(90,0.4,'sawtooth',0.1,55); noise(0.18,0.1); }
+  function sfxIkemen(){ [0,0.08,0.16,0.24].forEach(function(d,i){ tone([660,880,1100,1320][i],0.18,'triangle',0.05,null,d); }); }
+  function sfxOne(){ tone(700,0.1,'square',0.06,1200); }
+  function sfxBaby(){ tone(900,0.12,'triangle',0.06,420); }
+  function sfxPudding(){ tone(500,0.16,'sine',0.06,300); }
+  function sfxWin(){ [523,659,784,1046].forEach(function(f,i){ tone(f,0.22,'square',0.07,null,i*0.12); }); }
+  function sfxLose(){ [440,392,330,247].forEach(function(f,i){ tone(f,0.28,'sawtooth',0.07,null,i*0.13); }); }
+  function startBGM(){ stopBGM(); if(!AC) return; bgmStep=0;
+    bgmTimer=setInterval(function(){ if(!AC) return; var seq=[147,147,196,165]; var n=seq[bgmStep%4];
+      tone(n,0.1,'triangle',0.045); if(bgmStep%2===0) tone(n*2,0.07,'square',0.02); bgmStep++; }, 230); }
+  function stopBGM(){ if(bgmTimer){ clearInterval(bgmTimer); bgmTimer=null; } }
+
+  /* ---------- SVGアート ---------- */
+  function permCurls(cx,cy,R,fill,st){ var s='',i,n=11; for(i=0;i<n;i++){ var a=Math.PI*(1.08-1.16*i/(n-1));
+    var x=cx+R*Math.cos(a), y=cy-R*Math.sin(a)*0.96;
+    s+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="8.4" fill="'+fill+'" stroke="'+st+'" stroke-width="1.3"/>'; } return s; }
+  function heart(cx,cy,sz,c){ return '<path transform="translate('+cx+','+cy+') scale('+sz+')" d="M0,2.2 C-2.4,-1.2 -6,-0.2 -6,2.6 C-6,5 -3,7 0,9 C3,7 6,5 6,2.6 C6,-0.2 2.4,-1.2 0,2.2 Z" fill="'+(c||'#ff3b6b')+'"/>'; }
+  function heartEyes(cx,cy){ return heart(cx,cy-3,0.92); }
+  function sparkle(x,y,r){ return '<path transform="translate('+x+','+y+')" d="M0,-'+r+' L'+(r*0.28).toFixed(1)+',-'+(r*0.28).toFixed(1)+' L'+r+',0 L'+(r*0.28).toFixed(1)+','+(r*0.28).toFixed(1)+' L0,'+r+' L-'+(r*0.28).toFixed(1)+','+(r*0.28).toFixed(1)+' L-'+r+',0 L-'+(r*0.28).toFixed(1)+',-'+(r*0.28).toFixed(1)+' Z" fill="#fff7a8" stroke="#ffd34d" stroke-width="0.6"/>'; }
+  function bigLips(cx,cy,w,c){ var hw=w/2; return '<g transform="translate('+cx+','+cy+')">'
+    +'<path d="M-'+hw+',0 Q-'+(hw*0.5)+',-7 -3,-2 Q0,-6 3,-2 Q'+(hw*0.5)+',-7 '+hw+',0 Q'+(hw*0.55)+',9 0,9 Q-'+(hw*0.55)+',9 -'+hw+',0 Z" fill="'+c+'"/>'
+    +'<path d="M-'+hw+',0 Q0,3 '+hw+',0" stroke="#a32847" stroke-width="1.3" fill="none"/>'
+    +'<ellipse cx="-4" cy="3.4" rx="2.4" ry="1.5" fill="#fff" opacity=".35"/></g>'; }
+  function leopardBand(){ var s='<path d="M16,86 Q50,99 84,86 L84,100 L16,100 Z" fill="#e8b54e"/>';
+    [[28,90],[40,93],[52,90],[64,93],[74,89],[34,96],[58,96]].forEach(function(p){ s+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="2.3" fill="#6b4a1e"/>'; }); return s; }
+
+  function auntSVG(mode,hearts){
+    var s='<svg viewBox="0 0 100 102" xmlns="http://www.w3.org/2000/svg">';
+    if(mode==='oba'){
+      s+=permCurls(50,40,32,'#9a5fb0','#6f3f86');
+      s+='<ellipse cx="50" cy="54" rx="30" ry="29" fill="var(--skin,#ffd9b3)"/>';
+      s+='<circle cx="33" cy="60" r="6.4" fill="#ff9db0" opacity=".7"/><circle cx="67" cy="60" r="6.4" fill="#ff9db0" opacity=".7"/>';
+      s+='<path d="M28,44 Q35,40 42,44" stroke="#5a3a2a" stroke-width="2" fill="none" stroke-linecap="round"/>';
+      s+='<path d="M58,44 Q65,40 72,44" stroke="#5a3a2a" stroke-width="2" fill="none" stroke-linecap="round"/>';
+      s+= hearts? heartEyes(35,52)+heartEyes(65,52) : '<ellipse cx="35" cy="52" rx="3.6" ry="4.5" fill="#222"/><ellipse cx="65" cy="52" rx="3.6" ry="4.5" fill="#222"/>';
+      s+='<circle cx="44" cy="66" r="1.6" fill="#7a4a2a"/>';
+      s+= bigLips(50,73,22,'var(--lip,#d63a5e)');
+      s+= leopardBand();
+    } else if(mode==='one'){
+      s+='<path d="M50,16 C26,16 20,40 22,74 L31,74 C26,46 32,30 50,30 C68,30 74,46 69,74 L78,74 C80,40 74,16 50,16 Z" fill="#4a2f22"/>';
+      s+='<ellipse cx="50" cy="52" rx="27" ry="28" fill="#ffe0c2"/>';
+      s+='<circle cx="34" cy="58" r="5" fill="#ff9db0" opacity=".55"/><circle cx="66" cy="58" r="5" fill="#ff9db0" opacity=".55"/>';
+      s+= hearts? heartEyes(36,50)+heartEyes(64,50)
+        : '<ellipse cx="36" cy="50" rx="3.2" ry="4.2" fill="#222"/><path d="M31,46 Q34,43.5 40,45" stroke="#222" stroke-width="1.6" fill="none"/>'
+         +'<ellipse cx="64" cy="50" rx="3.2" ry="4.2" fill="#222"/><path d="M60,45 Q66,43.5 69,46" stroke="#222" stroke-width="1.6" fill="none"/>';
+      s+='<path d="M42,70 Q50,76 58,70 Q50,73 42,70 Z" fill="#e8567f"/>';
+      s+= sparkle(80,30,5);
+    } else { /* baby */
+      s+='<ellipse cx="50" cy="56" rx="31" ry="30" fill="#ffe2c6"/>';
+      s+='<path d="M50,25 q9,-7 2,-15 q-7,-4 -8,3" stroke="#caa15f" stroke-width="3.6" fill="none" stroke-linecap="round"/>';
+      s+='<circle cx="30" cy="64" r="7" fill="#ff9db0" opacity=".6"/><circle cx="70" cy="64" r="7" fill="#ff9db0" opacity=".6"/>';
+      s+= hearts? heartEyes(36,54)+heartEyes(64,54)
+        : '<circle cx="36" cy="54" r="6" fill="#fff"/><circle cx="36" cy="55.4" r="4" fill="#222"/><circle cx="34.4" cy="53.6" r="1.4" fill="#fff"/>'
+         +'<circle cx="64" cy="54" r="6" fill="#fff"/><circle cx="64" cy="55.4" r="4" fill="#222"/><circle cx="62.4" cy="53.6" r="1.4" fill="#fff"/>';
+      s+='<ellipse cx="50" cy="70" rx="7" ry="3.4" fill="#ffd27f" stroke="#e0a94d" stroke-width="1.4"/>';
+      s+='<circle cx="50" cy="76" r="6.4" fill="#bfe3ff" stroke="#7fbfe8" stroke-width="2"/><circle cx="50" cy="76" r="2.5" fill="#fff"/>';
+    }
+    s+='</svg>'; return s;
+  }
+  function flySVG(){ return '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">'
+    +'<ellipse cx="32" cy="38" rx="20" ry="13" fill="#cfe6f5" opacity=".75" stroke="#9fc4dc" stroke-width="1.2" transform="rotate(-18 32 38)"/>'
+    +'<ellipse cx="68" cy="38" rx="20" ry="13" fill="#cfe6f5" opacity=".75" stroke="#9fc4dc" stroke-width="1.2" transform="rotate(18 68 38)"/>'
+    +'<g stroke="#222" stroke-width="2" stroke-linecap="round"><path d="M40,70 L30,86"/><path d="M50,72 L50,90"/><path d="M60,70 L70,86"/><path d="M42,66 L28,72"/><path d="M58,66 L72,72"/></g>'
+    +'<ellipse cx="50" cy="60" rx="20" ry="22" fill="#37343f"/>'
+    +'<path d="M34,56 Q50,62 66,56" stroke="#1f1d26" stroke-width="2" fill="none"/><path d="M33,66 Q50,72 67,66" stroke="#1f1d26" stroke-width="2" fill="none"/>'
+    +'<circle cx="50" cy="40" r="15" fill="#2b2933"/>'
+    +'<ellipse cx="42" cy="38" rx="7" ry="9" fill="#e23b4e"/><ellipse cx="58" cy="38" rx="7" ry="9" fill="#e23b4e"/>'
+    +'<circle cx="40" cy="35" r="2" fill="#fff" opacity=".8"/><circle cx="56" cy="35" r="2" fill="#fff" opacity=".8"/>'
+    +'<path d="M44,48 Q50,52 56,48" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>'; }
+  function ikemenSVG(){ return '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">'
+    +'<ellipse cx="50" cy="56" rx="26" ry="30" fill="#f6cda0"/>'
+    +'<path d="M24,46 C20,20 44,13 56,17 C73,21 81,34 77,48 C70,35 60,30 54,33 C56,26 48,26 44,30 C42,25 33,28 33,35 C29,33 25,39 28,48 Z" fill="#2a2330"/>'
+    +'<path d="M33,52 q6,-3 11,0" stroke="#2a2330" stroke-width="2.2" fill="none" stroke-linecap="round"/>'
+    +'<ellipse cx="62" cy="52" rx="3.4" ry="4.4" fill="#2a2330"/><path d="M56,46 q6,-2 10,1" stroke="#2a2330" stroke-width="1.5" fill="none"/>'
+    +'<path d="M50,56 l-2,8 l4,0" stroke="#c99a6a" stroke-width="1.3" fill="none"/>'
+    +'<path d="M42,72 q8,5 16,0" stroke="#a35b4a" stroke-width="2" fill="none" stroke-linecap="round"/>'
+    + sparkle(72,30,6)+sparkle(30,72,4)+sparkle(76,66,3.4)+'</svg>'; }
+  function meshHoles(cx,cy,rx,ry){ var s='',i,j; for(i=-2;i<=2;i++){ for(j=-2;j<=2;j++){ var x=cx+i*7,y=cy+j*7;
+    if((x-cx)*(x-cx)/(rx*rx)+(y-cy)*(y-cy)/(ry*ry)<=1) s+='<circle cx="'+x+'" cy="'+y+'" r="1.7" fill="#fff" opacity=".7"/>'; } } return s; }
+  function swatSVG(ham){ if(ham){ return '<svg viewBox="0 0 60 122" xmlns="http://www.w3.org/2000/svg">'
+      +'<rect x="26" y="0" width="8" height="86" rx="4" fill="#9a6b3a"/>'
+      +'<rect x="8" y="80" width="44" height="32" rx="6" fill="#9aa3ad" stroke="#5d6670" stroke-width="2"/>'
+      +'<rect x="8" y="80" width="12" height="32" rx="4" fill="#c2c9d2"/></svg>'; }
+    return '<svg viewBox="0 0 60 122" xmlns="http://www.w3.org/2000/svg">'
+      +'<rect x="26" y="0" width="8" height="84" rx="4" fill="#e0473e"/>'
+      +'<ellipse cx="30" cy="96" rx="26" ry="23" fill="#ef5a52" stroke="#b5322b" stroke-width="2.5"/>'
+      + meshHoles(30,96,20,16)+'</svg>'; }
+
+  /* ---------- 画面 ---------- */
+  function show(id){ ['hae-title','hae-game','hae-result'].forEach(function(s){ $(s).classList.toggle('on', s===id); });
+    var w=$('hae-wrap'); if(w) w.scrollTop=0; }
+  function fieldRect(){ return $('hae-field').getBoundingClientRect(); }
+  function tableXY(i){ var r=fieldRect(); return { x:r.width*TX[i]/100, y:r.height*0.70 }; }
+  function placeTables(){ for(var i=0;i<3;i++){ var t=$('hae-t'+i); t.style.left=TX[i]+'%'; t.style.top='70%'; } }
+  function placeFly(){ var f=$('hae-fly'); f.style.left=TX[pos]+'%'; f.style.top='61%'; }
+  function placeItem(){ var it=$('hae-item'); if(!itemActive){ it.style.display='none'; return; }
+    it.style.display='block'; it.style.left=TX[itemPos]+'%'; it.style.top='57%'; }
+  function swatWindup(i){ var p=tableXY(i),s=$('hae-swat'); s.innerHTML=swatSVG(Date.now()<eff.hammer);
+    s.style.left=p.x+'px'; s.style.top=Math.max(4,(p.y-205))+'px'; s.className='wind'; }
+  function swatSlam(i){ var p=tableXY(i),s=$('hae-swat'); s.style.left=p.x+'px'; s.style.top=(p.y-70)+'px'; s.className='slam'; }
+  function swatHide(){ $('hae-swat').className=''; }
+  function leanAunt(i){ var a=$('hae-aunt'); a.className=(i>=0?('lean'+i):''); }
+
+  function updateHUD(){ $('hae-time').textContent=Math.ceil(tLeft);
+    var h=''; for(var i=0;i<3;i++) h+=(i<lives?'❤️':'🤍'); $('hae-hearts').textContent=h; }
+  function banner(txt,color){ var b=$('hae-banner'); b.textContent=txt; b.style.color=color||'#fff';
+    b.classList.remove('show'); void b.offsetWidth; b.classList.add('show');
+    clearTimeout(bannerTO); bannerTO=setTimeout(function(){ b.classList.remove('show'); },1600); }
+
+  function syncVisual(force){ var n=Date.now();
+    var giant=n<eff.giant, ham=n<eff.hammer, pud=n<eff.pudding, ike=n<eff.ikemen;
+    var sig=[giant,ham,pud,ike,eff.auntMode].join('|');
+    if(sig!==lastSig || force){ lastSig=sig;
+      var fly=$('hae-fly');
+      fly.innerHTML = ike? ikemenSVG() : (pud? '<div class="pud">🍮</div>' : flySVG());
+      fly.classList.toggle('giant', giant);
+      $('hae-aunt').innerHTML = auntSVG(eff.auntMode, ike);
+    } }
+
+  /* ---------- 攻撃 ---------- */
+  function curTiming(){ var prog=(60-tLeft)/60, ramp=1-Math.min(0.18,prog*0.18), W,R;
+    if(eff.auntMode==='one'){ W=0.62; R=0.42; } else if(eff.auntMode==='baby'){ W=1.35; R=0.9; } else { W=0.95; R=0.62; }
+    return { W:W*ramp, R:R*ramp }; }
+  function scheduleAttack(sec){ if(!running) return; clearTimeout(attackTimer); attackTimer=setTimeout(beginWindup, sec*1000); }
+  function beginWindup(){ if(!running) return;
+    if(Date.now()<eff.ikemen){ scheduleAttack(0.3); return; }      // イケメン中はオバハン停止
+    atkTarget=Math.floor(Math.random()*3);
+    $('hae-t'+atkTarget).classList.add('aim'); leanAunt(atkTarget); swatWindup(atkTarget); sfxWind();
+    clearTimeout(attackTimer); attackTimer=setTimeout(doSlam, curTiming().W*1000); }
+  function doSlam(){ if(!running) return;
+    swatSlam(atkTarget); sfxSlam();
+    var tb=$('hae-t'+atkTarget); tb.classList.remove('aim'); tb.classList.remove('hitfx'); void tb.offsetWidth; tb.classList.add('hitfx');
+    var ham=Date.now()<eff.hammer, giant=Date.now()<eff.giant;
+    if(atkTarget===pos && !giant){
+      flyHurt();
+      if(ham){ lives=0; sfxHit(); updateHUD(); cleanupSwat(); lose(); return; }
+      lives-=1; sfxHit(); updateHUD();
+      if(lives<=0){ cleanupSwat(); lose(); return; }
+    }
+    setTimeout(cleanupSwat,130);
+    scheduleAttack(curTiming().R+0.12); }
+  function cleanupSwat(){ swatHide(); leanAunt(-1); }
+  function flyHurt(){ var f=$('hae-fly'); f.classList.remove('hurt'); void f.offsetWidth; f.classList.add('hurt'); }
+
+  /* ---------- アイテム ---------- */
+  function scheduleItem(){ if(!running) return; clearTimeout(itemTimer); itemTimer=setTimeout(spawnItem,(4.5+Math.random()*3.5)*1000); }
+  function spawnItem(){ if(!running) return; if(!itemActive){ itemPos=Math.floor(Math.random()*3); itemActive=true; itemExpire=Date.now()+4200; placeItem(); sfxBlip(); } scheduleItem(); }
+  function checkItemCollect(){ if(itemActive && pos===itemPos){ itemActive=false; placeItem(); applyEffect(); } }
+  function applyEffect(){ var roll=Math.random()*100, n=Date.now(); sfxItem();
+    if(roll<22){ eff.giant=n+7000; banner('巨大化！7びょう むてき💪','#1f8a4d'); sfxGiant(); }
+    else if(roll<42){ eff.ikemen=n+7000; banner('イケメン参上！オバハンめろめろ♡','#d83a7a'); sfxIkemen(); }
+    else if(roll<60){ eff.auntMode='baby'; eff.auntUntil=n+7000; banner('オバハンが あかちゃんに！おそい👶','#2f7fc4'); sfxBaby(); }
+    else if(roll<76){ eff.pudding=n+7000; banner('プリンになった…とくに意味なし🍮','#b07f1e'); sfxPudding(); }
+    else if(roll<90){ eff.auntMode='one'; eff.auntUntil=n+7000; banner('オバハンが おねえさんに！はやい💢','#d8431e'); sfxOne(); }
+    else { eff.hammer=n+7000; banner('トンカチや！1ぱつアウト!?🔨','#a8301e'); sfxHammer(); }
+    syncVisual(true); }
+
+  /* ---------- ループ ---------- */
+  function loop(ts){ if(!running) return; if(!lastTs) lastTs=ts; var dt=(ts-lastTs)/1000; if(dt>0.1) dt=0.1; lastTs=ts;
+    tLeft-=dt; if(tLeft<0) tLeft=0;
+    if(eff.auntMode!=='oba' && Date.now()>eff.auntUntil) eff.auntMode='oba';
+    if(itemActive && Date.now()>itemExpire){ itemActive=false; placeItem(); }
+    syncVisual(false); updateHUD();
+    if(tLeft<=0){ win(); return; }
+    raf=requestAnimationFrame(loop); }
+
+  /* ---------- 移動 ---------- */
+  function moveTo(p){ if(p<0||p>2||p===pos) return; pos=p; sfxMove(); placeFly(); checkItemCollect(); }
+  function onTap(e){ if(!running) return; var r=fieldRect(); var x=(e.clientX||0)-r.left; if(x<r.width/2) moveTo(pos-1); else moveTo(pos+1); }
+  function onKey(e){ if(!running) return; if(e.key==='ArrowLeft') moveTo(pos-1); else if(e.key==='ArrowRight') moveTo(pos+1); }
+
+  /* ---------- 開始・終了 ---------- */
+  function stopAll(){ running=false; if(raf) cancelAnimationFrame(raf); raf=null;
+    clearTimeout(attackTimer); clearTimeout(itemTimer); stopBGM();
+    itemActive=false; if($('hae-item')) placeItem(); if($('hae-swat')) swatHide();
+    for(var i=0;i<3;i++){ var t=$('hae-t'+i); if(t) t.classList.remove('aim'); } leanAunt(-1); }
+  function start(){ show('hae-game'); pos=1; lives=3; tLeft=60; running=true; lastTs=0; lastSig='';
+    eff={ giant:0, hammer:0, pudding:0, ikemen:0, auntUntil:0, auntMode:'oba' }; itemActive=false; itemPos=-1;
+    placeTables(); syncVisual(true); placeFly(); placeItem(); swatHide(); updateHUD();
+    startBGM(); scheduleAttack(0.9); scheduleItem(); raf=requestAnimationFrame(loop); }
+  function win(){ stopAll(); sfxWin(); result(true,60); }
+  function lose(){ stopAll(); sfxLose(); result(false, Math.max(0,Math.round(60-tLeft))); }
+
+  function getBest(){ try{ return JSON.parse(localStorage.getItem('hae_best')||'{}')||{}; }catch(e){ return {}; } }
+  function setBest(sec,cl){ try{ localStorage.setItem('hae_best', JSON.stringify({sec:sec,cleared:!!cl})); }catch(e){} }
+  function result(cleared,secs){ show('hae-result');
+    $('hae-stamp').textContent = cleared?'🏆':'😵';
+    $('hae-res-title').textContent = cleared?'にげきった！！':'つかまった…';
+    $('hae-res-sub').textContent = cleared?'オバハンから 60びょう にげきった！':(secs+'びょう にげのびた');
+    var b=getBest(), bestSec=b.sec||0, bestCl=!!b.cleared, disp=cleared?60:secs;
+    if(disp>bestSec || (cleared&&!bestCl)){ setBest(Math.max(disp,bestSec), cleared||bestCl); $('hae-res-best').textContent='🎉 新記録！'; }
+    else { $('hae-res-best').textContent='ベスト ⏱ '+bestSec+'びょう'+(bestCl?' 🏆クリアずみ':''); } }
+  function updateBestLabel(){ var b=getBest(), el=$('hae-best'); if(!el) return;
+    el.textContent = b.sec? ('ベスト ⏱ '+b.sec+'びょう'+(b.cleared?' 🏆クリア!':'')) : 'まだ記録なし'; }
+  function showTitle(){ stopAll(); show('hae-title'); updateBestLabel();
+    var tf=$('hae-titleface'); if(tf) tf.innerHTML=auntSVG('oba',false); }
+
+  function bind(){ if(bound) return; bound=true;
+    var field=$('hae-field'); if(field) field.addEventListener('pointerdown', onTap);
+    $('hae-start').addEventListener('click', function(e){ e.stopPropagation(); start(); });
+    $('hae-retry').addEventListener('click', function(e){ e.stopPropagation(); start(); });
+    $('hae-totitle').addEventListener('click', function(e){ e.stopPropagation(); showTitle(); });
+    document.addEventListener('keydown', onKey); }
+
+  window.haeLaunch=function(ctx){ AC=ctx||AC; bind(); showTitle(); };
+  window.haeShutdown=function(){ stopAll(); };
+  if(document.readyState!=='loading') bind(); else document.addEventListener('DOMContentLoaded', bind);
+})();
+
+</script>
+<script>
+/* ===== 🦟 はえたたきオバハン（グルー：ハブ連携）===== */
+function playHae(e){
+  if(e) e.stopPropagation();
+  if(!audioCtx){ try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(err){} }
+  if(audioCtx && audioCtx.state==='suspended'){ try{ audioCtx.resume(); }catch(err){} }
+  isAudioStarted = true;
+  if(typeof titleInterval!=='undefined' && titleInterval){ clearInterval(titleInterval); titleInterval=null; }
+  if(typeof bpmInterval!=='undefined' && bpmInterval){ clearInterval(bpmInterval); bpmInterval=null; }
+  if(typeof stopBGM==='function'){ try{ stopBGM(); }catch(err){} }
+  if(typeof currentBgmMode!=='undefined'){ currentBgmMode=null; }
+  document.getElementById('title-screen').style.display='none';
+  gameState='HAE';
+  var w=document.getElementById('hae-wrap'); w.classList.add('show'); w.scrollTop=0;
+  if(typeof firstTitleDone!=='undefined'){ firstTitleDone=true; }
+  if(typeof window.haeLaunch==='function') window.haeLaunch(audioCtx);
+}
+function haeToTitle(e){
+  if(e) e.stopPropagation();
+  if(typeof window.haeShutdown==='function') window.haeShutdown();
+  goToTitle();
+}
+
 </script>
 
 </body>
