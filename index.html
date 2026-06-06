@@ -3158,6 +3158,13 @@
     14%{ opacity:1; transform:translate(-50%,-50%) scale(1.12);}
     24%{ transform:translate(-50%,-50%) scale(1);} 78%{ opacity:1;} 100%{ opacity:0; transform:translate(-50%,-70%) scale(1);} }
 
+  #hae-power{ position:absolute; transform:translate(-50%,-50%); z-index:8; font-weight:900; font-size:17px; color:#ff6a2a;
+    text-shadow:0 2px 0 #fff, 0 0 6px rgba(255,150,40,.6); opacity:0; pointer-events:none; white-space:nowrap; }
+  #hae-power.show{ animation:haePower .48s ease forwards; }
+  @keyframes haePower{ 0%{ opacity:0; transform:translate(-50%,-50%) scale(.5);} 30%{ opacity:1; transform:translate(-50%,-90%) scale(1.2);} 100%{ opacity:0; transform:translate(-50%,-150%) scale(1);} }
+  #hae-flicker{ position:absolute; inset:0; z-index:8; pointer-events:none; opacity:0; background:#000; }
+  #hae-flicker.on{ animation:haeFlick 2.4s steps(1) infinite; }
+  @keyframes haeFlick{ 0%{ opacity:0;} 18%{ opacity:0;} 22%{ opacity:.82;background:#000;} 28%{ opacity:0;} 48%{ opacity:0;} 51%{ opacity:.3;background:#fff;} 55%{ opacity:0;} 72%{ opacity:0;} 76%{ opacity:.88;background:#000;} 84%{ opacity:0;} 100%{ opacity:0;} }
   #hae-hint{ margin-top:12px; font-size:13px; font-weight:900; color:#fff; text-shadow:0 2px 0 #b8431a;
     background:rgba(0,0,0,.12); padding:6px 18px; border-radius:999px; letter-spacing:2px; }
 
@@ -3285,7 +3292,7 @@
         <div id="title-content">
         <div id="tap-notice" onclick="beginTitleAudio(event)">▶ タップして音を出す</div>
         <div class="famicom-title">はちばんちくわ</div>
-        <div id="version-label">Ver 2.11.2</div>
+        <div id="version-label">Ver 2.12.1</div>
         <button id="start-btn" class="start-btn" onclick="startGame(event)" style="display:none;">🍩 ちくわを覗く... 🍩</button>
         <button id="title-badge-btn" class="badge-link-btn" onclick="openBadgeScreen('title')" style="display:none;">🏅 称号コレクション</button>
         <button id="reset-record-btn" onclick="resetDiscoveryRecord(event)" style="display:none;">🗑 異変の記録をリセット</button>
@@ -12629,6 +12636,8 @@ function kokkiToTitle(e){
         <div id="hae-fly"></div>
         <div id="hae-swat"></div>
         <div id="hae-banner"></div>
+        <div id="hae-power">パワーッ！💪</div>
+        <div id="hae-flicker"></div>
       </div>
       <div id="hae-hint">← タップで にげろ →</div>
     </div>
@@ -12659,7 +12668,8 @@ function kokkiToTitle(e){
   var pos, lives, tLeft, running, raf, lastTs, lastSig;
   var attackTimer=null, itemTimer=null, bgmTimer=null, bannerTO=null, bgmStep=0;
   var atkTarget=-1, itemActive=false, itemPos=-1, itemExpire=0;
-  var eff = { giant:0, hammer:0, pudding:0, ikemen:0, auntUntil:0, auntMode:'oba' };
+  var eff = { giant:0, hammer:0, pudding:0, ikemen:0, muscle:0, flicker:0, auntUntil:0, auntMode:'oba' };
+  var muscleCharging=false;
 
   /* ---------- オーディオ ---------- */
   function tone(freq,dur,type,vol,slideTo,delay){ if(!AC) return; var t=AC.currentTime+(delay||0);
@@ -12787,12 +12797,30 @@ function kokkiToTitle(e){
     b.classList.remove('show'); void b.offsetWidth; b.classList.add('show');
     clearTimeout(bannerTO); bannerTO=setTimeout(function(){ b.classList.remove('show'); },1600); }
 
+  function muscleSVG(){ return '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">'
+    +'<path d="M24,56 C9,53 7,33 18,28 C26,24 32,30 31,39 L31,54 Z" fill="#f0b07a" stroke="#d18a52" stroke-width="2"/>'
+    +'<circle cx="17" cy="32" r="9" fill="#f0b07a" stroke="#d18a52" stroke-width="2"/>'
+    +'<path d="M76,56 C91,53 93,33 82,28 C74,24 68,30 69,39 L69,54 Z" fill="#f0b07a" stroke="#d18a52" stroke-width="2"/>'
+    +'<circle cx="83" cy="32" r="9" fill="#f0b07a" stroke="#d18a52" stroke-width="2"/>'
+    +'<path d="M32,46 C32,38 68,38 68,46 L65,86 C65,94 35,94 35,86 Z" fill="#f3b984"/>'
+    +'<path d="M36,52 Q50,60 64,52" stroke="#cf8a52" stroke-width="2" fill="none"/>'
+    +'<line x1="50" y1="53" x2="50" y2="82" stroke="#cf8a52" stroke-width="2"/>'
+    +'<line x1="41" y1="64" x2="59" y2="64" stroke="#cf8a52" stroke-width="1.6"/>'
+    +'<line x1="41" y1="73" x2="59" y2="73" stroke="#cf8a52" stroke-width="1.6"/>'
+    +'<circle cx="50" cy="29" r="11" fill="#f7c89a"/>'
+    +'<path d="M40,26 q10,-8 20,0" stroke="#3a2a1a" stroke-width="3" fill="none"/>'
+    +'<rect x="41" y="27" width="7" height="4.5" rx="1.5" fill="#222"/><rect x="52" y="27" width="7" height="4.5" rx="1.5" fill="#222"/><line x1="48" y1="29" x2="52" y2="29" stroke="#222" stroke-width="1.6"/>'
+    +'<path d="M45,36 q5,3 10,0" stroke="#a35b4a" stroke-width="1.8" fill="none" stroke-linecap="round"/>'
+    + sparkle(82,16,5) +'</svg>'; }
+  function sfxMuscle(){ tone(110,0.2,'sawtooth',0.09,70); tone(220,0.16,'square',0.05,165,0.06); }
+  function sfxFlicker(){ tone(70,0.3,'square',0.07,95); noise(0.22,0.06); }
+  function sfxPower(){ tone(150,0.12,'square',0.07,95); }
   function syncVisual(force){ var n=Date.now();
-    var giant=n<eff.giant, ham=n<eff.hammer, pud=n<eff.pudding, ike=n<eff.ikemen;
-    var sig=[giant,ham,pud,ike,eff.auntMode].join('|');
+    var giant=n<eff.giant, ham=n<eff.hammer, pud=n<eff.pudding, ike=n<eff.ikemen, mus=n<eff.muscle;
+    var sig=[giant,ham,pud,ike,mus,eff.auntMode].join('|');
     if(sig!==lastSig || force){ lastSig=sig;
       var fly=$('hae-fly');
-      fly.innerHTML = ike? ikemenSVG() : (pud? '<div class="pud">🍮</div>' : flySVG());
+      fly.innerHTML = ike? ikemenSVG() : (mus? muscleSVG() : (pud? '<div class="pud">🍮</div>' : flySVG()));
       fly.classList.toggle('giant', giant);
       $('hae-aunt').innerHTML = auntSVG(eff.auntMode, ike);
     } }
@@ -12827,12 +12855,14 @@ function kokkiToTitle(e){
   function spawnItem(){ if(!running) return; if(!itemActive){ itemPos=Math.floor(Math.random()*3); itemActive=true; itemExpire=Date.now()+4200; placeItem(); sfxBlip(); } scheduleItem(); }
   function checkItemCollect(){ if(itemActive && pos===itemPos){ itemActive=false; placeItem(); applyEffect(); } }
   function applyEffect(){ var roll=Math.random()*100, n=Date.now(); sfxItem();
-    if(roll<22){ eff.giant=n+7000; banner('巨大化！7びょう むてき💪','#1f8a4d'); sfxGiant(); }
-    else if(roll<42){ eff.ikemen=n+7000; banner('イケメン参上！オバハンめろめろ♡','#d83a7a'); sfxIkemen(); }
-    else if(roll<60){ eff.auntMode='baby'; eff.auntUntil=n+7000; banner('オバハンが あかちゃんに！おそい👶','#2f7fc4'); sfxBaby(); }
-    else if(roll<76){ eff.pudding=n+7000; banner('プリンになった…とくに意味なし🍮','#b07f1e'); sfxPudding(); }
-    else if(roll<90){ eff.auntMode='one'; eff.auntUntil=n+7000; banner('オバハンが おねえさんに！はやい💢','#d8431e'); sfxOne(); }
-    else { eff.hammer=n+7000; banner('トンカチや！1ぱつアウト!?🔨','#a8301e'); sfxHammer(); }
+    if(roll<18){ eff.giant=n+7000; banner('巨大化！7びょう むてき💪','#1f8a4d'); sfxGiant(); }
+    else if(roll<34){ eff.ikemen=n+7000; banner('イケメン参上！オバハンめろめろ♡','#d83a7a'); sfxIkemen(); }
+    else if(roll<48){ eff.auntMode='baby'; eff.auntUntil=n+7000; banner('オバハンが あかちゃんに！おそい👶','#2f7fc4'); sfxBaby(); }
+    else if(roll<60){ eff.pudding=n+7000; banner('プリンになった…とくに意味なし🍮','#b07f1e'); sfxPudding(); }
+    else if(roll<72){ eff.auntMode='one'; eff.auntUntil=n+7000; banner('オバハンが おねえさんに！はやい💢','#d8431e'); sfxOne(); }
+    else if(roll<80){ eff.hammer=n+7000; banner('トンカチや！1ぱつアウト!?🔨','#a8301e'); sfxHammer(); }
+    else if(roll<90){ eff.muscle=n+7000; banner('ムキムキ筋肉マンに変身！でも動くの おそい💪','#c0562a'); sfxMuscle(); }
+    else { eff.flicker=n+7000; banner('蛍光灯こわれた！チカチカして見にくい💡','#9aa0a6'); sfxFlicker(); }
     syncVisual(true); }
 
   /* ---------- ループ ---------- */
@@ -12840,22 +12870,29 @@ function kokkiToTitle(e){
     tLeft-=dt; if(tLeft<0) tLeft=0;
     if(eff.auntMode!=='oba' && Date.now()>eff.auntUntil) eff.auntMode='oba';
     if(itemActive && Date.now()>itemExpire){ itemActive=false; placeItem(); }
+    var flk=$('hae-flicker'); if(flk) flk.classList.toggle('on', Date.now()<eff.flicker);
     syncVisual(false); updateHUD();
     if(tLeft<=0){ win(); return; }
     raf=requestAnimationFrame(loop); }
 
   /* ---------- 移動 ---------- */
   function moveTo(p){ if(p<0||p>2||p===pos) return; pos=p; sfxMove(); placeFly(); checkItemCollect(); }
-  function onTap(e){ if(!running) return; var r=fieldRect(); var x=(e.clientX||0)-r.left; if(x<r.width/2) moveTo(pos-1); else moveTo(pos+1); }
-  function onKey(e){ if(!running) return; if(e.key==='ArrowLeft') moveTo(pos-1); else if(e.key==='ArrowRight') moveTo(pos+1); }
+  function showPower(){ var el=$('hae-power'); if(!el) return; el.style.left=TX[pos]+'%'; el.style.top='50%'; el.classList.remove('show'); void el.offsetWidth; el.classList.add('show'); }
+  function requestMove(dir){ if(!running) return;
+    if(Date.now()<eff.muscle){ if(muscleCharging) return; muscleCharging=true; showPower(); sfxPower();
+      setTimeout(function(){ muscleCharging=false; if(running) moveTo(pos+dir); }, 480); }
+    else { moveTo(pos+dir); } }
+  function onTap(e){ if(!running) return; var r=fieldRect(); var x=(e.clientX||0)-r.left; if(x<r.width/2) requestMove(-1); else requestMove(1); }
+  function onKey(e){ if(!running) return; if(e.key==='ArrowLeft') requestMove(-1); else if(e.key==='ArrowRight') requestMove(1); }
 
   /* ---------- 開始・終了 ---------- */
   function stopAll(){ running=false; if(raf) cancelAnimationFrame(raf); raf=null;
     clearTimeout(attackTimer); clearTimeout(itemTimer); stopBGM();
     itemActive=false; if($('hae-item')) placeItem(); if($('hae-swat')) swatHide();
-    for(var i=0;i<3;i++){ var t=$('hae-t'+i); if(t) t.classList.remove('aim'); } leanAunt(-1); }
+    for(var i=0;i<3;i++){ var t=$('hae-t'+i); if(t) t.classList.remove('aim'); } leanAunt(-1);
+    muscleCharging=false; var pw=$('hae-power'); if(pw) pw.classList.remove('show'); var fl2=$('hae-flicker'); if(fl2) fl2.classList.remove('on'); }
   function start(){ show('hae-game'); pos=1; lives=3; tLeft=60; running=true; lastTs=0; lastSig='';
-    eff={ giant:0, hammer:0, pudding:0, ikemen:0, auntUntil:0, auntMode:'oba' }; itemActive=false; itemPos=-1;
+    eff={ giant:0, hammer:0, pudding:0, ikemen:0, muscle:0, flicker:0, auntUntil:0, auntMode:'oba' }; muscleCharging=false; itemActive=false; itemPos=-1;
     placeTables(); syncVisual(true); placeFly(); placeItem(); swatHide(); updateHUD();
     startBGM(); scheduleAttack(0.9); scheduleItem(); raf=requestAnimationFrame(loop); }
   function win(){ stopAll(); sfxWin(); result(true,60); }
