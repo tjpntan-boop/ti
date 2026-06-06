@@ -1229,6 +1229,18 @@
         }
         #play-tan-btn:hover { background: #1d333e; border-color: #ffce6b; }
         #play-tan-btn .hassaku-sub { font-size: 10px; font-weight: normal; letter-spacing: 0; opacity: 0.8; color: #cfe0ea; }
+        #play-ona-btn {
+            margin-top: 10px;
+            background: #18382e; color: #8fe6bf;
+            border: 1px solid #3aa17a; border-radius: 8px; padding: 9px 22px;
+            font-size: 15px; font-weight: bold; cursor: pointer; z-index: 1010; letter-spacing: 1px;
+            display: flex; flex-direction: column; align-items: center; gap: 2px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+            transition: background 0.15s, border-color 0.15s;
+            font-family: inherit;
+        }
+        #play-ona-btn:hover { background: #1f4b3c; border-color: #8fe6bf; }
+        #play-ona-btn .hassaku-sub { font-size: 10px; font-weight: normal; letter-spacing: 0; opacity: 0.85; color: #cfe9dd; }
 
         /* タイトルに常設する「ブラウザで開く手順」案内ボックス */
         #open-guide {
@@ -3271,6 +3283,147 @@
   .tan-col-cell .ccnt{ font-weight:800; font-size:12px; color:#c0392b; }
   .tan-col-cell.lock .cnm{ color:#9a8f7a; } .tan-col-cell.lock .ccnt{ color:#9a8f7a; }
 
+  /* ====================== 💨 おなら我慢じゅぎょう ====================== */
+  #ona-wrap{
+    --paper:#fff8ec; --board:#2f5d4a; --accent:#3aa17a; --danger:#e3473e;
+    position:fixed; inset:0; z-index:5500; overflow-y:auto; -webkit-overflow-scrolling:touch;
+    display:none; align-items:flex-start; justify-content:center;
+    font-family:"M PLUS Rounded 1c", system-ui, sans-serif; color:#3a2a18; user-select:none; -webkit-user-select:none;
+    -webkit-tap-highlight-color:transparent; touch-action:manipulation;
+    background:linear-gradient(#fbe9c8 0%, #f6dcae 50%, #d2a96e 50%, #b88a52 100%);
+  }
+  #ona-wrap.show{ display:flex; }
+  #ona-wrap *{ box-sizing:border-box; }
+  #ona-stage{ position:relative; width:100%; max-width:460px; min-height:100%; display:flex; flex-direction:column; align-items:center; padding:48px 12px 24px; }
+  #ona-back-btn{ position:absolute; top:8px; left:50%; transform:translateX(-50%); z-index:6700; font-family:inherit; font-size:13px; font-weight:900;
+    cursor:pointer; padding:7px 14px; border-radius:18px; border:none; background:#2f5d4a; color:#fff; box-shadow:0 3px 0 #1d3a2e; }
+  #ona-back-btn:active{ transform:translateX(-50%) translateY(2px); }
+  .ona-screen{ width:100%; display:none; flex-direction:column; align-items:center; }
+  .ona-screen.on{ display:flex; }
+  .ona-btn{ border:none; cursor:pointer; font-family:inherit; font-weight:900; color:#fff;
+    background:linear-gradient(#46b98c,#2f8e69); border-radius:16px; box-shadow:0 5px 0 #1f6a4d;
+    padding:13px 30px; font-size:20px; letter-spacing:1px; transition:transform .06s, box-shadow .06s; }
+  .ona-btn:active{ transform:translateY(4px); box-shadow:0 1px 0 #1f6a4d; }
+  .ona-btn.sub{ background:linear-gradient(#a9b3a0,#83917a); box-shadow:0 5px 0 #5e6a54; font-size:15px; padding:10px 22px; }
+
+  /* タイトル */
+  #ona-logo{ margin-top:8px; text-align:center; font-weight:900; color:#2f5d4a; line-height:1.12; text-shadow:0 2px 0 #fff; }
+  #ona-logo .l1{ font-size:20px; } #ona-logo .l2{ font-size:30px; color:#e07b2a; }
+  #ona-titlekid{ width:120px; height:120px; margin:6px 0; } #ona-titlekid svg{ width:100%; height:100%; }
+  #ona-tagline{ font-weight:800; font-size:14px; text-align:center; color:#3a2a18; background:rgba(255,248,236,.92); padding:9px 16px; border-radius:14px; line-height:1.5; max-width:360px; }
+  #ona-best{ margin-top:12px; font-weight:900; font-size:15px; color:#2f5d4a; background:#bfe6d3; border-radius:999px; padding:7px 18px; box-shadow:0 3px 0 #8fc9b0; }
+  #ona-start{ margin-top:16px; }
+  #ona-howto{ display:none; margin-top:12px; font-size:12px; font-weight:700; color:#5a4a30; text-align:center; line-height:1.6; max-width:360px; background:#fffdf6; border:2px dashed #d8cbab; border-radius:12px; padding:10px 12px; }
+  #ona-howto.open{ display:block; }
+  .ona-howto-btn{ margin-top:12px; background:transparent; border:2px solid #cdbfa0; color:#7a6a4a; font-family:inherit; font-weight:900; font-size:13px; padding:7px 18px; border-radius:999px; cursor:pointer; }
+  .ona-howto-btn:active{ transform:translateY(2px); }
+
+  /* プレイ */
+  #ona-hud{ width:100%; max-width:430px; display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; gap:6px; }
+  .ona-chip{ background:rgba(255,255,255,.92); border-radius:13px; padding:6px 12px; font-weight:900; font-size:13px; box-shadow:0 2px 0 rgba(0,0,0,.1); color:#3a2a18; white-space:nowrap; }
+  .ona-chip b{ font-size:20px; color:#2f8e69; }
+  #ona-lives{ letter-spacing:2px; font-size:16px; }
+
+  #ona-field{ position:relative; width:100%; max-width:430px; height:40vh; max-height:360px; min-height:300px;
+    border-radius:20px; overflow:hidden; border:4px solid #fff;
+    background:linear-gradient(#fbe7c2 0%, #f7ddb0 46%, #c79a60 46%, #b07e44 100%);
+    box-shadow:0 10px 24px rgba(120,80,30,.3); }
+  #ona-board{ position:absolute; left:8%; top:5%; width:84%; height:26%; border-radius:8px;
+    background:#2f5d4a; border:6px solid #8a6a3a; box-shadow:inset 0 0 0 2px #244a3b;
+    color:#dff0e6; font-weight:900; font-size:13px; letter-spacing:2px; opacity:.96;
+    padding:8px 0 0 12px; }
+  #ona-teacher{ position:absolute; left:50%; top:26%; width:74px; transform:translateX(-50%); z-index:3; }
+  #ona-teacher svg{ width:100%; height:auto; display:block; filter:drop-shadow(0 4px 4px rgba(0,0,0,.25)); }
+  #ona-class{ position:absolute; inset:0; z-index:2; pointer-events:none; }
+  .ona-cm{ position:absolute; transform:translate(-50%,-50%); }
+  .ona-cm .ona-cmb{ animation:onaBob 2.6s ease-in-out infinite; }
+  .ona-cm svg{ width:100%; height:auto; display:block; filter:drop-shadow(0 3px 3px rgba(0,0,0,.2)); }
+  #ona-class.zawa .ona-cm .ona-cmb{ animation:onaZawa .45s ease-in-out infinite; }
+  @keyframes onaBob{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-2px);} }
+  @keyframes onaZawa{ 0%,100%{ transform:rotate(-4deg) translateY(0);} 50%{ transform:rotate(4deg) translateY(-2px);} }
+  .ona-cmbub{ position:absolute; left:50%; top:-6px; transform:translate(-50%,-100%); background:#fff; color:#7a4ec0; font-weight:900; font-size:11px;
+    padding:2px 7px; border-radius:10px; white-space:nowrap; box-shadow:0 2px 4px rgba(0,0,0,.25); animation:onaBubPop .25s ease; }
+  .ona-cmbub::after{ content:""; position:absolute; left:50%; bottom:-5px; transform:translateX(-50%); border:5px solid transparent; border-top-color:#fff; }
+  @keyframes onaBubPop{ from{ transform:translate(-50%,-90%) scale(.6);} to{ transform:translate(-50%,-100%) scale(1);} }
+  #ona-player{ position:absolute; left:50%; bottom:-4%; width:118px; transform:translateX(-50%); z-index:5; }
+  #ona-player svg{ width:100%; height:auto; display:block; filter:drop-shadow(0 4px 5px rgba(0,0,0,.3)); }
+  #ona-puff{ position:absolute; left:62%; bottom:8%; transform:translateX(-50%); z-index:6; font-size:30px; opacity:0; pointer-events:none; }
+  #ona-puff.go{ animation:onaPuff .7s ease forwards; }
+  @keyframes onaPuff{ 0%{ opacity:0; transform:translateX(-50%) scale(.4);} 25%{ opacity:1; transform:translate(-30%,-10px) scale(1.1);} 100%{ opacity:0; transform:translate(10%,-46px) scale(1.5);} }
+  #ona-zawatxt{ position:absolute; left:8px; top:34%; z-index:4; font-weight:900; font-size:13px; color:#7a4ec0; opacity:.0; pointer-events:none; text-shadow:0 1px 0 #fff; }
+  #ona-popup{ position:absolute; left:50%; top:60%; transform:translate(-50%,-50%) scale(.6); z-index:8; opacity:0; pointer-events:none; font-weight:900; font-size:19px; text-align:center; text-shadow:0 2px 0 #fff; white-space:nowrap; }
+  #ona-popup.show{ animation:onaPop 1.1s ease forwards; }
+  @keyframes onaPop{ 0%{ opacity:0; transform:translate(-50%,-50%) scale(.5);} 20%{ opacity:1; transform:translate(-50%,-60%) scale(1.15);} 100%{ opacity:0; transform:translate(-50%,-110%) scale(1);} }
+  #ona-field.flashred::after{ content:""; position:absolute; inset:0; background:#e3473e; opacity:.35; z-index:9; animation:onaFlash .5s ease forwards; pointer-events:none; }
+  @keyframes onaFlash{ from{ opacity:.4;} to{ opacity:0;} }
+
+  /* メーター */
+  #ona-meters{ width:100%; max-width:430px; margin-top:10px; }
+  .ona-mrow{ display:flex; align-items:center; gap:8px; margin-bottom:7px; }
+  .ona-mlabel{ font-weight:900; font-size:12px; color:#5a4a30; width:78px; flex:none; }
+  .ona-bar{ position:relative; flex:1; height:18px; background:#efe3cc; border-radius:999px; overflow:hidden; box-shadow:inset 0 2px 4px rgba(0,0,0,.2); border:2px solid #fff; }
+  .ona-bar .fill{ height:100%; width:0%; border-radius:999px; transition:width .1s linear, background .2s; }
+  #ona-gaugefill{ background:#39b06a; }
+  #ona-noisefill{ background:#7a4ec0; }
+  #ona-suspfill{ background:#e0a82e; }
+  .ona-tick{ position:absolute; top:-3px; bottom:-3px; width:3px; background:rgba(60,40,20,.55); }
+  .ona-tick span{ position:absolute; top:-13px; left:50%; transform:translateX(-50%); font-size:9px; font-weight:900; color:#5a4a30; white-space:nowrap; }
+
+  /* おならボタン3種 */
+  #ona-btns{ width:100%; max-width:430px; margin-top:12px; display:flex; gap:8px; }
+  .ona-fbtn{ flex:1; border:none; cursor:pointer; font-family:inherit; font-weight:900; color:#fff; border-radius:16px;
+    padding:12px 4px 9px; text-align:center; transition:transform .06s, box-shadow .06s, filter .15s;
+    background:linear-gradient(#9aa3ab,#6f7a83); box-shadow:0 5px 0 #4e565d; }
+  .ona-fbtn:active{ transform:translateY(4px); box-shadow:0 1px 0 #4e565d; }
+  .ona-fbtn .nm{ font-size:18px; display:block; line-height:1.1; }
+  .ona-fbtn .sub{ font-size:10px; font-weight:700; opacity:.95; display:block; margin-top:3px; }
+  .ona-fbtn .st{ font-size:10px; font-weight:900; display:block; margin-top:4px; }
+  .ona-fbtn.safe{ background:linear-gradient(#46b98c,#2f8e69); box-shadow:0 5px 0 #1f6a4d; }
+  .ona-fbtn.border{ background:linear-gradient(#edc14e,#d89a1e); box-shadow:0 5px 0 #a8741a; }
+  .ona-fbtn.danger{ background:linear-gradient(#ec6a62,#d23a30); box-shadow:0 5px 0 #9e2a22; }
+  .ona-fbtn.locked{ background:linear-gradient(#cfc6b6,#a9a08f); box-shadow:0 5px 0 #8a8170; opacity:.7; filter:grayscale(.4); }
+  .ona-fbtn.cool{ background:linear-gradient(#cfc6b6,#a9a08f); box-shadow:0 5px 0 #8a8170; opacity:.6; filter:grayscale(.5); }
+  .ona-cm.down{ transform:translate(-58%,-26%) rotate(80deg); opacity:.5; }
+  .ona-cm.down .ona-cmb{ animation:none; }
+  .ona-cmbub.down{ color:#7a8a2a; }
+  #ona-teacher.down{ transform:translateX(-50%) rotate(76deg); opacity:.5; }
+  #ona-tdizzy{ position:absolute; left:50%; top:23%; transform:translateX(-50%); z-index:6; font-size:22px; opacity:0; transition:opacity .3s; pointer-events:none; }
+
+  /* もうでちゃう！表示 */
+  #ona-urge{ width:100%; max-width:430px; margin-top:10px; text-align:center; font-weight:900; font-size:15px; }
+  #ona-urge.low{ color:#9a8f7a; }
+  #ona-urge.mid{ color:#d89a1e; }
+  #ona-urge.hot{ color:#e3473e; font-size:21px; animation:onaUrge .5s ease-in-out infinite; }
+  #ona-namelabel{ text-align:center; font-size:11px; font-weight:900; color:#8a7f6a; margin-top:8px; }
+  #ona-name{ display:block; margin:5px auto 2px; width:72%; max-width:240px; text-align:center; font-family:inherit; font-weight:900; font-size:17px; color:#2f5d4a; padding:9px 10px; border:2px solid #cdbfa0; border-radius:12px; background:#fffdf6; box-shadow:inset 0 2px 4px rgba(0,0,0,.08); }
+  #ona-name:focus{ outline:none; border-color:#46b98c; }
+  #ona-intro-kid{ width:152px; margin:6px auto 10px; }
+  #ona-intro-kid svg{ width:100%; height:auto; display:block; filter:drop-shadow(0 4px 6px rgba(0,0,0,.25)); }
+  #ona-intro-speech{ background:#fffdf6; border:3px solid #f0c14b; border-radius:16px; padding:14px 16px; margin:0 4px 14px; font-weight:800; color:#5a4a2a; font-size:15px; line-height:1.65; max-width:330px; box-shadow:0 4px 0 rgba(0,0,0,.12); text-align:center; }
+  #ona-intro-speech b{ color:#e07b2a; }
+  #ona-principal{ position:absolute; left:50%; top:10%; width:96px; transform:translate(-50%,-130%); opacity:0; z-index:7; transition:transform .55s cubic-bezier(.2,.85,.3,1.15), opacity .4s; }
+  #ona-principal svg{ width:100%; height:auto; display:block; filter:drop-shadow(0 5px 7px rgba(0,0,0,.4)); }
+  #ona-principal.show{ transform:translate(-50%,0); opacity:1; }
+  #ona-principal.down{ transform:translate(-58%,16%) rotate(74deg); opacity:.5; }
+  #ona-boss-say{ position:absolute; left:50%; top:1%; transform:translateX(-50%); z-index:8; max-width:210px; background:#fff; color:#b5452f; font-weight:900; font-size:12.5px; line-height:1.4; padding:7px 11px; border-radius:13px; box-shadow:0 3px 0 rgba(0,0,0,.18); text-align:center; opacity:0; transition:opacity .25s; }
+  #ona-boss-say.show{ opacity:1; }
+  #ona-boss-say::after{ content:""; position:absolute; left:50%; bottom:-6px; transform:translateX(-50%); border:6px solid transparent; border-top-color:#fff; }
+  @keyframes onaUrge{ 0%,100%{ transform:scale(1);} 50%{ transform:scale(1.13);} }
+
+  /* バレたー！大きく */
+  #ona-busted{ position:absolute; left:50%; top:46%; transform:translate(-50%,-50%) scale(.4) rotate(-7deg); z-index:10; opacity:0; pointer-events:none;
+    font-weight:900; font-size:48px; color:#fff; -webkit-text-stroke:3px #e3473e; text-shadow:0 4px 0 #a8281f, 0 0 18px rgba(227,71,62,.65); white-space:nowrap; letter-spacing:1px; }
+  #ona-busted.show{ animation:onaBusted 2s ease forwards; }
+  @keyframes onaBusted{ 0%{ opacity:0; transform:translate(-50%,-50%) scale(.4) rotate(-7deg);} 14%{ opacity:1; transform:translate(-50%,-50%) scale(1.2) rotate(-7deg);} 26%{ transform:translate(-50%,-50%) scale(1) rotate(-7deg);} 82%{ opacity:1; transform:translate(-50%,-50%) scale(1) rotate(-7deg);} 100%{ opacity:0; transform:translate(-50%,-56%) scale(1) rotate(-7deg);} }
+
+  /* リザルト */
+  #ona-verdict{ font-weight:900; font-size:26px; text-align:center; color:#2f5d4a; text-shadow:0 2px 0 #fff; line-height:1.3; }
+  #ona-verdict .em{ font-size:60px; display:block; }
+  #ona-res-card{ margin-top:12px; width:100%; max-width:340px; background:var(--paper); border-radius:18px; padding:18px; text-align:center; box-shadow:0 10px 24px rgba(120,80,30,.3); }
+  #ona-res-score{ font-weight:900; font-size:20px; color:#3a2a18; }
+  #ona-res-best{ margin-top:10px; font-weight:800; font-size:14px; color:#2f8e69; }
+  #ona-res-btns{ margin-top:16px; display:flex; flex-direction:column; gap:11px; align-items:center; }
+
 </style>
 </head>
 <body>
@@ -3292,7 +3445,7 @@
         <div id="title-content">
         <div id="tap-notice" onclick="beginTitleAudio(event)">▶ タップして音を出す</div>
         <div class="famicom-title">はちばんちくわ</div>
-        <div id="version-label">Ver 2.12.1</div>
+        <div id="version-label">Ver 2.20.3</div>
         <button id="start-btn" class="start-btn" onclick="startGame(event)" style="display:none;">🍩 ちくわを覗く... 🍩</button>
         <button id="title-badge-btn" class="badge-link-btn" onclick="openBadgeScreen('title')" style="display:none;">🏅 称号コレクション</button>
         <button id="reset-record-btn" onclick="resetDiscoveryRecord(event)" style="display:none;">🗑 異変の記録をリセット</button>
@@ -3314,6 +3467,7 @@
             <button id="play-kokki-btn" onclick="playKokki(event)">🌍 国旗あてクイズ<span class="hassaku-sub">国旗から国名を当てよう！首都・名物・自然/地形も。45カ国＋こっきずかん</span></button>
             <button id="play-hae-btn" onclick="playHae(event)">🦟 はえたたきオバハン<span class="hassaku-sub">パンチパーマのオバハンのはえたたきを60秒よけろ！💩アイテムで何かが起こる</span></button>
             <button id="play-tan-btn" onclick="playTan(event)">🕵️ パンツにウンコついてる？<span class="hassaku-sub">モウリ探偵になって質問→推理！3人の中学生から犯人を一発で当てろ</span></button>
+            <button id="play-ona-btn" onclick="playOnara(event)">💨 おなら教室<span class="hassaku-sub">女子高生になって、バレずにおならで クラス全員＆先生＆校長をノックアウト！45分以内にクリア</span></button>
         </div>
         <div id="open-guide">
             <div class="og-title">⚠️ 音が出ない / タップできない時は</div>
@@ -13348,6 +13502,386 @@ function playTan(e){
 function tanToTitle(e){
   if(e) e.stopPropagation();
   if(typeof window.tanShutdown==='function') window.tanShutdown();
+  goToTitle();
+}
+
+</script>
+
+<!-- ===== 💨 おなら我慢じゅぎょう（組み込み）===== -->
+<div id="ona-wrap">
+  <button id="ona-back-btn" onclick="onaraToTitle(event)">↩ もどる</button>
+  <div id="ona-stage">
+
+    <!-- タイトル -->
+    <div class="ona-screen on" id="ona-title">
+      <div id="ona-logo"><div class="l1">💨</div><div class="l2">おなら教室</div></div>
+      <div id="ona-titlekid"></div>
+      <div id="ona-tagline">後ろの席の 女子高生 💺<br><b>バレずに</b> おならをかまして…<br>クサさで クラス全員→先生を ノックアウト！</div>
+      <div id="ona-best">…</div>
+      <div id="ona-namelabel">なまえを いれてね（女子高生）</div>
+      <input id="ona-name" maxlength="6" placeholder="サクラ">
+      <button class="ona-btn" id="ona-start">▶ じゅぎょう開始</button>
+      <button class="ona-howto-btn" id="ona-howto-btn">❓ あそびかた</button>
+      <div id="ona-howto">ぷぷ／ぷーう／ぷりぷり は <b>つかった おならだけ3秒待ち</b>（ほかは すぐ出せる）。ざわざわが大きいスキは バレにくい／静かだとバレやすい。くささが たまると みんな「だれ？くさい？窓開けて！」と さわいで 1人ずつバタン！同級生11人＋先生を 45分以内にノックアウトでクリア。タイムは分秒で記録・3回バレたら退場！</div>
+    </div>
+
+    <!-- 自己紹介 -->
+    <div class="ona-screen" id="ona-intro">
+      <div id="ona-intro-kid"></div>
+      <div id="ona-intro-speech"></div>
+      <button class="ona-btn" id="ona-intro-go">▶ じゅぎょうへ！</button>
+    </div>
+
+    <!-- プレイ -->
+    <div class="ona-screen" id="ona-play">
+      <div id="ona-hud">
+        <div class="ona-chip">のこり <b id="ona-time">45分00秒</b></div>
+        <div class="ona-chip">たおした <b id="ona-score">0</b>/13</div>
+        <div class="ona-chip" id="ona-lives">❤️❤️❤️</div>
+      </div>
+      <div id="ona-field">
+        <div id="ona-board">せんせい<br>こくばん…</div>
+        <div id="ona-teacher"></div>
+        <div id="ona-tdizzy">💫</div>
+        <div id="ona-zawatxt">ざわ…ざわ…</div>
+        <div id="ona-class"></div>
+        <div id="ona-player"></div>
+        <div id="ona-puff">💨</div>
+        <div id="ona-popup"></div>
+        <div id="ona-busted">バレたー！</div>
+        <div id="ona-principal"></div>
+        <div id="ona-boss-say"></div>
+      </div>
+      <div id="ona-meters">
+        <div class="ona-mrow"><div class="ona-mlabel">ざわざわ度</div><div class="ona-bar"><div class="fill" id="ona-noisefill"></div></div></div>
+        <div class="ona-mrow"><div class="ona-mlabel">あやしい度 👀</div><div class="ona-bar"><div class="fill" id="ona-suspfill"></div></div></div>
+        <div class="ona-mrow"><div class="ona-mlabel">くささ 💨</div><div class="ona-bar"><div class="fill" id="ona-stinkfill"></div></div></div>
+      </div>
+      <div id="ona-urge" class="low">おなら、ためちゅう…</div>
+      <div id="ona-btns">
+        <button class="ona-fbtn" id="ona-b-pupu"><span class="nm">ぷぷ</span><span class="sub">ちいさめ</span><span class="st">―</span></button>
+        <button class="ona-fbtn" id="ona-b-puu"><span class="nm">ぷーう</span><span class="sub">ふつう</span><span class="st">―</span></button>
+        <button class="ona-fbtn" id="ona-b-puri"><span class="nm">ぷりぷり</span><span class="sub">大ばくはつ</span><span class="st">―</span></button>
+      </div>
+    </div>
+
+    <!-- リザルト -->
+    <div class="ona-screen" id="ona-result">
+      <div id="ona-verdict"></div>
+      <div id="ona-res-card">
+        <div id="ona-res-score"></div>
+        <div id="ona-res-best"></div>
+      </div>
+      <div id="ona-res-btns">
+        <button class="ona-btn" id="ona-retry">もう一回</button>
+        <button class="ona-btn sub" id="ona-totitle">タイトルへ</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ===== 💨 おならでバタンキュー教室（ロジック）===== */
+(function(){ "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+  var AC=null, bound=false;
+  var stink, cd, faintN, susp, lives, tLeft, running, raf, lastTs, bossPhase=false, bossDown=false;
+  var noise, noiseTarget, noiseTimer=null, suspTO=null, recTO=null, bgmTimer=null, mood, busted, zawaWasHi=false, faintOrder=[], playerName="";
+
+  var DEF={ pupu:{L:24,add:10}, puu:{L:48,add:20}, puri:{L:78,add:36} };
+  var T=[9,20,33,48,65,84,105,128,152,176,196,218];   // 同級生11人→先生
+  var BOSS_NEED=110;   // 校長先生（ラスボス）の限界
+
+  /* ---------- オーディオ ---------- */
+  function tone(f,d,t,v,sl,dl){ if(!AC) return; var s=AC.currentTime+(dl||0); var o=AC.createOscillator(),g=AC.createGain();
+    o.type=t||'square'; o.frequency.setValueAtTime(f,s); if(sl) o.frequency.exponentialRampToValueAtTime(Math.max(1,sl),s+d);
+    g.gain.setValueAtTime(v||0.06,s); g.gain.exponentialRampToValueAtTime(0.0008,s+d); o.connect(g); g.connect(AC.destination); o.start(s); o.stop(s+d+0.05); }
+  function brap(f0,f1,dur,flut,depth,vol,lp0,lp1,Q,nz,dl){ if(!AC) return; var t0=AC.currentTime+(dl||0); var te=t0+dur;
+    var o=AC.createOscillator(); o.type='sawtooth';
+    o.frequency.setValueAtTime(f0,t0); o.frequency.linearRampToValueAtTime(f0*1.08,t0+dur*0.16); o.frequency.linearRampToValueAtTime(Math.max(26,f1),te);
+    var l1=AC.createOscillator(); l1.type='square'; l1.frequency.setValueAtTime(flut,t0); l1.frequency.linearRampToValueAtTime(flut*0.5,te);
+    var g1=AC.createGain(); g1.gain.setValueAtTime(f0*depth,t0); l1.connect(g1); g1.connect(o.frequency);
+    var l2=AC.createOscillator(); l2.type='triangle'; l2.frequency.setValueAtTime(flut*0.37+2.5,t0);
+    var g2=AC.createGain(); g2.gain.setValueAtTime(f0*depth*0.5,t0); l2.connect(g2); g2.connect(o.frequency);
+    var flt=AC.createBiquadFilter(); flt.type='lowpass'; flt.Q.setValueAtTime(Q||8,t0); flt.frequency.setValueAtTime(lp0||1100,t0); flt.frequency.linearRampToValueAtTime(lp1||320,te);
+    var trem=AC.createGain(); trem.gain.setValueAtTime(0.72,t0);
+    var lt=AC.createOscillator(); lt.type='square'; lt.frequency.setValueAtTime(flut,t0); lt.frequency.linearRampToValueAtTime(flut*0.5,te);
+    var ltg=AC.createGain(); ltg.gain.setValueAtTime(0.3,t0); lt.connect(ltg); ltg.connect(trem.gain);
+    var g=AC.createGain(); g.gain.setValueAtTime(0.0001,t0); g.gain.linearRampToValueAtTime(vol,t0+dur*0.16); g.gain.setValueAtTime(vol,t0+dur*0.6); g.gain.exponentialRampToValueAtTime(0.0008,te);
+    o.connect(flt); flt.connect(trem); trem.connect(g); g.connect(AC.destination);
+    o.start(t0); o.stop(te+0.06); l1.start(t0); l1.stop(te+0.06); l2.start(t0); l2.stop(te+0.06); lt.start(t0); lt.stop(te+0.06);
+    if(nz){ var n=Math.floor(AC.sampleRate*dur); var bf=AC.createBuffer(1,n,AC.sampleRate); var dd=bf.getChannelData(0); for(var i=0;i<n;i++) dd[i]=(Math.random()*2-1)*(0.55+0.45*Math.sin(i*0.05));
+      var src=AC.createBufferSource(); src.buffer=bf; var nf=AC.createBiquadFilter(); nf.type='bandpass'; nf.frequency.setValueAtTime(460,t0); nf.Q.value=1.2;
+      var ng=AC.createGain(); ng.gain.setValueAtTime(0.0001,t0); ng.gain.linearRampToValueAtTime(nz,t0+dur*0.2); ng.gain.exponentialRampToValueAtTime(0.0008,te);
+      src.connect(nf); nf.connect(ng); ng.connect(AC.destination); src.start(t0); src.stop(te+0.06); } }
+  function playFart(kind){ if(!AC) return;   // 女子のおなら＝やや高めの「ぷ」系
+    if(kind==='pupu'){ brap(285,200,0.2,21,0.5,0.13,1500,700,8,0.045,0); brap(255,170,0.22,19,0.55,0.13,1300,520,8,0.045,0.26); }
+    else if(kind==='puu'){ brap(195,95,0.9,21,0.6,0.16,1350,300,9,0.07,0); }
+    else { var n=7; for(var i=0;i<n;i++){ var f=205-i*9; brap(f,f*0.8,0.15,22+i*2,0.7,0.13,1200,380,9,0.055,i*0.18); } brap(130,72,0.3,15,0.5,0.12,860,240,8,0.07,n*0.18); } }
+  function sfxTap(){ tone(560,0.06,'square',0.05,760); }
+  function sfxNada(){ tone(360,0.05,'square',0.03,300); }
+  function sfxFaint(){ tone(330,0.16,'sine',0.06,120); tone(160,0.2,'triangle',0.05,70,0.05); }   // ばたっ
+  function sfxBoss(){ tone(120,0.55,'sawtooth',0.09,72); tone(90,0.65,'square',0.05,55,0.05); tone(180,0.4,'sawtooth',0.05,120,0.1); }   // 登場（重々しく）
+  function sfxWin(){ [523,659,784,1046,1318].forEach(function(f,i){ tone(f,0.24,'square',0.07,null,i*0.12); }); }
+  function sfxLose(){ [392,330,262].forEach(function(f,i){ tone(f,0.3,'sawtooth',0.07,null,i*0.14); }); }
+  function startBGM(){ stopBGM(); if(!AC) return; bgmTimer=setInterval(function(){ if(AC) tone(1500,0.02,'square',0.01); },1000); }
+  function stopBGM(){ if(bgmTimer){ clearInterval(bgmTimer); bgmTimer=null; } }
+
+  /* ---------- アート ---------- */
+  function teacherSVG(view, m){
+    var s='<svg viewBox="0 0 100 122" xmlns="http://www.w3.org/2000/svg">';
+    s+='<path d="M50,72 C32,72 26,92 24,122 L76,122 C74,92 68,72 50,72 Z" fill="#4a8a86"/>';
+    s+='<rect x="45" y="64" width="10" height="12" fill="#f3c89a"/>';
+    if(view==='front'){
+      s+='<path d="M28,46 C28,20 72,20 72,46 C72,32 64,26 50,26 C36,26 28,32 28,46 Z" fill="#4a3a2a"/><circle cx="50" cy="22" r="8" fill="#3a2c1f"/>';
+      s+='<ellipse cx="50" cy="48" rx="20" ry="22" fill="#f3c89a"/>';
+      s+='<rect x="33" y="44" width="14" height="10" rx="2" fill="#cfe8ff" opacity=".6" stroke="#333" stroke-width="2"/><rect x="53" y="44" width="14" height="10" rx="2" fill="#cfe8ff" opacity=".6" stroke="#333" stroke-width="2"/><line x1="47" y1="48" x2="53" y2="48" stroke="#333" stroke-width="2"/>';
+      if(m==='ko'){ s+='<line x1="34" y1="46" x2="45" y2="42" stroke="#333" stroke-width="2"/><line x1="34" y1="42" x2="45" y2="46" stroke="#333" stroke-width="2"/><line x1="66" y1="46" x2="55" y2="42" stroke="#333" stroke-width="2"/><line x1="66" y1="42" x2="55" y2="46" stroke="#333" stroke-width="2"/><ellipse cx="50" cy="60" rx="5" ry="6" fill="#7a2a2a"/>'; }
+      else { s+='<line x1="34" y1="40" x2="45" y2="45" stroke="#333" stroke-width="2.4"/><line x1="66" y1="40" x2="55" y2="45" stroke="#333" stroke-width="2.4"/><circle cx="40" cy="49" r="2.4" fill="#222"/><circle cx="60" cy="49" r="2.4" fill="#222"/><ellipse cx="50" cy="60" rx="6" ry="4.5" fill="#7a2a2a"/><path d="M30,30 l4,6 M26,38 l6,2" stroke="#e3473e" stroke-width="2" stroke-linecap="round"/>'; }
+    } else {
+      s+='<ellipse cx="50" cy="48" rx="20" ry="22" fill="#f3c89a"/>';
+      s+='<path d="M29,48 C29,22 71,22 71,48 C71,42 71,62 65,68 L35,68 C29,62 29,42 29,48 Z" fill="#4a3a2a"/><circle cx="50" cy="30" r="9" fill="#3a2c1f"/>';
+      s+='<path d="M70,80 L88,56" stroke="#f3c89a" stroke-width="7" stroke-linecap="round"/><circle cx="89" cy="54" r="4" fill="#f3c89a"/><circle cx="92" cy="51" r="3" fill="#fff"/>';
+    }
+    s+='</svg>'; return s;
+  }
+  function backHeadSVG(hair, shirt){
+    return '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">'
+      +'<path d="M50,64 C32,64 26,82 24,100 L76,100 C74,82 68,64 50,64 Z" fill="'+shirt+'"/>'
+      +'<ellipse cx="50" cy="46" rx="23" ry="24" fill="#ffe0c2"/>'
+      +'<path d="M26,52 C26,16 74,16 74,52 C74,44 70,62 64,68 L36,68 C30,62 26,44 26,52 Z" fill="'+hair+'"/>'
+      +'<path d="M44,22 q6,-5 12,0" stroke="'+hair+'" stroke-width="5" fill="none" stroke-linecap="round"/></svg>';
+  }
+  function turnedHeadSVG(hair, shirt){
+    return '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">'
+      +'<path d="M50,64 C32,64 26,82 24,100 L76,100 C74,82 68,64 50,64 Z" fill="'+shirt+'"/>'
+      +'<ellipse cx="50" cy="44" rx="22" ry="23" fill="#ffe0c2"/>'
+      +'<path d="M28,44 C28,18 72,18 72,44 C72,30 63,26 50,26 C37,26 28,30 28,44 Z" fill="'+hair+'"/>'
+      +'<circle cx="42" cy="44" r="2.6" fill="#222"/><circle cx="58" cy="44" r="2.6" fill="#222"/>'
+      +'<ellipse cx="50" cy="55" rx="3.5" ry="4.5" fill="#7a2a2a"/></svg>';
+  }
+  /* 主人公＝女子高生（後ろ姿：ロングヘア＋セーラー服） */
+  function girlBackSVG(){
+    return '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">'
+      +'<path d="M50,60 C28,60 21,80 19,100 L81,100 C79,80 72,60 50,60 Z" fill="#2f3b66"/>'
+      +'<path d="M37,61 L50,76 L63,61 L60,59 L50,71 L40,59 Z" fill="#eef2f6"/>'
+      +'<rect x="45" y="56" width="10" height="9" fill="#ffe0c2"/>'
+      +'<ellipse cx="50" cy="44" rx="23" ry="24" fill="#6a4326"/>'
+      +'<path d="M27,44 q-3,30 3,48 l12,0 q-7,-26 -5,-48 z" fill="#6a4326"/>'
+      +'<path d="M73,44 q3,30 -3,48 l-12,0 q7,-26 5,-48 z" fill="#6a4326"/>'
+      +'<path d="M32,28 q18,-10 36,0" stroke="#caa15f" stroke-width="2" fill="none" opacity=".5"/>'
+      +'<path d="M50,18 l-9,-4 l0,9 z" fill="#e0445a"/><path d="M50,18 l9,-4 l0,9 z" fill="#e0445a"/><circle cx="50" cy="18" r="2.8" fill="#b03048"/></svg>';
+  }
+  function girlFrontSVG(){
+    return '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">'
+      +'<path d="M50,60 C28,60 21,80 19,100 L81,100 C79,80 72,60 50,60 Z" fill="#2f3b66"/>'
+      +'<path d="M36,60 L50,80 L64,60 L60,58 L50,74 L40,58 Z" fill="#eef2f6"/>'
+      +'<path d="M50,74 l-7,4 l7,3 l7,-3 z" fill="#e0445a"/>'
+      +'<rect x="45" y="55" width="10" height="9" fill="#ffe0c2"/>'
+      +'<ellipse cx="50" cy="42" rx="23" ry="24" fill="#ffe0c2"/>'
+      +'<path d="M25,46 C25,12 75,12 75,46 L77,82 L66,86 C70,54 70,30 50,28 C30,30 30,54 34,86 L23,82 Z" fill="#6a4326"/>'
+      +'<path d="M30,30 Q50,18 70,30 Q60,26 50,26 Q40,26 30,30 Z" fill="#6a4326"/>'
+      +'<circle cx="41" cy="44" r="3" fill="#222"/><circle cx="59" cy="44" r="3" fill="#222"/>'
+      +'<circle cx="35" cy="50" r="3.4" fill="#ff9db0" opacity=".55"/><circle cx="65" cy="50" r="3.4" fill="#ff9db0" opacity=".55"/>'
+      +'<path d="M45,55 Q50,59 55,55" stroke="#a35b4a" stroke-width="2" fill="none" stroke-linecap="round"/>'
+      +'<path d="M50,14 l-10,-5 l0,10 z" fill="#e0445a"/><path d="M50,14 l10,-5 l0,10 z" fill="#e0445a"/><circle cx="50" cy="14" r="3" fill="#b03048"/></svg>';
+  }
+  var CMS=[
+    {h:'#3a2c1f',s:'#e0b24d',x:28,y:39,w:40},{h:'#4a3a2a',s:'#5aa9e6',x:50,y:38,w:40},{h:'#5a3a2a',s:'#c879b0',x:72,y:39,w:40},
+    {h:'#2a2330',s:'#7fbf8a',x:27,y:50,w:50},{h:'#6a4326',s:'#9b8cd4',x:50,y:49,w:50},{h:'#3a2c1f',s:'#e8896a',x:73,y:50,w:50},
+    {h:'#222222',s:'#6ec6c0',x:26,y:62,w:58},{h:'#4a2e1a',s:'#d98c5f',x:50,y:61,w:58},{h:'#3a2c1f',s:'#d4b24a',x:74,y:62,w:58},
+    {h:'#5a3a2a',s:'#e07b9a',x:37,y:74,w:66},{h:'#2a2330',s:'#7aa6e0',x:63,y:74,w:66}
+  ];
+  function renderClass(reactSet, phrase){ var down=faintOrder.slice(0,Math.min(faintN,11)); var h='';
+    CMS.forEach(function(c,i){ var isDown=down.indexOf(i)>=0; var react=!isDown && reactSet && reactSet.indexOf(i)>=0;
+      h+='<div class="ona-cm'+(isDown?' down':'')+'" style="left:'+c.x+'%;top:'+c.y+'%;width:'+c.w+'px;">'
+        +'<div class="ona-cmb" style="animation-delay:'+(i*0.3)+'s">'+((react)?turnedHeadSVG(c.h,c.s):backHeadSVG(c.h,c.s))+'</div>'
+        +(isDown?'<div class="ona-cmbub down">💫</div>':(react?'<div class="ona-cmbub">'+(phrase||'？')+'</div>':''))
+        +'</div>'; });
+    $('ona-class').innerHTML=h; }
+  function renderTeacher(){ var t=$('ona-teacher'); var down=faintN>=12; t.innerHTML=teacherSVG('board'); t.classList.toggle('down', down);
+    var td=$('ona-tdizzy'); if(td) td.style.opacity = down?1:0; }
+  function renderTeacherFront(m){ var t=$('ona-teacher'); t.innerHTML=teacherSVG('front', m); t.classList.remove('down'); }
+  /* ラスボス：校長先生（いかつい・スーツ・メガネ・口ひげ） */
+  function principalSVG(){
+    return '<svg viewBox="0 0 100 126" xmlns="http://www.w3.org/2000/svg">'
+      +'<path d="M50,72 C28,72 20,96 18,126 L82,126 C80,96 72,72 50,72 Z" fill="#34384a"/>'
+      +'<path d="M50,72 C40,72 36,74 36,74 L44,96 L50,84 L56,96 L64,74 C64,74 60,72 50,72 Z" fill="#eef2f6"/>'
+      +'<path d="M50,74 l-4,5 l4,16 l4,-16 z" fill="#9b2f2f"/>'
+      +'<rect x="45" y="64" width="10" height="11" fill="#e8b98a"/>'
+      +'<ellipse cx="50" cy="46" rx="21" ry="23" fill="#e8b98a"/>'
+      +'<path d="M30,42 C30,24 70,24 70,42 C66,34 58,31 50,31 C42,31 34,34 30,42 Z" fill="#e8b98a"/>'
+      +'<path d="M28,48 C27,36 33,30 33,30 C31,40 31,52 33,60 L28,60 C26,55 27,52 28,48 Z" fill="#cfcfcf"/>'
+      +'<path d="M72,48 C73,36 67,30 67,30 C69,40 69,52 67,60 L72,60 C74,55 73,52 72,48 Z" fill="#cfcfcf"/>'
+      +'<path d="M34,42 l12,3" stroke="#8a8a8a" stroke-width="3" stroke-linecap="round"/><path d="M66,42 l-12,3" stroke="#8a8a8a" stroke-width="3" stroke-linecap="round"/>'
+      +'<rect x="33" y="45" width="14" height="9" rx="2" fill="#cfe8ff" opacity=".5" stroke="#333" stroke-width="2"/><rect x="53" y="45" width="14" height="9" rx="2" fill="#cfe8ff" opacity=".5" stroke="#333" stroke-width="2"/><line x1="47" y1="49" x2="53" y2="49" stroke="#333" stroke-width="2"/>'
+      +'<circle cx="40" cy="50" r="2.2" fill="#222"/><circle cx="60" cy="50" r="2.2" fill="#222"/>'
+      +'<path d="M40,60 Q50,66 60,60 Q50,63 40,60 Z" fill="#9a9a9a"/>'
+      +'<path d="M45,65 Q50,62 55,65" stroke="#7a4a3a" stroke-width="2" fill="none" stroke-linecap="round"/>'
+      +'<path d="M30,29 l3,6 M26,35 l5,2" stroke="#5aa9e6" stroke-width="2" stroke-linecap="round"/>'
+      +'</svg>';
+  }
+
+  /* ---------- 小物 ---------- */
+  function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
+  function esc(x){ return String(x).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function fmtClock(rs){ if(rs<0) rs=0; var m=Math.floor(rs), sec=Math.floor((rs-m)*60); return m+'分'+(sec<10?'0':'')+sec+'秒'; }
+  function fmtUsed(rs){ var m=Math.floor(rs), sec=Math.floor((rs-m)*60); return m+'分'+sec+'秒'; }
+  function popup(txt,color){ var p=$('ona-popup'); p.textContent=txt; p.style.color=color||'#2f8e69'; p.classList.remove('show'); void p.offsetWidth; p.classList.add('show'); }
+  function puff(){ var p=$('ona-puff'); p.classList.remove('go'); void p.offsetWidth; p.classList.add('go'); }
+  function bustedBig(){ var el=$('ona-busted'); if(!el) return; el.textContent='バレたー！'; el.classList.remove('show'); void el.offsetWidth; el.classList.add('show'); }
+  function flashRed(){ var f=$('ona-field'); f.classList.remove('flashred'); void f.offsetWidth; f.classList.add('flashred'); }
+  function updateHUD(){ $('ona-time').textContent=fmtClock(tLeft); $('ona-score').textContent=faintN+(bossDown?1:0);
+    var h=''; for(var i=0;i<3;i++) h+=(i<lives?'❤️':'🤍'); $('ona-lives').textContent=h; }
+  function setFill(id,v,col){ var f=$(id); if(!f) return; f.style.width=Math.max(0,Math.min(100,v))+'%'; if(col) f.style.background=col; }
+  function updateMeters(){ setFill('ona-noisefill', noise, noise>=60?'#8e5fd6':(noise>=35?'#7a4ec0':'#9b86c4'));
+    setFill('ona-suspfill', susp, susp>=70?'#e3473e':'#e0a82e');
+    var sd=bossPhase?BOSS_NEED:T[11]; setFill('ona-stinkfill', stink/sd*100, stink>=sd*0.66?'#7a8a2a':(stink>=sd*0.33?'#9caa3a':'#bcc56a'));
+    $('ona-zawatxt').style.opacity = Math.max(0,(noise-30)/70).toFixed(2);
+    var hi=noise>=55; if(hi!==zawaWasHi){ zawaWasHi=hi; $('ona-class').classList.toggle('zawa',hi); }
+    var u=$('ona-urge'); if(u){ if(cd.pupu<=0||cd.puu<=0||cd.puri<=0){ u.textContent='💨 出せる おならを えらんで！'; u.className='low'; } else { u.textContent='つぎまで '+Math.ceil(Math.min(cd.pupu,cd.puu,cd.puri))+' 秒…'; u.className='mid'; } } }
+  function updateButtons(){ var map={pupu:'ona-b-pupu',puu:'ona-b-puu',puri:'ona-b-puri'};
+    Object.keys(DEF).forEach(function(k){ var b=$(map[k]); if(!b) return;
+      if(cd[k]>0){ b.className='ona-fbtn cool'; b.querySelector('.st').textContent='⏳'+Math.ceil(cd[k]); return; }
+      var m=noise-DEF[k].L, cls,st;
+      if(m>=8){ cls='safe'; st='バレにくい🟢'; } else if(m<=-16){ cls='danger'; st='バレやすい🔴'; } else { cls='border'; st='びみょう🟡'; }
+      b.className='ona-fbtn '+cls; b.querySelector('.st').textContent=st; }); }
+
+  /* ---------- ざわざわ ---------- */
+  function scheduleNoise(){ if(!running) return; clearTimeout(noiseTimer);
+    var r=Math.random(); if(r<0.18) noiseTarget=6+Math.random()*14; else if(r<0.5) noiseTarget=70+Math.random()*28; else noiseTarget=28+Math.random()*44;
+    noiseTimer=setTimeout(scheduleNoise, (1.9+Math.random()*1.8)*1000); }
+
+  /* ---------- リアクション ---------- */
+  function phraseFor(obvious){ if(obvious) return pick(['だれだ！？','だれだ だれだ','いま 誰か！？','犯人さがせ！','ぜったい誰かいる！']);
+    if(stink>=120) return pick(['クサイーッ！','うっ…くさっ！','誰か 窓 開けて！','まど！まど〜！','息できない…','目がしみる！','たすけて〜！','もうムリ…','ぎゃー！']);
+    if(stink>=55) return pick(['あれ、くさい？','くさいよね？','なんか におう…','ねえ、におわない？','うっ…なに？','だれか した？']);
+    return pick(['ん？','…？','きのせい？','んん？','なんだろ…']); }
+  function reactWave(obvious){ var down=faintOrder.slice(0,Math.min(faintN,11)), awake=[];
+    for(var i=0;i<11;i++) if(down.indexOf(i)<0) awake.push(i);
+    if(!awake.length) return; var n=Math.min(awake.length, 2+Math.floor(Math.random()*2)); var ids=[], pool=awake.slice();
+    for(var j=0;j<n;j++) ids.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0]);
+    var ph=phraseFor(obvious), shown=[]; if(suspTO) clearTimeout(suspTO);
+    ids.forEach(function(ix,k){ setTimeout(function(){ if(!running) return; shown.push(ix); renderClass(shown.slice(), ph); }, 280+k*430); });
+    suspTO=setTimeout(function(){ if(running) renderClass(null); }, 280+n*430+1500); }
+
+  /* ---------- 放出 ---------- */
+  function awakeFactor(){ return Math.max(0, (12-faintN))/12; }
+  function press(kind){ if(!running||busted) return; var d=DEF[kind];
+    if(cd[kind]>0){ sfxNada(); return; }
+    playFart(kind); puff(); cd[kind]=3.0;
+    stink += d.add;
+    var m = noise - d.L, obvious=false;
+    if(m<=-16){ susp += 52*awakeFactor(); obvious=true; }
+    else if(m<8){ susp += 30*awakeFactor(); }
+    else { susp += 6*awakeFactor(); }
+    if(bossPhase) bossReact(); else reactWave(obvious);
+    if(susp>=100) { caught(); } else { faintCheck(); }
+    updateMeters(); updateButtons(); updateHUD(); }
+  function faintCheck(){ if(bossPhase){ if(stink>=BOSS_NEED) principalDownWin(); return; }
+    var changed=false;
+    while(faintN<12 && stink>=T[faintN]){ faintN++; changed=true; sfxFaint();
+      if(faintN>=12){ enterBoss(); return; } }
+    if(changed){ renderClass(null); popup('バタッ…！ ('+faintN+'/13)','#7a8a2a'); updateHUD(); } }
+  function bossReact(){ var sb=$('ona-boss-say'); if(!sb) return; var p=stink/BOSS_NEED, t;
+    if(p>=0.8) t=pick(['うぐぐ…もう ダメだ…','め、目が…まわる…','ぐはっ…！','た、たおれる…']);
+    else if(p>=0.4) t=pick(['な、なんという 臭い…！','うっ…気を確かに…','だ、誰の しわざだ…','ぐ…ぬぬ…','人生初だ！！','まさかこの匂いは！？']);
+    else t=pick(['何だ この匂い…？','うっ…くさい！','みんな 大丈夫か！','だ、誰だ！','まさかこの匂いは！？','きみきみ！！！']);
+    sb.innerHTML=t; sb.classList.add('show'); }
+  function enterBoss(){ bossPhase=true; stink=0; faintN=12; renderClass(null); renderTeacher();
+    var pr=$('ona-principal'); if(pr){ pr.classList.remove('down'); pr.innerHTML=principalSVG(); pr.classList.add('show'); }
+    var sb=$('ona-boss-say'); if(sb){ sb.innerHTML='何だ、この匂い…！？<br>みんな 大丈夫か！'; sb.classList.add('show'); }
+    flashRed(); sfxBoss(); popup('校長先生 とうじょう！ 最後のスパート💨','#b5452f'); updateMeters(); updateButtons(); updateHUD(); }
+  function principalDownWin(){ if(bossDown) return; bossDown=true;
+    var pr=$('ona-principal'); if(pr) pr.classList.add('down');
+    var sb=$('ona-boss-say'); if(sb){ sb.innerHTML='ぐ、ぐふっ…！'; sb.classList.add('show'); }
+    flashRed(); popup('校長先生 ダウン！！','#7a8a2a'); updateHUD();
+    if(recTO) clearTimeout(recTO); recTO=setTimeout(function(){ if(running) win(); }, 1300); }
+  function caught(){ if(busted) return; busted=true; lives--; flashRed();
+    renderClass([0,1,2,3,4,5,6,7,8,9,10].filter(function(i){return faintOrder.slice(0,Math.min(faintN,11)).indexOf(i)<0;}), 'だれだー！');
+    renderTeacherFront('angry'); bustedBig(); susp=0;
+    updateMeters(); updateHUD();
+    if(lives<=0){ lose(); return; }
+    if(recTO) clearTimeout(recTO); if(suspTO) clearTimeout(suspTO);
+    recTO=setTimeout(function(){ if(running){ busted=false; mood='normal'; renderClass(null); renderTeacher(); } }, 2000); }
+
+  /* ---------- ループ ---------- */
+  function loop(ts){ if(!running) return; if(!lastTs) lastTs=ts; var dt=(ts-lastTs)/1000; if(dt>0.1) dt=0.1; lastTs=ts;
+    tLeft-=dt; if(tLeft<0) tLeft=0;
+    for(var ck in cd){ if(cd[ck]>0){ cd[ck]-=dt; if(cd[ck]<0) cd[ck]=0; } }
+    noise += (noiseTarget-noise)*Math.min(1,dt*1.9); if(noise<0)noise=0; if(noise>100)noise=100;
+    stink -= 1.3*dt; if(stink<0) stink=0;
+    susp -= 11*dt; if(susp<0) susp=0;
+    if(susp>=100 && !busted) caught();
+    updateMeters(); updateButtons(); updateHUD();
+    if(tLeft<=0){ lose(); return; }
+    raf=requestAnimationFrame(loop); }
+
+  /* ---------- 開始・終了 ---------- */
+  function stopAll(){ running=false; if(raf) cancelAnimationFrame(raf); raf=null; clearTimeout(noiseTimer); clearTimeout(suspTO); clearTimeout(recTO); stopBGM(); }
+  function show(id){ ['ona-title','ona-intro','ona-play','ona-result'].forEach(function(s){ $(s).classList.toggle('on', s===id); }); var w=$('ona-wrap'); if(w) w.scrollTop=0; }
+  function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t;} return a; }
+  function beginRound(){ show('ona-play'); stink=0; cd={pupu:0,puu:0,puri:0}; faintN=0; susp=0; lives=3; tLeft=45; running=true; lastTs=0; bossPhase=false; bossDown=false;
+    noise=40; noiseTarget=40; mood='normal'; busted=false; zawaWasHi=false; faintOrder=shuffle([0,1,2,3,4,5,6,7,8,9,10]);
+    renderTeacher(); $('ona-player').innerHTML=girlBackSVG(); renderClass(null);
+    var bb=$('ona-busted'); if(bb) bb.classList.remove('show');
+    var pr=$('ona-principal'); if(pr){ pr.classList.remove('show','down'); } var sb=$('ona-boss-say'); if(sb) sb.classList.remove('show');
+    updateMeters(); updateButtons(); updateHUD(); startBGM(); scheduleNoise(); raf=requestAnimationFrame(loop); }
+  function getBest(){ try{ return parseFloat(localStorage.getItem('ona_best')||'0')||0; }catch(e){ return 0; } }
+  function getName(){ try{ return (localStorage.getItem('ona_name')||'').slice(0,6); }catch(e){ return ''; } }
+  function setName(v){ try{ localStorage.setItem('ona_name',(v||'').slice(0,6)); }catch(e){} }
+  function setBest(v){ try{ localStorage.setItem('ona_best',String(v)); }catch(e){} }
+  function win(){ stopAll(); sfxWin(); var used=Math.max(0.1,45-tLeft); var best=getBest(); var nb=(best===0||used<best); if(nb) setBest(used);
+    show('ona-result'); $('ona-verdict').innerHTML='<span class="em">🎉</span>クリア！';
+    $('ona-res-score').innerHTML=(playerName?esc(playerName)+'の かち！<br>':'')+'全員＋校長先生 ノックアウト！<br>'+fmtUsed(used)+'で せいこう';
+    $('ona-res-best').textContent = nb ? '🎉 最速記録！' : ('さいそく 🏆 '+fmtUsed(getBest())); }
+  function lose(reason){ stopAll(); sfxLose(); show('ona-result'); $('ona-verdict').innerHTML='<span class="em">😱</span>ざんねん…！';
+    $('ona-res-score').innerHTML = (lives<=0) ? ('バレて 退場…（たおした '+(faintN+(bossDown?1:0))+'/13）') : ('時間切れ！（たおした '+(faintN+(bossDown?1:0))+'/13）');
+    var b=getBest(); $('ona-res-best').textContent = b>0 ? ('さいそく 🏆 '+fmtUsed(b)) : 'クリアめざせ！'; }
+  function updateBest(){ var el=$('ona-best'); if(!el) return; var b=getBest(); el.textContent = b>0 ? ('さいそく 🏆 '+fmtUsed(b)+'でクリア') : 'まだクリアなし'; }
+  function showIntro(){ var inp=$('ona-name'); var nm=inp?inp.value.trim():''; if(!nm) nm=getName(); if(!nm) nm='サクラ'; setName(nm); playerName=nm;
+    var k=$('ona-intro-kid'); if(k) k.innerHTML=girlFrontSVG();
+    var sp=$('ona-intro-speech'); if(sp) sp.innerHTML='「私、<b>'+esc(nm)+'</b>！」<br><span style="white-space:nowrap">かわいいのに</span> <span style="white-space:nowrap">おならが た〜くさん</span> <span style="white-space:nowrap">出るの…</span><br><br>でも――<br><b><span style="white-space:nowrap">かならず 全員を</span> <span style="white-space:nowrap">私の とりこに</span> <span style="white-space:nowrap">してみせるわ！💕</span></b>';
+    show('ona-intro'); }
+  function showTitle(){ stopAll(); show('ona-title'); $('ona-titlekid').innerHTML=girlFrontSVG(); var inp=$('ona-name'); if(inp) inp.value=getName(); updateBest(); }
+
+  function bind(){ if(bound) return; bound=true;
+    $('ona-start').addEventListener('click', function(e){ e.stopPropagation(); sfxTap(); showIntro(); });
+    var ig=$('ona-intro-go'); if(ig) ig.addEventListener('click', function(e){ e.stopPropagation(); sfxTap(); beginRound(); });
+    var hb=$('ona-howto-btn'); if(hb) hb.addEventListener('click', function(e){ e.stopPropagation(); sfxTap(); var hw=$('ona-howto'); if(!hw) return; hw.classList.toggle('open'); hb.textContent = hw.classList.contains('open') ? '❌ とじる' : '❓ あそびかた'; });
+    $('ona-retry').addEventListener('click', function(e){ e.stopPropagation(); sfxTap(); beginRound(); });
+    $('ona-totitle').addEventListener('click', function(e){ e.stopPropagation(); sfxTap(); showTitle(); });
+    $('ona-b-pupu').addEventListener('click', function(e){ e.stopPropagation(); press('pupu'); });
+    $('ona-b-puu').addEventListener('click', function(e){ e.stopPropagation(); press('puu'); });
+    $('ona-b-puri').addEventListener('click', function(e){ e.stopPropagation(); press('puri'); }); }
+
+  window.onaLaunch=function(ctx){ AC=ctx||AC; bind(); showTitle(); };
+  window.onaShutdown=function(){ stopAll(); };
+  if(document.readyState!=='loading') bind(); else document.addEventListener('DOMContentLoaded', bind);
+})();
+
+</script>
+<script>
+/* ===== 💨 おなら我慢じゅぎょう（ハブ連携）===== */
+function playOnara(e){
+  if(e) e.stopPropagation();
+  if(!audioCtx){ try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(err){} }
+  if(audioCtx && audioCtx.state==='suspended'){ try{ audioCtx.resume(); }catch(err){} }
+  isAudioStarted = true;
+  if(typeof titleInterval!=='undefined' && titleInterval){ clearInterval(titleInterval); titleInterval=null; }
+  if(typeof bpmInterval!=='undefined' && bpmInterval){ clearInterval(bpmInterval); bpmInterval=null; }
+  if(typeof stopBGM==='function'){ try{ stopBGM(); }catch(err){} }
+  if(typeof currentBgmMode!=='undefined'){ currentBgmMode=null; }
+  document.getElementById('title-screen').style.display='none';
+  gameState='ONA';
+  var w=document.getElementById('ona-wrap'); w.classList.add('show'); w.scrollTop=0;
+  if(typeof firstTitleDone!=='undefined'){ firstTitleDone=true; }
+  if(typeof window.onaLaunch==='function') window.onaLaunch(audioCtx);
+}
+function onaraToTitle(e){
+  if(e) e.stopPropagation();
+  if(typeof window.onaShutdown==='function') window.onaShutdown();
   goToTitle();
 }
 
