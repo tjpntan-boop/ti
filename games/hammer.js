@@ -292,8 +292,10 @@
     if(startBtn) startBtn.addEventListener('click', function(e){ e.stopPropagation(); startReady(); });
     retryBtn.addEventListener('click', function(e){ e.stopPropagation(); showTitle(); });
     muteBtn.addEventListener('click', function(e){ e.stopPropagation(); muted=!muted; muteBtn.textContent=muted?'🔇':'🔊'; if(master) master.gain.value=muted?0:0.5; });
-    stage.addEventListener('pointerdown', function(e){ if(state!=='power'&&state!=='angle'&&state!=='timing') return; e.preventDefault();
-      var r=stage.getBoundingClientRect(); tapInput((e.clientX-r.left)/r.width*LW,(e.clientY-r.top)/r.height*LH); });
+    wrap.addEventListener('pointerdown', function(e){ if(state!=='power'&&state!=='angle'&&state!=='timing') return;
+      if(e.target&&e.target.closest&&e.target.closest('button')) return; e.preventDefault();
+      var r=stage.getBoundingClientRect(); var x=(e.clientX-r.left)/r.width*LW, y=(e.clientY-r.top)/r.height*LH;
+      if(x<0||x>LW||y<0||y>LH){ x=null; y=null; } tapInput(x,y); });
     window.addEventListener('keydown', function(e){ if(!isOpen()) return;
       if(e.code==='Space'||e.code==='ArrowUp'){ e.preventDefault(); if(e.repeat&&state!=='power') return;
         if(state==='power'||state==='angle'||state==='timing') tapInput(); else if(state==='title'||state==='result') startReady(); } });
