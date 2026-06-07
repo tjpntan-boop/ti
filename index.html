@@ -3480,7 +3480,7 @@
         <div id="title-content">
         <div id="tap-notice" onclick="beginTitleAudio(event)">▶ タップして音を出す</div>
         <div class="famicom-title">はちばんちくわ</div>
-        <div id="version-label">Ver 2.36.0</div>
+        <div id="version-label">Ver 2.38.1</div>
         <button id="start-btn" class="start-btn" onclick="startGame(event)" style="display:none;">🍩 ちくわを覗く... 🍩</button>
         <button id="title-badge-btn" class="badge-link-btn" onclick="openBadgeScreen('title')" style="display:none;">🏅 称号コレクション</button>
         <button id="reset-record-btn" onclick="resetDiscoveryRecord(event)" style="display:none;">🗑 異変の記録をリセット</button>
@@ -14074,16 +14074,11 @@ function onaraToTitle(e){
     <div class="hammer-overlay-inner">
       <h1>ちくわなげ<br>ハンマー</h1>
       <p id="hammer-best">ベスト記録</p>
-      <p class="hammer-sel-lead">ハンマーを選んでスタート！</p>
-      <div class="hammer-chars">
-        <button class="hammer-char" data-type="stable">🟦 安定タイプ</button>
-        <button class="hammer-char" data-type="gamble">🎲 一か八かタイプ</button>
-        <button class="hammer-char" data-type="genius">🧠 天才型タイプ</button>
-      </div>
+      <button id="hammer-start" class="hammer-btn">スタート</button>
       <div class="hammer-help">
         ① <b>画面を連打</b>でパワー（落ちないけど上がりにくい・5秒）<br>
         ② <b>角度</b> → ③ <b>タイミング</b> を画面タップで合わせる<br>
-        あとは自動で投げる！どこまで飛ぶ！？
+        あとは自動で投げる！結果は…<b>安定・天才・一か八か</b>、どれになる！？
       </div>
     </div>
   </div>

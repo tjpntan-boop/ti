@@ -14,7 +14,7 @@
 
   var wrap, stage, canvas, ctx, elBest, titleScr, overScr, retryBtn, muteBtn;
   var state='title';  // title ready power powerGot angle angleGot timing timingGot release flight landing result
-  var charType='stable';
+  var resultType='stable';
   var power, powerTime, tapFx, spinAngle, spinSpeed;
   var ang, angDir, angAcc, tm, tmDir, accuracy, timingElapsed, angleElapsed;
   var distance, baseDist, bonusInfo, currentDist, flightT, flightDur, maxAltZone;
@@ -88,7 +88,7 @@
   function showTitle(){ state='title'; spinAngle=-Math.PI/2; power=0;
     if(elBest) elBest.innerHTML=bestHTML(loadScores(),-1);
     overScr.classList.add('hidden'); titleScr.classList.remove('hidden'); }
-  function startReady(type){ if(type&&CHARS[type]) charType=type;
+  function startReady(){
     titleScr.classList.add('hidden'); overScr.classList.add('hidden');
     state='ready'; beatTimer=READY_DUR; power=0; spinAngle=-Math.PI/2; spinSpeed=4; blip(660,0.12,'square',0.18); }
   function startPowerCharge(){ state='power'; power=0; powerTime=POWER_TIME; tapFx=[]; blip(880,0.12,'square',0.2); }
@@ -107,34 +107,36 @@
   function computeDistance(){
     var pf=0.6+0.4*power, af=0.6+0.4*angAcc, tf=0.6+0.4*accuracy;
     baseDist=Math.round(MAXD*pf*af*tf);
-    var mult=1.0; bonusInfo='';
-    if(charType==='stable'){
-      var pd=Math.round(power*100)%10, ad=Math.round(angAcc*100)%10, td=Math.round(accuracy*100)%10;
-      var isPrime=function(x){ return x===2||x===3||x===5||x===7; };
-      if(isPrime(pd)&&isPrime(ad)&&isPrime(td)){ mult=5.0; bonusInfo='安定爆発！💥 一桁ぜんぶ素数 ×5.0'; }
-      else { mult=1.2; bonusInfo='安定：×1.2'; }
-    } else if(charType==='gamble'){
-      var pd=Math.round(power*100)%10, ad=Math.round(angAcc*100)%10, td=Math.round(accuracy*100)%10;
-      var P=Math.round(power*100), A=Math.round(angAcc*100), T=Math.round(accuracy*100);
-      var isPrime=function(n){ if(n<2) return false; for(var k=2;k*k<=n;k++){ if(n%k===0) return false; } return true; };
-      var is369=function(x){ return x===3||x===6||x===9; };
-      if(isPrime(P)&&isPrime(A)&&isPrime(T)){ mult=15.0; bonusInfo='一か八か 全部素数！🎰 ×15.0'; }
-      else if(is369(pd)&&is369(ad)&&is369(td)){ mult=5.0; bonusInfo='一か八か 3・6・9ぞろい！MAX ×5.0🎯'; }
-      else { var d1=baseDist%10;
-        if(d1===3||d1===6||d1===9){ mult=1.5+Math.random()*0.5; bonusInfo='一か八か 大当たり！🎲（1の位'+d1+'）×'+mult.toFixed(2); }
-        else { mult=0.5+Math.random()*0.5; bonusInfo='一か八か ハズレ…（1の位'+d1+'）×'+mult.toFixed(2); } }
-    } else if(charType==='genius'){
-      var pd=Math.round(power*100)%10, ad=Math.round(angAcc*100)%10, td=Math.round(accuracy*100)%10;
-      var span=Math.max(pd,ad,td)-Math.min(pd,ad,td); var sum=pd+ad+td;
-      if(pd===0&&ad===0&&td===0&&baseDist%10===0){ mult=10.0; bonusInfo='天才 オール0の奇跡！🌟 ×10.0'; }
-      else if(pd===ad&&ad===td&&(pd===2||pd===3||pd===5||pd===7)){ mult=6.0; bonusInfo='天才 ぞろ目＆素数！✨('+pd+') ×6.0'; }
-      else if(sum===20){ mult=3.0; bonusInfo='天才 下一桁の合計20！ ×3.0'; }
-      else if(sum===10){ mult=2.8; bonusInfo='天才 下一桁の合計10！ ×2.8'; }
-      else if(pd===ad&&ad===td){ mult=2.5; bonusInfo='天才 一桁が3つ同じ！('+pd+') ×2.5'; }
-      else if(pd===ad||ad===td||pd===td){ mult=2.0; bonusInfo='天才 一桁が2つ同じ！ ×2.0'; }
-      else if(span<=2){ mult=1.5; bonusInfo='天才 一桁が近い！ ×1.5'; }
-      else { mult=1.0; bonusInfo='天才 一桁がバラバラ… ×1.0'; }
-    }
+    var pd=Math.round(power*100)%10, ad=Math.round(angAcc*100)%10, td=Math.round(accuracy*100)%10;
+    var P=Math.round(power*100), A=Math.round(angAcc*100), T=Math.round(accuracy*100);
+    var b1=baseDist%10, sum=pd+ad+td, span=Math.max(pd,ad,td)-Math.min(pd,ad,td);
+    var isPrimeN=function(n){ if(n<2) return false; for(var k=2;k*k<=n;k++){ if(n%k===0) return false; } return true; };
+    var pdig=function(x){ return x===2||x===3||x===5||x===7; };
+    var d369=function(x){ return x===3||x===6||x===9; };
+    var cnt=function(v){ var n=0; if(pd===v)n++; if(ad===v)n++; if(td===v)n++; return n; };
+    var is789=function(x){ return x===7||x===8||x===9; };
+    var all789=is789(pd)&&is789(ad)&&is789(td);
+    var mult, info, type;
+    // 全ルールを1本化：高い倍率から判定し、最初に当てはまったタイプが今回の結果
+    if(P===A&&A===T&&isPrimeN(P)){ mult=20.0; type='genius'; info='👑 天才：奇跡の三つ子素数（'+P+'）！ ×20.0'; }
+    else if(P===A&&A===T){ mult=18.0; type='genius'; info='🎯 天才：パーフェクト三つ子（'+P+'）！ ×18.0'; }
+    else if(isPrimeN(P)&&isPrimeN(A)&&isPrimeN(T)){ mult=15.0; type='gamble'; info='🎰 一か八か：全部素数！ ×15.0'; }
+    else if(pd===ad&&ad===td&&pdig(pd)&&b1===pd){ mult=12.0; type='genius'; info='✨ 天才：素数フォース（'+pd+'が4つ）！ ×12.0'; }
+    else if(pd===0&&ad===0&&td===0&&b1===0){ mult=10.0; type='genius'; info='🌟 天才：オール0の奇跡！ ×10.0'; }
+    else if(all789&&cnt(9)>=2){ mult=9.0; type='genius'; info='天才：下一桁が7〜9＆9が2つ！ ×9.0'; }
+    else if(all789&&cnt(8)>=2){ mult=8.0; type='genius'; info='天才：下一桁が7〜9＆8が2つ！ ×8.0'; }
+    else if(all789&&cnt(7)>=2){ mult=7.0; type='genius'; info='天才：下一桁が7〜9＆7が2つ！ ×7.0'; }
+    else if(pd===ad&&ad===td&&pdig(pd)){ mult=6.0; type='genius'; info='✨ 天才：ぞろ目＆素数（'+pd+'）！ ×6.0'; }
+    else if(pdig(pd)&&pdig(ad)&&pdig(td)){ mult=5.0; type='stable'; info='💥 安定爆発：一桁ぜんぶ素数！ ×5.0'; }
+    else if(d369(pd)&&d369(ad)&&d369(td)){ mult=5.0; type='gamble'; info='🎯 一か八か：3・6・9ぞろい！ ×5.0'; }
+    else if(sum===20){ mult=3.0; type='genius'; info='天才：下一桁の合計20！ ×3.0'; }
+    else if(sum===10){ mult=2.8; type='genius'; info='天才：下一桁の合計10！ ×2.8'; }
+    else if(pd===ad&&ad===td){ mult=2.5; type='genius'; info='天才：一桁が3つ同じ（'+pd+'）！ ×2.5'; }
+    else if(pd===ad||ad===td||pd===td){ mult=2.0; type='genius'; info='天才：一桁が2つ同じ！ ×2.0'; }
+    else if(d369(b1)){ mult=1.5+Math.random()*0.5; type='gamble'; info='🎲 一か八か：当たり（基準の1の位'+b1+'）！ ×'+mult.toFixed(2); }
+    else if(span<=2){ mult=1.5; type='genius'; info='天才：一桁が近い！ ×1.5'; }
+    else { mult=1.2; type='stable'; info='安定：×1.2'; }
+    resultType=type; bonusInfo=info;
     distance=Math.max(200, Math.round(baseDist*mult));
   }
 
@@ -151,7 +153,7 @@
     if(d<12700) return '銀河の彼方へ！🌌';
     return '神様に会った…！？😇';
   }
-  function showResult(){ state='result'; var rec={type:charType, pw:Math.round(power*100), ang:Math.round(angAcc*100), tm:Math.round(accuracy*100)};
+  function showResult(){ state='result'; var rec={type:resultType, pw:Math.round(power*100), ang:Math.round(angAcc*100), tm:Math.round(accuracy*100)};
     var rank=submitScore(distance, rec), scores=loadScores();
     document.getElementById('hammer-res-dist').textContent=distance;
     document.getElementById('hammer-res-comment').textContent=resultComment(distance);
@@ -286,15 +288,15 @@
     canvas=document.getElementById('hammer-canvas'); ctx=canvas.getContext('2d');
     elBest=document.getElementById('hammer-best'); titleScr=document.getElementById('hammer-title');
     overScr=document.getElementById('hammer-over'); retryBtn=document.getElementById('hammer-retry'); muteBtn=document.getElementById('hammer-mute');
-    var chars=wrap.querySelectorAll('.hammer-char');
-    for(var ci=0;ci<chars.length;ci++){ (function(btn){ btn.addEventListener('click', function(e){ e.stopPropagation(); startReady(btn.getAttribute('data-type')); }); })(chars[ci]); }
+    var startBtn=document.getElementById('hammer-start');
+    if(startBtn) startBtn.addEventListener('click', function(e){ e.stopPropagation(); startReady(); });
     retryBtn.addEventListener('click', function(e){ e.stopPropagation(); showTitle(); });
     muteBtn.addEventListener('click', function(e){ e.stopPropagation(); muted=!muted; muteBtn.textContent=muted?'🔇':'🔊'; if(master) master.gain.value=muted?0:0.5; });
     stage.addEventListener('pointerdown', function(e){ if(state!=='power'&&state!=='angle'&&state!=='timing') return; e.preventDefault();
       var r=stage.getBoundingClientRect(); tapInput((e.clientX-r.left)/r.width*LW,(e.clientY-r.top)/r.height*LH); });
     window.addEventListener('keydown', function(e){ if(!isOpen()) return;
       if(e.code==='Space'||e.code==='ArrowUp'){ e.preventDefault(); if(e.repeat&&state!=='power') return;
-        if(state==='power'||state==='angle'||state==='timing') tapInput(); else if(state==='title'||state==='result') startReady(charType); } });
+        if(state==='power'||state==='angle'||state==='timing') tapInput(); else if(state==='title'||state==='result') startReady(); } });
     window.addEventListener('resize', function(){ if(isOpen()){ resize(); render(); } });
   }
 
