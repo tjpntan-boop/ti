@@ -158,6 +158,7 @@
     document.getElementById('hammer-res-dist').textContent=distance;
     document.getElementById('hammer-res-comment').textContent=resultComment(distance);
     document.getElementById('hammer-res-bonus').textContent=bonusInfo||'';
+    document.getElementById('hammer-res-pct').textContent='パワー'+rec.pw+'% ／ 角度'+rec.ang+'% ／ タイミング'+rec.tm+'%';
     document.getElementById('hammer-res-title').textContent=rank>0?('🎉 TOP3入り！ '+rank+'位！'):'記録！';
     document.getElementById('hammer-res-best').innerHTML=bestHTML(scores,rank>0?rank-1:-1);
     overScr.classList.remove('hidden'); fanfare(); }

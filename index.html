@@ -3480,7 +3480,7 @@
         <div id="title-content">
         <div id="tap-notice" onclick="beginTitleAudio(event)">▶ タップして音を出す</div>
         <div class="famicom-title">はちばんちくわ</div>
-        <div id="version-label">Ver 2.38.4</div>
+        <div id="version-label">Ver 2.39.0</div>
         <button id="start-btn" class="start-btn" onclick="startGame(event)" style="display:none;">🍩 ちくわを覗く... 🍩</button>
         <button id="title-badge-btn" class="badge-link-btn" onclick="openBadgeScreen('title')" style="display:none;">🏅 称号コレクション</button>
         <button id="reset-record-btn" onclick="resetDiscoveryRecord(event)" style="display:none;">🗑 異変の記録をリセット</button>
@@ -14043,6 +14043,7 @@ function onaraToTitle(e){
   #hammer-wrap .hammer-btn{ font:inherit; font-size:clamp(16px,3.4vw,22px); font-weight:700; color:#0a0a12; background:linear-gradient(180deg,#ffe27a,#f7b733); border:0; border-radius:999px; padding:14px 40px; cursor:pointer; box-shadow:0 6px 0 #b07d12,0 10px 22px rgba(0,0,0,.4); transition:transform .06s,box-shadow .06s; }
   #hammer-wrap .hammer-btn:active{ transform:translateY(4px); box-shadow:0 2px 0 #b07d12,0 5px 12px rgba(0,0,0,.4); }
   #hammer-wrap #hammer-taphint{ position:absolute; left:0; right:0; bottom:20px; text-align:center; color:rgba(255,255,255,.5); font-size:clamp(12px,3.2vw,17px); font-weight:800; letter-spacing:.04em; pointer-events:none; z-index:4; }
+  #hammer-wrap .hammer-pct{ font-size:clamp(12px,2.7vw,15px); opacity:.85; font-variant-numeric:tabular-nums; letter-spacing:.02em; }
   #hammer-wrap .hammer-help{ margin-top:16px; font-size:clamp(11px,2.4vw,14px); line-height:1.9; opacity:.82; }
   #hammer-wrap .hammer-help b{ color:#9fe6ff; }
   #hammer-wrap #hammer-best, #hammer-wrap #hammer-over .res{ font-size:clamp(13px,2.8vw,17px); opacity:.95; margin:0 0 12px; }
@@ -14091,6 +14092,7 @@ function onaraToTitle(e){
       <p class="res hbig"><span id="hammer-res-dist">0</span>m</p>
       <p id="hammer-res-comment" class="res"></p>
       <p id="hammer-res-bonus" class="res hammer-bonus"></p>
+      <p id="hammer-res-pct" class="res hammer-pct"></p>
       <p id="hammer-res-best" class="res"></p>
       <button id="hammer-retry" class="hammer-btn">もう一度</button>
     </div>
