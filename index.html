@@ -1265,6 +1265,17 @@
         }
         #play-hammer-btn:hover { background: #3a2c1a; border-color: #d8a85a; }
         #play-hammer-btn .hassaku-sub { font-size: 10px; font-weight: normal; letter-spacing: 0; opacity: 0.85; color: #d8b88a; }
+        #play-crush-btn {
+            margin-top: 10px;
+            background: #2a1622; color: #ffc0e0;
+            border: 1px solid #9a4a78; border-radius: 8px; padding: 9px 22px;
+            font-size: 15px; font-weight: bold; cursor: pointer; z-index: 1010; letter-spacing: 1px;
+            display: flex; flex-direction: column; align-items: center; gap: 2px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+            transition: background 0.15s, border-color 0.15s; font-family: inherit;
+        }
+        #play-crush-btn:hover { background: #3a1e30; border-color: #ff8fcf; }
+        #play-crush-btn .hassaku-sub { font-size: 10px; font-weight: normal; letter-spacing: 0; opacity: 0.85; color: #e6a8cc; }
 
         /* タイトルに常設する「ブラウザで開く手順」案内ボックス */
         #open-guide {
@@ -3469,7 +3480,7 @@
         <div id="title-content">
         <div id="tap-notice" onclick="beginTitleAudio(event)">▶ タップして音を出す</div>
         <div class="famicom-title">はちばんちくわ</div>
-        <div id="version-label">Ver 2.28.3</div>
+        <div id="version-label">Ver 2.34.0</div>
         <button id="start-btn" class="start-btn" onclick="startGame(event)" style="display:none;">🍩 ちくわを覗く... 🍩</button>
         <button id="title-badge-btn" class="badge-link-btn" onclick="openBadgeScreen('title')" style="display:none;">🏅 称号コレクション</button>
         <button id="reset-record-btn" onclick="resetDiscoveryRecord(event)" style="display:none;">🗑 異変の記録をリセット</button>
@@ -3494,6 +3505,7 @@
             <button id="play-ona-btn" onclick="playOnara(event)">💨 おなら教室<span class="hassaku-sub">女子高生になって、バレずにおならで クラス全員＆先生＆校長をノックアウト！45分以内にクリア</span></button>
             <button id="play-dash-btn" onclick="play8Dash(event)">🚇 8番ダッシュ<span class="hassaku-sub">終わらない通路をダッシュ！じじいを飛び越え、頭上をくぐれ。ちくわは拾え</span></button>
             <button id="play-hammer-btn" onclick="playHammer(event)">🔨 ちくわなげハンマー<span class="hassaku-sub">ハンマー投げで何m飛ぶ？連打でパワー、ゲージで投げて土星をめざせ</span></button>
+            <button id="play-crush-btn" onclick="playCrush(event)">🐰 ちくわビート<span class="hassaku-sub">流れてくる具からちくわだけを潰せ！だんだん速くなる見極めリズムゲー</span></button>
         </div>
         <div id="open-guide">
             <div class="og-title">⚠️ 音が出ない / タップできない時は</div>
@@ -14089,6 +14101,73 @@ function onaraToTitle(e){
 </div>
 
 
+<!-- ===================== 🐰 ちくわビート（ミニゲーム枠）===================== -->
+<style>
+  #crush-wrap{ position:fixed; inset:0; z-index:5500; display:none; flex-direction:column; align-items:center; justify-content:center;
+    background:#120b1c; color:#f3ecff; font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+    user-select:none; -webkit-user-select:none; -webkit-tap-highlight-color:transparent; touch-action:none; }
+  #crush-wrap.show{ display:flex; }
+  #crush-wrap *{ box-sizing:border-box; }
+  #crush-game-area{ flex:1 1 auto; width:100%; min-height:0; display:flex; align-items:center; justify-content:center; padding:6px; }
+  #crush-stage{ position:relative; width:100%; max-width:900px; max-height:100%; aspect-ratio:900/506; margin:auto; background:#15101f; overflow:hidden; }
+  #crush-canvas{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+  #crush-back-btn{ position:absolute; top:8px; left:50%; transform:translateX(-50%); z-index:6700; font-family:inherit; font-size:13px; font-weight:900; cursor:pointer; padding:7px 14px; border-radius:18px; border:none; background:#2c2c3e; color:#fff; box-shadow:0 3px 0 #16161f; }
+  #crush-back-btn:active{ transform:translateX(-50%) translateY(2px); }
+  #crush-wrap #crush-mute{ position:absolute; top:8px; right:10px; z-index:6700; width:40px; height:40px; border-radius:50%; border:0; background:rgba(255,255,255,.14); color:#fff; font-size:18px; cursor:pointer; }
+  #crush-wrap .crush-overlay{ position:absolute; inset:0; z-index:5; display:flex; overflow-y:auto; -webkit-overflow-scrolling:touch; background:rgba(18,11,28,.94); padding:18px 16px; }
+  #crush-wrap .crush-overlay.hidden{ display:none; }
+  #crush-wrap .crush-overlay-inner{ margin:auto; display:flex; flex-direction:column; align-items:center; text-align:center; width:100%; max-width:520px; }
+  #crush-wrap h1{ font-size:clamp(26px,6.6vw,46px); margin:0 0 4px; line-height:1.1; color:#ff8fcf; text-shadow:0 0 18px rgba(255,120,200,.6); }
+  #crush-wrap .sub{ font-size:clamp(11px,2.4vw,15px); opacity:.8; margin:0 0 16px; letter-spacing:.14em; }
+  #crush-wrap .crush-btn{ font:inherit; font-size:clamp(16px,3.4vw,22px); font-weight:800; color:#2a0a1c; background:linear-gradient(180deg,#ffb3dd,#ff6fb3); border:0; border-radius:999px; padding:14px 40px; cursor:pointer; box-shadow:0 6px 0 #b03a78,0 10px 22px rgba(0,0,0,.4); transition:transform .06s,box-shadow .06s; }
+  #crush-wrap .crush-btn:active{ transform:translateY(4px); box-shadow:0 2px 0 #b03a78,0 5px 12px rgba(0,0,0,.4); }
+  #crush-wrap .crush-help{ margin-top:16px; font-size:clamp(11px,2.4vw,14px); line-height:1.9; opacity:.85; }
+  #crush-wrap .crush-help b{ color:#9fe6ff; }
+  #crush-wrap #crush-best{ display:flex; flex-direction:column; gap:2px; font-size:clamp(13px,2.8vw,17px); margin:0 0 14px; }
+  #crush-wrap .crush-best-head{ font-weight:800; color:#ff8fcf; margin-bottom:4px; letter-spacing:.06em; }
+  #crush-wrap .crush-best-row{ display:block; font-variant-numeric:tabular-nums; }
+  #crush-wrap #crush-over h2{ font-size:clamp(22px,5.5vw,38px); margin:0 0 6px; color:#ff8fcf; text-shadow:0 0 12px rgba(255,120,200,.5); }
+  #crush-wrap #crush-over .hbig{ font-size:clamp(32px,9vw,60px); font-weight:900; color:#ffe27a; margin:2px 0 6px; }
+  #crush-wrap #crush-over .res{ font-size:clamp(12px,2.7vw,16px); opacity:.95; margin:0 0 10px; }
+</style>
+
+<div id="crush-wrap">
+  <button id="crush-back-btn" onclick="crushToTitle(event)">↩ もどる</button>
+  <button id="crush-mute" title="サウンド切替">🔊</button>
+
+  <div id="crush-game-area">
+    <div id="crush-stage">
+      <canvas id="crush-canvas"></canvas>
+    </div>
+  </div>
+
+  <div id="crush-title" class="crush-overlay">
+    <div class="crush-overlay-inner">
+      <h1>ちくわビート</h1>
+      <p class="sub">CHIKUWA BEAT</p>
+      <p id="crush-best">ベスト記録</p>
+      <button id="crush-start" class="crush-btn">スタート</button>
+      <div class="crush-help">
+        <b>バン＝ちくわを叩く</b> ／ <b>プウ＝ちくわ以外は見送る</b>！<br>
+        ベース＆メロディに乗って「バンプウ バンプウ…」とリズムよくタップ🐰<br>
+        永遠ループでどんどん加速！ミス（♥）3回でゲームオーバー。上手い人はずっと続く！
+      </div>
+    </div>
+  </div>
+
+  <div id="crush-over" class="crush-overlay hidden">
+    <div class="crush-overlay-inner">
+      <h2 id="crush-res-title">記録！</h2>
+      <p class="res hbig"><span id="crush-res-score">0</span> 点</p>
+      <p id="crush-res-acc" class="res"></p>
+      <p id="crush-res-detail" class="res"></p>
+      <p id="crush-res-best" class="res"></p>
+      <button id="crush-retry" class="crush-btn">もう一度</button>
+    </div>
+  </div>
+</div>
+
+
 <!-- 🚇 8番ダッシュ本体は games/dash.js に分離（ボタン押下時に遅延ロード）-->
 
 <script>
@@ -14151,6 +14230,29 @@ function playHammer(e){
 function hammerToTitle(e){
   if(e) e.stopPropagation();
   if(typeof window.hammerShutdown==='function') window.hammerShutdown();
+  goToTitle();
+}
+/* ===== 🐰 ちくわビート（ハブ連携）===== */
+function playCrush(e){
+  if(e) e.stopPropagation();
+  if(!audioCtx){ try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(err){} }
+  if(audioCtx && audioCtx.state==='suspended'){ try{ audioCtx.resume(); }catch(err){} }
+  isAudioStarted = true;
+  if(typeof titleInterval!=='undefined' && titleInterval){ clearInterval(titleInterval); titleInterval=null; }
+  if(typeof bpmInterval!=='undefined' && bpmInterval){ clearInterval(bpmInterval); bpmInterval=null; }
+  if(typeof stopBGM==='function'){ try{ stopBGM(); }catch(err){} }
+  if(typeof currentBgmMode!=='undefined'){ currentBgmMode=null; }
+  document.getElementById('title-screen').style.display='none';
+  gameState='CRUSH';
+  var w=document.getElementById('crush-wrap'); w.classList.add('show'); w.scrollTop=0;
+  if(typeof firstTitleDone!=='undefined'){ firstTitleDone=true; }
+  loadGameModule('games/crush.js', function(){
+    if(typeof window.crushLaunch==='function') window.crushLaunch(audioCtx);
+  });
+}
+function crushToTitle(e){
+  if(e) e.stopPropagation();
+  if(typeof window.crushShutdown==='function') window.crushShutdown();
   goToTitle();
 }
 </script>
