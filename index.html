@@ -3457,7 +3457,7 @@
         <div id="title-content">
         <div id="tap-notice" onclick="beginTitleAudio(event)">▶ タップして音を出す</div>
         <div class="famicom-title">はちばんちくわ</div>
-        <div id="version-label">Ver 2.23.0</div>
+        <div id="version-label">Ver 2.24.0</div>
         <button id="start-btn" class="start-btn" onclick="startGame(event)" style="display:none;">🍩 ちくわを覗く... 🍩</button>
         <button id="title-badge-btn" class="badge-link-btn" onclick="openBadgeScreen('title')" style="display:none;">🏅 称号コレクション</button>
         <button id="reset-record-btn" onclick="resetDiscoveryRecord(event)" style="display:none;">🗑 異変の記録をリセット</button>
@@ -13903,14 +13903,15 @@ function onaraToTitle(e){
 <!-- ===================== 🚇 8番ダッシュ（ミニゲーム / ハブ統合版）===================== -->
 <style>
   #dash-wrap{
-    position:fixed; inset:0; z-index:5500; display:none;
+    position:fixed; inset:0; z-index:5500; display:none; flex-direction:column;
     align-items:center; justify-content:center; background:#0a0a12; color:#e8e8f0;
     font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
     user-select:none; -webkit-user-select:none; -webkit-tap-highlight-color:transparent; touch-action:none;
   }
   #dash-wrap.show{ display:flex; }
   #dash-wrap *{ box-sizing:border-box; }
-  #dash-stage{ position:relative; width:100%; max-width:900px; aspect-ratio:900/506; background:#12121c; overflow:hidden; }
+  #dash-game-area{ flex:1 1 auto; width:100%; min-height:0; display:flex; align-items:center; justify-content:center; padding:6px; }
+  #dash-stage{ position:relative; width:100%; max-width:900px; max-height:100%; aspect-ratio:900/506; margin:auto; background:#12121c; overflow:hidden; }
   #dash-canvas{ position:absolute; inset:0; width:100%; height:100%; display:block; }
   #dash-back-btn{ position:absolute; top:8px; left:50%; transform:translateX(-50%); z-index:6700;
     font-family:inherit; font-size:13px; font-weight:900; cursor:pointer; padding:7px 14px;
@@ -13940,21 +13941,31 @@ function onaraToTitle(e){
   #dash-wrap #dash-hud{ position:absolute; top:10px; left:14px; right:14px; display:flex; justify-content:space-between;
     font-size:clamp(13px,3vw,18px); font-weight:700; text-shadow:0 1px 4px #000; z-index:3; pointer-events:none; }
   #dash-wrap #dash-hud .cw{ color:#ffd98a; }
-  #dash-wrap #dash-mute{ position:absolute; bottom:10px; right:10px; z-index:4; width:40px; height:40px; border-radius:50%;
-    border:0; background:rgba(255,255,255,.12); color:#fff; font-size:18px; cursor:pointer; }
+  #dash-wrap #dash-controls{ flex:0 0 auto; z-index:3; width:100%; max-width:600px; display:flex; align-items:center; justify-content:center; gap:10px; padding:8px 14px calc(10px + env(safe-area-inset-bottom)); }
+  #dash-wrap .dash-ctrl-btn{ flex:1 1 0; height:66px; border:0; border-radius:16px; font:inherit; font-weight:800; font-size:clamp(16px,5vw,22px); color:#fff; cursor:pointer; touch-action:none; -webkit-user-select:none; user-select:none; display:flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 4px 0 rgba(0,0,0,.45); transition:transform .05s, box-shadow .05s; }
+  #dash-wrap .dash-ctrl-btn:active{ transform:translateY(3px); box-shadow:0 1px 0 rgba(0,0,0,.45); }
+  #dash-wrap #dash-btn-duck{ background:rgba(80,110,170,.9); }
+  #dash-wrap #dash-btn-jump{ background:rgba(225,165,45,.95); color:#1a1410; }
+  #dash-wrap #dash-mute{ flex:0 0 auto; z-index:4; width:46px; height:46px; border-radius:50%;
+    border:0; background:rgba(255,255,255,.14); color:#fff; font-size:20px; cursor:pointer; }
 </style>
 
 <div id="dash-wrap">
   <button id="dash-back-btn" onclick="dash8ToTitle(event)">↩ もどる</button>
-  <div id="dash-stage">
-    <canvas id="dash-canvas"></canvas>
-
-    <div id="dash-hud">
-      <span>距離 <span id="dash-dist">0</span>m</span>
-      <span class="cw">ちくわ <span id="dash-cw">0</span></span>
+  <div id="dash-game-area">
+    <div id="dash-stage">
+      <canvas id="dash-canvas"></canvas>
+      <div id="dash-hud">
+        <span>距離 <span id="dash-dist">0</span>m</span>
+        <span class="cw">ちくわ <span id="dash-cw">0</span></span>
+      </div>
     </div>
+  </div>
 
+  <div id="dash-controls">
+    <button id="dash-btn-duck" class="dash-ctrl-btn">⬇️ しゃがむ</button>
     <button id="dash-mute" title="サウンド切替">🔊</button>
+    <button id="dash-btn-jump" class="dash-ctrl-btn">⬆️ 飛ぶ</button>
   </div>
 
   <div id="dash-title" class="dash-overlay">
@@ -13964,8 +13975,8 @@ function onaraToTitle(e){
       <p id="dash-best">ベスト記録 0m</p>
       <button id="dash-start" class="dash-btn">スタート</button>
       <div class="dash-help">
-        <b>ジャンプ</b>：画面の上半分タップ／↑・スペース<br>
-        <b>スライド</b>：画面の下半分を長押し／↓<br>
+        <b>飛ぶ</b>：右下の【飛ぶ】ボタン（キーボードは ↑・スペース）<br>
+        <b>しゃがむ</b>：左下の【しゃがむ】ボタンを長押し（キーボードは ↓）<br>
         じじいを飛び越え、頭上をくぐれ。ちくわは拾え。
       </div>
     </div>

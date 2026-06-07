@@ -14,7 +14,7 @@
   var BASE_SPEED = 360, MAX_SPEED = 730;
   var BEST_KEY = 'dash8_best_v1';
 
-  var wrap, stage, canvas, ctx, elDist, elCw, elBest, elHud, titleScr, overScr, startBtn, retryBtn, muteBtn;
+  var wrap, stage, canvas, ctx, elDist, elCw, elBest, elHud, titleScr, overScr, startBtn, retryBtn, muteBtn, jumpBtn, duckBtn;
 
   var state = 'title';
   var player, obstacles, pickups, speed, distAccum, chikuwa, spawnTimer, pickTimer, shake, runPhase;
@@ -341,16 +341,15 @@
       if (master) master.gain.value = muted ? 0 : 0.5;
     });
 
-    stage.addEventListener('pointerdown', function(e){
-      if (state !== 'playing') return;
-      if (e.target && e.target.closest && e.target.closest('#dash-back-btn,#dash-mute')) return;
-      var r = stage.getBoundingClientRect();
-      var y = e.clientY - r.top;
-      if (y < r.height * 0.5){ jump(); }
-      else { slidePointerId = e.pointerId; setSlide(true); }
-    });
-    stage.addEventListener('pointerup', function(e){ if (e.pointerId === slidePointerId){ slidePointerId = null; setSlide(false); } });
-    stage.addEventListener('pointercancel', function(e){ if (e.pointerId === slidePointerId){ slidePointerId = null; setSlide(false); } });
+    jumpBtn = document.getElementById('dash-btn-jump');
+    duckBtn = document.getElementById('dash-btn-duck');
+    jumpBtn.addEventListener('pointerdown', function(e){ e.preventDefault(); e.stopPropagation(); jump(); });
+    function duckStart(e){ e.preventDefault(); e.stopPropagation(); try { duckBtn.setPointerCapture(e.pointerId); } catch(_){} setSlide(true); }
+    function duckEnd(e){ e.stopPropagation(); setSlide(false); }
+    duckBtn.addEventListener('pointerdown', duckStart);
+    duckBtn.addEventListener('pointerup', duckEnd);
+    duckBtn.addEventListener('pointercancel', duckEnd);
+    duckBtn.addEventListener('pointerleave', duckEnd);
 
     window.addEventListener('keydown', function(e){
       if (!isOpen()) return;
