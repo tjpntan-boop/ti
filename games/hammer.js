@@ -111,13 +111,18 @@
     if(charType==='stable'){
       mult=1.2; bonusInfo='安定：×1.2';
     } else if(charType==='gamble'){
-      var d1=baseDist%10;
-      if(d1===3||d1===6||d1===9){ mult=1.5+Math.random()*0.5; bonusInfo='一か八か 大当たり！🎲（1の位'+d1+'）×'+mult.toFixed(2); }
-      else { mult=0.5+Math.random()*0.5; bonusInfo='一か八か ハズレ…（1の位'+d1+'）×'+mult.toFixed(2); }
+      var pd=Math.round(power*100)%10, ad=Math.round(angAcc*100)%10, td=Math.round(accuracy*100)%10;
+      var is369=function(x){ return x===3||x===6||x===9; };
+      if(is369(pd)&&is369(ad)&&is369(td)){ mult=5.0; bonusInfo='一か八か 3・6・9ぞろい！MAX ×5.0🎯'; }
+      else { var d1=baseDist%10;
+        if(d1===3||d1===6||d1===9){ mult=1.5+Math.random()*0.5; bonusInfo='一か八か 大当たり！🎲（1の位'+d1+'）×'+mult.toFixed(2); }
+        else { mult=0.5+Math.random()*0.5; bonusInfo='一か八か ハズレ…（1の位'+d1+'）×'+mult.toFixed(2); } }
     } else if(charType==='genius'){
       var pd=Math.round(power*100)%10, ad=Math.round(angAcc*100)%10, td=Math.round(accuracy*100)%10;
-      var span=Math.max(pd,ad,td)-Math.min(pd,ad,td);
-      if(pd===ad&&ad===td){ mult=2.5; bonusInfo='天才 一桁が3つ同じ！('+pd+') ×2.5'; }
+      var span=Math.max(pd,ad,td)-Math.min(pd,ad,td); var sum=pd+ad+td;
+      if(sum===20){ mult=3.0; bonusInfo='天才 下一桁の合計20！ ×3.0'; }
+      else if(sum===10){ mult=2.8; bonusInfo='天才 下一桁の合計10！ ×2.8'; }
+      else if(pd===ad&&ad===td){ mult=2.5; bonusInfo='天才 一桁が3つ同じ！('+pd+') ×2.5'; }
       else if(pd===ad||ad===td||pd===td){ mult=2.0; bonusInfo='天才 一桁が2つ同じ！ ×2.0'; }
       else if(span<=2){ mult=1.5; bonusInfo='天才 一桁が近い！ ×1.5'; }
       else { mult=1.0; bonusInfo='天才 一桁がバラバラ… ×1.0'; }
