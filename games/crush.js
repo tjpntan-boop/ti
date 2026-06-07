@@ -78,14 +78,14 @@
 
   // ---------- 譜面（パン パン ツーツーパン つー のノリ）----------
   var LOOP_PAT=['B','D','B','D','B','B','D','.', 'B','B','D','D','B','B','D','.'];  // 2小節ループ
-  function genIntro(){ var bpm=92, eighth=30/bpm; curBpm=bpm;        // ベースだけ先に1小節鳴らす
+  function genIntro(){ var bpm=90, eighth=30/bpm; curBpm=bpm;        // ベースだけ先に1小節鳴らす
     for(var i=0;i<8;i++){ grid.push({t:genT, ch:'.', step:genStep, bpm:bpm}); genT+=eighth; genStep++; } }
   function genLoop(){
-    var bpm=Math.min(92+loopIdx*9,156); curBpm=bpm; var eighth=30/bpm; var baseSpeed=(SPAWN_X-PLATE_X)/1.4;
+    var bpm=Math.min(90+loopIdx*4,300); curBpm=bpm; var eighth=30/bpm; var baseSpeed=(SPAWN_X-PLATE_X)/1.4;
     for(var i=0;i<LOOP_PAT.length;i++){ var ch=LOOP_PAT[i];
       grid.push({t:genT, ch:ch, step:genStep, bpm:bpm});
       if(ch!=='.'){ var isC=(ch==='B'); if(isC)nChikuwa++; else nDecoy++;
-        items.push({ t:genT, chikuwa:isC, emoji: isC?null:DECOYS[Math.floor(Math.random()*DECOYS.length)], judged:false, speed: baseSpeed*(bpm/92) }); }
+        items.push({ t:genT, chikuwa:isC, emoji: isC?null:DECOYS[Math.floor(Math.random()*DECOYS.length)], judged:false, speed: baseSpeed*(bpm/90) }); }
       genT+=eighth; genStep++;
     }
     loopIdx++;
