@@ -26,11 +26,22 @@
   function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
 
   // ---------- ベスト ----------
-  function loadBest(){ try{ var v=JSON.parse(localStorage.getItem(BEST_KEY)); return (v&&typeof v.score==='number')?v:null; }catch(e){ return null; } }
+  function loadBest(){ try{ var v=JSON.parse(localStorage.getItem(BEST_KEY)); var b={scores:[],combos:[]};
+      if(v){ if(Array.isArray(v.scores)) b.scores=v.scores.filter(function(x){return typeof x==='number';}).slice(0,3);
+             else if(typeof v.score==='number') b.scores=[v.score];          // 旧形式から移行
+             if(Array.isArray(v.combos)) b.combos=v.combos.filter(function(x){return typeof x==='number';}).slice(0,3); }
+      return b; }catch(e){ return {scores:[],combos:[]}; } }
   function saveBest(b){ try{ localStorage.setItem(BEST_KEY, JSON.stringify(b)); }catch(e){} }
-  function bestHTML(){ var b=loadBest();
-    if(!b) return '<span class="crush-best-head">🏆 ベスト</span><span class="crush-best-row">まだ記録なし</span>';
-    return '<span class="crush-best-head">🏆 ベスト</span><span class="crush-best-row">'+b.score+' 点'+(b.bpm?'（最高 '+b.bpm+'BPM）':'')+'</span>'; }
+  function submitBest(s,c){ var b=loadBest();
+    b.scores.push(s); b.scores.sort(function(a,z){return z-a;}); var sr=b.scores.indexOf(s)+1; b.scores=b.scores.slice(0,3);
+    b.combos.push(c); b.combos.sort(function(a,z){return z-a;}); var cr=b.combos.indexOf(c)+1; b.combos=b.combos.slice(0,3);
+    saveBest(b); return { scoreRank: sr<=3?sr:0, comboRank: cr<=3?cr:0 }; }
+  function fmtTop(list,hi){ var m=['🥇','🥈','🥉'], out=[];
+    for(var i=0;i<3;i++){ var v=(i<list.length)?list[i]:null; var t=m[i]+' '+(v==null?'—':v);
+      out.push(hi===i?('<span class="crush-hi">'+t+'</span>'):t); } return out.join('　'); }
+  function bestHTML(hiS,hiC){ var b=loadBest();
+    return '<span class="crush-best-head">🏆 ハイスコア TOP3</span><span class="crush-best-row">'+fmtTop(b.scores, hiS==null?-1:hiS)+'</span>'
+         + '<span class="crush-best-head crush-best-head2">🔥 最高コンボ TOP3</span><span class="crush-best-row">'+fmtTop(b.combos, hiC==null?-1:hiC)+'</span>'; }
 
   // ---------- オーディオ ----------
   function ensureMaster(){ if(!actx||master) return; try{ master=actx.createGain(); master.gain.value=muted?0:0.5; master.connect(actx.destination);}catch(e){master=null;} }
@@ -115,12 +126,12 @@
 
   function showResult(){
     state='result';
-    var b=loadBest(); if(!b||score>b.score) saveBest({score:score, bpm:curBpm});
+    var r=submitBest(score, maxCombo);
     document.getElementById('crush-res-title').textContent = 'ゲームオーバー！';
     document.getElementById('crush-res-score').textContent = score;
-    document.getElementById('crush-res-acc').textContent = 'たどりついた はやさ '+curBpm+' BPM';
-    document.getElementById('crush-res-detail').textContent = 'つぶし '+nCrush+' ／ お手つき '+nWrong+' ／ 逃し '+nMissChikuwa+'　最大コンボ '+maxCombo;
-    document.getElementById('crush-res-best').innerHTML = bestHTML();
+    document.getElementById('crush-res-acc').textContent = 'たどりついた はやさ '+curBpm+' BPM　最大コンボ '+maxCombo;
+    document.getElementById('crush-res-detail').textContent = 'つぶし '+nCrush+' ／ お手つき '+nWrong+' ／ 逃し '+nMissChikuwa;
+    document.getElementById('crush-res-best').innerHTML = bestHTML(r.scoreRank>0?r.scoreRank-1:-1, r.comboRank>0?r.comboRank-1:-1);
     overScr.classList.remove('hidden'); fanfare();
   }
 
@@ -280,7 +291,7 @@
     startBtn.addEventListener('click',function(e){ e.stopPropagation(); startPlay(); });
     retryBtn.addEventListener('click',function(e){ e.stopPropagation(); startPlay(); });
     muteBtn.addEventListener('click',function(e){ e.stopPropagation(); muted=!muted; muteBtn.textContent=muted?'🔇':'🔊'; if(master) master.gain.value=muted?0:0.5; });
-    stage.addEventListener('pointerdown',function(e){ if(state!=='play') return; e.preventDefault(); doTap(); });
+    wrap.addEventListener('pointerdown',function(e){ if(state!=='play') return; if(e.target&&e.target.closest&&e.target.closest('button')) return; e.preventDefault(); doTap(); });
     window.addEventListener('keydown',function(e){ if(!isOpen()) return;
       if(e.code==='Space'||e.code==='ArrowUp'||e.code==='Enter'){ e.preventDefault(); if(e.repeat) return;
         if(state==='play') doTap(); else if(state==='title'||state==='result') startPlay(); } });
