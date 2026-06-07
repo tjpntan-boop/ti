@@ -109,18 +109,26 @@
     baseDist=Math.round(MAXD*pf*af*tf);
     var mult=1.0; bonusInfo='';
     if(charType==='stable'){
-      mult=1.2; bonusInfo='安定：×1.2';
+      var pd=Math.round(power*100)%10, ad=Math.round(angAcc*100)%10, td=Math.round(accuracy*100)%10;
+      var isPrime=function(x){ return x===2||x===3||x===5||x===7; };
+      if(isPrime(pd)&&isPrime(ad)&&isPrime(td)){ mult=5.0; bonusInfo='安定爆発！💥 一桁ぜんぶ素数 ×5.0'; }
+      else { mult=1.2; bonusInfo='安定：×1.2'; }
     } else if(charType==='gamble'){
       var pd=Math.round(power*100)%10, ad=Math.round(angAcc*100)%10, td=Math.round(accuracy*100)%10;
+      var P=Math.round(power*100), A=Math.round(angAcc*100), T=Math.round(accuracy*100);
+      var isPrime=function(n){ if(n<2) return false; for(var k=2;k*k<=n;k++){ if(n%k===0) return false; } return true; };
       var is369=function(x){ return x===3||x===6||x===9; };
-      if(is369(pd)&&is369(ad)&&is369(td)){ mult=5.0; bonusInfo='一か八か 3・6・9ぞろい！MAX ×5.0🎯'; }
+      if(isPrime(P)&&isPrime(A)&&isPrime(T)){ mult=15.0; bonusInfo='一か八か 全部素数！🎰 ×15.0'; }
+      else if(is369(pd)&&is369(ad)&&is369(td)){ mult=5.0; bonusInfo='一か八か 3・6・9ぞろい！MAX ×5.0🎯'; }
       else { var d1=baseDist%10;
         if(d1===3||d1===6||d1===9){ mult=1.5+Math.random()*0.5; bonusInfo='一か八か 大当たり！🎲（1の位'+d1+'）×'+mult.toFixed(2); }
         else { mult=0.5+Math.random()*0.5; bonusInfo='一か八か ハズレ…（1の位'+d1+'）×'+mult.toFixed(2); } }
     } else if(charType==='genius'){
       var pd=Math.round(power*100)%10, ad=Math.round(angAcc*100)%10, td=Math.round(accuracy*100)%10;
       var span=Math.max(pd,ad,td)-Math.min(pd,ad,td); var sum=pd+ad+td;
-      if(sum===20){ mult=3.0; bonusInfo='天才 下一桁の合計20！ ×3.0'; }
+      if(pd===0&&ad===0&&td===0&&baseDist%10===0){ mult=10.0; bonusInfo='天才 オール0の奇跡！🌟 ×10.0'; }
+      else if(pd===ad&&ad===td&&(pd===2||pd===3||pd===5||pd===7)){ mult=6.0; bonusInfo='天才 ぞろ目＆素数！✨('+pd+') ×6.0'; }
+      else if(sum===20){ mult=3.0; bonusInfo='天才 下一桁の合計20！ ×3.0'; }
       else if(sum===10){ mult=2.8; bonusInfo='天才 下一桁の合計10！ ×2.8'; }
       else if(pd===ad&&ad===td){ mult=2.5; bonusInfo='天才 一桁が3つ同じ！('+pd+') ×2.5'; }
       else if(pd===ad||ad===td||pd===td){ mult=2.0; bonusInfo='天才 一桁が2つ同じ！ ×2.0'; }
