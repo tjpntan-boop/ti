@@ -7,7 +7,7 @@
   var LW=900, LH=506, GROUND_Y=LH-70;
   var TX=235, PIVOT_Y=GROUND_Y-86, HANDLE=74;
   var MAXD=13500, ARC_MAX=GROUND_Y-56;
-  var READY_DUR=2.4, POWER_TIME=5.0, P_INC=0.02;
+  var READY_DUR=2.4, POWER_TIME=5.0, P_INC=0.045, P_EXP=2;
   var GOT_DUR=1.4, BEAT_RELEASE=1.5, LAND_HOLD=1.7;
   var BEST_KEY='hammer_best_v1';
   var CHARS={ stable:{name:'安定'}, gamble:{name:'一か八か'}, genius:{name:'天才'} };
@@ -93,7 +93,7 @@
     state='ready'; beatTimer=READY_DUR; power=0; spinAngle=-Math.PI/2; spinSpeed=4; blip(660,0.12,'square',0.18); }
   function startPowerCharge(){ state='power'; power=0; powerTime=POWER_TIME; tapFx=[]; blip(880,0.12,'square',0.2); }
   function addPower(x,y){ if(state!=='power') return;
-    power=Math.min(1, power+P_INC*(1-power));   // 減らない・頭打ちで上がりにくい
+    power=Math.min(1, power+P_INC*Math.pow(1-power,P_EXP));   // 減らない・上ほど鈍い（限界95%くらい）
     if(tapFx.length<28) tapFx.push({x:(x==null?LW/2:x),y:(y==null?180:y),life:0.45});
     blip(420+power*460,0.04,'square',0.10); }
   function toPowerGot(){ state='powerGot'; beatTimer=GOT_DUR; blip(700,0.14,'square',0.2); }
