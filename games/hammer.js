@@ -13,7 +13,7 @@
   var CHARS={ stable:{name:'安定'}, gamble:{name:'一か八か'}, genius:{name:'天才'} };
 
   var wrap, stage, canvas, ctx, elBest, titleScr, overScr, retryBtn, muteBtn;
-  var bonusKey='base', FOUND_KEY='hammer_found_v1';
+  var bonusKey='base', FOUND_KEY='hammer_found_v1', HVER='2.43.2';
   var RULES=[
     {key:'triple_prime', m:'×25', name:'三つ子素数', cond:'値が3つとも同じ素数', freq:'約4万回に1回'},
     {key:'triple', m:'×20', name:'パーフェクト三つ子', cond:'値が3つとも同じ', freq:'約1.3万回に1回'},
@@ -37,9 +37,9 @@
   function renderRules(){ var f=loadFound(), list=document.getElementById('hammer-rules-list'); if(!list) return; var found=0, html='';
     for(var i=0;i<RULES.length;i++){ var r=RULES[i], got=!!f[r.key]; if(got) found++;
       if(got) html+='<div class="hr-row"><span class="hr-m">'+r.m+'</span><span class="hr-c">'+r.name+'：'+r.cond+'<small>'+r.freq+'</small></span></div>';
-      else html+='<div class="hr-row hr-locked"><span class="hr-m">？？？</span><span class="hr-c">？？？<small>まだ見つけていない役</small></span></div>'; }
+      else html+='<div class="hr-row hr-locked"><span class="hr-m">'+r.m+'</span><span class="hr-c">？？？<small>まだ見つけていない役</small></span></div>'; }
     var cnt=document.getElementById('hammer-rules-count'); if(cnt) cnt.textContent='発見 '+found+' / '+RULES.length;
-    list.innerHTML=html; }
+    list.innerHTML=html+'<div class="hr-ver">ロジック Ver '+HVER+'</div>'; }
   var state='title';  // title ready power powerGot angle angleGot timing timingGot release flight landing result
   var resultType='stable';
   var power, powerTime, tapFx, spinAngle, spinSpeed;
