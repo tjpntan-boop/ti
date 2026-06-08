@@ -13,6 +13,33 @@
   var CHARS={ stable:{name:'安定'}, gamble:{name:'一か八か'}, genius:{name:'天才'} };
 
   var wrap, stage, canvas, ctx, elBest, titleScr, overScr, retryBtn, muteBtn;
+  var bonusKey='base', FOUND_KEY='hammer_found_v1';
+  var RULES=[
+    {key:'triple_prime', m:'×25', name:'三つ子素数', cond:'値が3つとも同じ素数', freq:'約4万回に1回'},
+    {key:'triple', m:'×20', name:'パーフェクト三つ子', cond:'値が3つとも同じ', freq:'約1.3万回に1回'},
+    {key:'zorome', m:'×10〜19', name:'下一桁ぞろ目', cond:'その数字＋10倍（0→×10 … 9→×19）', freq:'各 約1000回に1回'},
+    {key:'pair789', m:'×7〜9', name:'ハイぞろ', cond:'下一桁が全部7〜9で 7/8/9 が2つ', freq:'各 約0.6%'},
+    {key:'dbl_prime', m:'×6', name:'ダブル素数', cond:'値の2つが同じ素数', freq:'約0.6%'},
+    {key:'all_prime', m:'×5', name:'オール素数', cond:'値が3つとも素数', freq:'約1.3%'},
+    {key:'dbl', m:'×4', name:'ダブル', cond:'値の2つが同じ', freq:'約1.9%'},
+    {key:'d369', m:'×3.8', name:'3・6・9ぞろい', cond:'下一桁が全部 3/6/9', freq:'約2.1%'},
+    {key:'sum22', m:'×3.6', name:'合計22', cond:'下一桁の合計が22', freq:'約1.7%'},
+    {key:'sum20', m:'×3.2', name:'合計20', cond:'下一桁の合計が20', freq:'約3.5%'},
+    {key:'dig_prime', m:'×2.5', name:'安定爆発', cond:'下一桁ぜんぶ素数(2/3/5/7)', freq:'約5%'},
+    {key:'sum10', m:'×2.4', name:'合計10', cond:'下一桁の合計が10', freq:'約5.6%'},
+    {key:'two_same', m:'×1.8', name:'2つ同じ', cond:'下一桁が2つ同じ', freq:'約15%'},
+    {key:'base369', m:'×1.5', name:'基準ラッキー', cond:'基準距離の1の位が 3/6/9', freq:'約18%'},
+    {key:'base', m:'×1.2', name:'基本', cond:'特別な役なし', freq:'約42%'}
+  ];
+  function loadFound(){ try{ var v=JSON.parse(localStorage.getItem(FOUND_KEY)); return (v&&typeof v==='object')?v:{}; }catch(e){ return {}; } }
+  function markFound(k){ var f=loadFound(); var isNew=!f[k]; f[k]=1; try{ localStorage.setItem(FOUND_KEY, JSON.stringify(f)); }catch(e){} return isNew; }
+  function ruleName(k){ for(var i=0;i<RULES.length;i++){ if(RULES[i].key===k) return RULES[i].name; } return ''; }
+  function renderRules(){ var f=loadFound(), list=document.getElementById('hammer-rules-list'); if(!list) return; var found=0, html='';
+    for(var i=0;i<RULES.length;i++){ var r=RULES[i], got=!!f[r.key]; if(got) found++;
+      if(got) html+='<div class="hr-row"><span class="hr-m">'+r.m+'</span><span class="hr-c">'+r.name+'：'+r.cond+'<small>'+r.freq+'</small></span></div>';
+      else html+='<div class="hr-row hr-locked"><span class="hr-m">？？？</span><span class="hr-c">？？？<small>まだ見つけていない役</small></span></div>'; }
+    var cnt=document.getElementById('hammer-rules-count'); if(cnt) cnt.textContent='発見 '+found+' / '+RULES.length;
+    list.innerHTML=html; }
   var state='title';  // title ready power powerGot angle angleGot timing timingGot release flight landing result
   var resultType='stable';
   var power, powerTime, tapFx, spinAngle, spinSpeed;
@@ -116,27 +143,26 @@
     var cnt=function(v){ var n=0; if(pd===v)n++; if(ad===v)n++; if(td===v)n++; return n; };
     var is789=function(x){ return x===7||x===8||x===9; };
     var all789=is789(pd)&&is789(ad)&&is789(td);
-    var mult, info, type;
-    // 全ルールを1本化：高い倍率から判定し、最初に当てはまったタイプが今回の結果
-    if(P===A&&A===T&&isPrimeN(P)){ mult=20.0; type='genius'; info='👑 天才：奇跡の三つ子素数（'+P+'）！ ×20.0'; }
-    else if(P===A&&A===T){ mult=18.0; type='genius'; info='🎯 天才：パーフェクト三つ子（'+P+'）！ ×18.0'; }
-    else if(isPrimeN(P)&&isPrimeN(A)&&isPrimeN(T)){ mult=15.0; type='gamble'; info='🎰 一か八か：全部素数！ ×15.0'; }
-    else if(pd===ad&&ad===td&&pdig(pd)&&b1===pd){ mult=12.0; type='genius'; info='✨ 天才：素数フォース（'+pd+'が4つ）！ ×12.0'; }
-    else if(pd===0&&ad===0&&td===0&&b1===0){ mult=10.0; type='genius'; info='🌟 天才：オール0の奇跡！ ×10.0'; }
-    else if(all789&&cnt(9)>=2){ mult=9.0; type='genius'; info='天才：下一桁が7〜9＆9が2つ！ ×9.0'; }
-    else if(all789&&cnt(8)>=2){ mult=8.0; type='genius'; info='天才：下一桁が7〜9＆8が2つ！ ×8.0'; }
-    else if(all789&&cnt(7)>=2){ mult=7.0; type='genius'; info='天才：下一桁が7〜9＆7が2つ！ ×7.0'; }
-    else if(pd===ad&&ad===td&&pdig(pd)){ mult=6.0; type='genius'; info='✨ 天才：ぞろ目＆素数（'+pd+'）！ ×6.0'; }
-    else if(pdig(pd)&&pdig(ad)&&pdig(td)){ mult=5.0; type='stable'; info='💥 安定爆発：一桁ぜんぶ素数！ ×5.0'; }
-    else if(d369(pd)&&d369(ad)&&d369(td)){ mult=5.0; type='gamble'; info='🎯 一か八か：3・6・9ぞろい！ ×5.0'; }
-    else if(sum===20){ mult=3.0; type='genius'; info='天才：下一桁の合計20！ ×3.0'; }
-    else if(sum===10){ mult=2.8; type='genius'; info='天才：下一桁の合計10！ ×2.8'; }
-    else if(pd===ad&&ad===td){ mult=2.5; type='genius'; info='天才：一桁が3つ同じ（'+pd+'）！ ×2.5'; }
-    else if(pd===ad||ad===td||pd===td){ mult=2.0; type='genius'; info='天才：一桁が2つ同じ！ ×2.0'; }
-    else if(d369(b1)){ mult=1.5+Math.random()*0.5; type='gamble'; info='🎲 一か八か：当たり（基準の1の位'+b1+'）！ ×'+mult.toFixed(2); }
-    else if(span<=2){ mult=1.5; type='genius'; info='天才：一桁が近い！ ×1.5'; }
-    else { mult=1.2; type='stable'; info='安定：×1.2'; }
-    resultType=type; bonusInfo=info;
+    var mult, info, type, key;
+    // 全ルールを1本化：高い倍率から判定＝最初に当てはまったタイプが結果
+    if(P===A&&A===T&&isPrimeN(P)){ mult=25.0; type='genius'; key='triple_prime'; info='👑 天才：奇跡の三つ子素数（'+P+'）！ ×25.0'; }
+    else if(P===A&&A===T){ mult=20.0; type='genius'; key='triple'; info='🏆 天才：パーフェクト三つ子（'+P+'）！ ×20.0'; }
+    else if(pd===ad&&ad===td){ mult=10+pd; type='genius'; key='zorome'; info='✨ 天才：下一桁ぞろ目（'+pd+'）！ ×'+mult.toFixed(1); }
+    else if(all789&&cnt(9)>=2){ mult=9.0; type='genius'; key='pair789'; info='天才：下一桁7〜9＆9が2つ！ ×9.0'; }
+    else if(all789&&cnt(8)>=2){ mult=8.0; type='genius'; key='pair789'; info='天才：下一桁7〜9＆8が2つ！ ×8.0'; }
+    else if(all789&&cnt(7)>=2){ mult=7.0; type='genius'; key='pair789'; info='天才：下一桁7〜9＆7が2つ！ ×7.0'; }
+    else if((P===A&&isPrimeN(P))||(A===T&&isPrimeN(A))||(P===T&&isPrimeN(P))){ mult=6.0; type='gamble'; key='dbl_prime'; info='💎 一か八か：ダブル素数（同じ素数が2つ）！ ×6.0'; }
+    else if(isPrimeN(P)&&isPrimeN(A)&&isPrimeN(T)){ mult=5.0; type='gamble'; key='all_prime'; info='🎰 一か八か：全部素数！ ×5.0'; }
+    else if(P===A||A===T||P===T){ mult=4.0; type='genius'; key='dbl'; info='👯 天才：ダブル（値が2つ同じ）！ ×4.0'; }
+    else if(d369(pd)&&d369(ad)&&d369(td)){ mult=3.8; type='gamble'; key='d369'; info='🎯 一か八か：3・6・9ぞろい！ ×3.8'; }
+    else if(sum===22){ mult=3.6; type='genius'; key='sum22'; info='天才：下一桁の合計22！ ×3.6'; }
+    else if(sum===20){ mult=3.2; type='genius'; key='sum20'; info='天才：下一桁の合計20！ ×3.2'; }
+    else if(pdig(pd)&&pdig(ad)&&pdig(td)){ mult=2.5; type='stable'; key='dig_prime'; info='💥 安定：下一桁ぜんぶ素数！ ×2.5'; }
+    else if(sum===10){ mult=2.4; type='genius'; key='sum10'; info='天才：下一桁の合計10！ ×2.4'; }
+    else if(pd===ad||ad===td||pd===td){ mult=1.8; type='genius'; key='two_same'; info='天才：下一桁が2つ同じ！ ×1.8'; }
+    else if(d369(b1)){ mult=1.5; type='gamble'; key='base369'; info='🎲 一か八か：基準の1の位'+b1+'！ ×1.5'; }
+    else { mult=1.2; type='stable'; key='base'; info='安定：×1.2'; }
+    resultType=type; bonusInfo=info; bonusKey=key;
     distance=Math.max(200, Math.round(baseDist*mult));
   }
 
@@ -159,6 +185,8 @@
     document.getElementById('hammer-res-comment').textContent=resultComment(distance);
     document.getElementById('hammer-res-bonus').textContent=bonusInfo||'';
     document.getElementById('hammer-res-pct').textContent='パワー'+rec.pw+'% ／ 角度'+rec.ang+'% ／ タイミング'+rec.tm+'%';
+    var isNewFind=markFound(bonusKey);
+    var rn=document.getElementById('hammer-res-new'); if(rn) rn.textContent = isNewFind ? ('🎉 新発見！「'+ruleName(bonusKey)+'」を倍率ずかんに追加！') : '';
     document.getElementById('hammer-res-title').textContent=rank>0?('🎉 TOP3入り！ '+rank+'位！'):'記録！';
     document.getElementById('hammer-res-best').innerHTML=bestHTML(scores,rank>0?rank-1:-1);
     overScr.classList.remove('hidden'); fanfare(); }
@@ -293,6 +321,9 @@
     if(startBtn) startBtn.addEventListener('click', function(e){ e.stopPropagation(); startReady(); });
     retryBtn.addEventListener('click', function(e){ e.stopPropagation(); showTitle(); });
     muteBtn.addEventListener('click', function(e){ e.stopPropagation(); muted=!muted; muteBtn.textContent=muted?'🔇':'🔊'; if(master) master.gain.value=muted?0:0.5; });
+    var rulesBtn=document.getElementById('hammer-rules-btn'), rulesScr=document.getElementById('hammer-rules'), rulesClose=document.getElementById('hammer-rules-close');
+    if(rulesBtn&&rulesScr) rulesBtn.addEventListener('click', function(e){ e.stopPropagation(); renderRules(); rulesScr.classList.remove('hidden'); });
+    if(rulesClose&&rulesScr) rulesClose.addEventListener('click', function(e){ e.stopPropagation(); rulesScr.classList.add('hidden'); });
     wrap.addEventListener('pointerdown', function(e){ if(state!=='power'&&state!=='angle'&&state!=='timing') return;
       if(e.target&&e.target.closest&&e.target.closest('button')) return; e.preventDefault();
       var r=stage.getBoundingClientRect(); var x=(e.clientX-r.left)/r.width*LW, y=(e.clientY-r.top)/r.height*LH;
