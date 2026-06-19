@@ -1276,6 +1276,17 @@
         }
         #play-crush-btn:hover { background: #3a1e30; border-color: #ff8fcf; }
         #play-crush-btn .hassaku-sub { font-size: 10px; font-weight: normal; letter-spacing: 0; opacity: 0.85; color: #e6a8cc; }
+        #play-uranai-btn {
+            margin-top: 10px;
+            background: #181a33; color: #cfd2ff;
+            border: 1px solid #5a5e9a; border-radius: 8px; padding: 9px 22px;
+            font-size: 15px; font-weight: bold; cursor: pointer; z-index: 1010; letter-spacing: 1px;
+            display: flex; flex-direction: column; align-items: center; gap: 2px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+            transition: background 0.15s, border-color 0.15s; font-family: inherit;
+        }
+        #play-uranai-btn:hover { background: #23264a; border-color: #8c91d8; }
+        #play-uranai-btn .hassaku-sub { font-size: 10px; font-weight: normal; letter-spacing: 0; opacity: 0.85; color: #a8acdc; }
 
         /* タイトルに常設する「ブラウザで開く手順」案内ボックス */
         #open-guide {
@@ -3480,7 +3491,7 @@
         <div id="title-content">
         <div id="tap-notice" onclick="beginTitleAudio(event)">▶ タップして音を出す</div>
         <div class="famicom-title">はちばんちくわ</div>
-        <div id="version-label">Ver 2.43.2</div>
+        <div id="version-label">Ver 2.45.0</div>
         <button id="start-btn" class="start-btn" onclick="startGame(event)" style="display:none;">🍩 ちくわを覗く... 🍩</button>
         <button id="title-badge-btn" class="badge-link-btn" onclick="openBadgeScreen('title')" style="display:none;">🏅 称号コレクション</button>
         <button id="reset-record-btn" onclick="resetDiscoveryRecord(event)" style="display:none;">🗑 異変の記録をリセット</button>
@@ -3506,6 +3517,7 @@
             <button id="play-dash-btn" onclick="play8Dash(event)">🚇 8番ダッシュ<span class="hassaku-sub">終わらない通路をダッシュ！じじいを飛び越え、頭上をくぐれ。ちくわは拾え</span></button>
             <button id="play-hammer-btn" onclick="playHammer(event)">🔨 ちくわなげハンマー<span class="hassaku-sub">ハンマー投げで何m飛ぶ？連打でパワー、ゲージで投げて土星をめざせ</span></button>
             <button id="play-crush-btn" onclick="playCrush(event)">🐰 ちくわビート<span class="hassaku-sub">流れてくる具からちくわだけを潰せ！だんだん速くなる見極めリズムゲー</span></button>
+            <button id="play-uranai-btn" onclick="playUranai(event)">🔮 ちくわうらない<span class="hassaku-sub">名前を入れると、あなたを“あったらいいけど無くてもいいもの”に例えて占う、哀愁の診断</span></button>
         </div>
         <div id="open-guide">
             <div class="og-title">⚠️ 音が出ない / タップできない時は</div>
@@ -14157,6 +14169,72 @@ function onaraToTitle(e){
   #crush-wrap #crush-over h2{ font-size:clamp(22px,5.5vw,38px); margin:0 0 6px; color:#ff8fcf; text-shadow:0 0 12px rgba(255,120,200,.5); }
   #crush-wrap #crush-over .hbig{ font-size:clamp(32px,9vw,60px); font-weight:900; color:#ffe27a; margin:2px 0 6px; }
   #crush-wrap #crush-over .res{ font-size:clamp(12px,2.7vw,16px); opacity:.95; margin:0 0 10px; }
+  /* ===== ちくわうらない ===== */
+  #uranai-wrap{ position:fixed; inset:0; z-index:5500; display:none; flex-direction:column; align-items:center; justify-content:center;
+    background:radial-gradient(120% 100% at 50% 0%, #1b2350 0%, #0c1030 55%, #070a1e 100%); color:#e9e6ff;
+    font-family:"Hiragino Mincho ProN","Yu Mincho",YuMincho,serif; user-select:none; -webkit-user-select:none; -webkit-tap-highlight-color:transparent; overflow:hidden; }
+  #uranai-wrap.show{ display:flex; }
+  #uranai-wrap *{ box-sizing:border-box; }
+  #uranai-sky{ position:absolute; inset:0; z-index:0; pointer-events:none;
+    background-image:radial-gradient(1.5px 1.5px at 20% 30%, rgba(255,255,255,.85), transparent),
+      radial-gradient(1.5px 1.5px at 70% 18%, rgba(255,255,255,.6), transparent),
+      radial-gradient(1px 1px at 40% 60%, rgba(255,255,255,.7), transparent),
+      radial-gradient(1.5px 1.5px at 85% 72%, rgba(255,255,255,.5), transparent),
+      radial-gradient(1px 1px at 15% 82%, rgba(255,255,255,.6), transparent),
+      radial-gradient(1px 1px at 55% 88%, rgba(255,255,255,.5), transparent),
+      radial-gradient(1.5px 1.5px at 90% 42%, rgba(255,255,255,.6), transparent),
+      radial-gradient(1px 1px at 30% 10%, rgba(255,255,255,.5), transparent);
+    animation:uraTwinkle 5s ease-in-out infinite alternate; }
+  @keyframes uraTwinkle{ from{opacity:.65;} to{opacity:1;} }
+  #uranai-back-btn{ position:absolute; top:8px; left:50%; transform:translateX(-50%); z-index:20; font-family:inherit; font-size:13px; font-weight:700; cursor:pointer; padding:7px 14px; border-radius:18px; border:none; background:rgba(40,46,90,.85); color:#fff; }
+  #uranai-back-btn:active{ transform:translateX(-50%) translateY(2px); }
+  #uranai-wrap #uranai-mute{ position:absolute; top:8px; right:10px; z-index:20; width:40px; height:40px; border-radius:50%; border:0; background:rgba(255,255,255,.12); color:#fff; font-size:18px; cursor:pointer; }
+  #uranai-stage{ position:relative; z-index:2; width:100%; max-width:540px; padding:26px 22px; max-height:100%; overflow-y:auto; -webkit-overflow-scrolling:touch; text-align:center; }
+  #uranai-wrap .uranai-panel{ animation:uraFade 1.4s ease both; }
+  #uranai-wrap .uranai-panel.hidden{ display:none; }
+  #uranai-wrap #uranai-result.uranai-panel{ animation:none; }
+  #uranai-wrap #uranai-result:not(.hidden) > *{ opacity:0; animation:uraRise 1.1s ease both; }
+  #uranai-wrap #uranai-result:not(.hidden) > #uranai-rname{ animation-delay:.2s; }
+  #uranai-wrap #uranai-result:not(.hidden) > #uranai-type{ animation-delay:1.0s; }
+  #uranai-wrap #uranai-result:not(.hidden) > #uranai-diag{ animation-delay:2.0s; }
+  #uranai-wrap #uranai-result:not(.hidden) > #uranai-lucky{ animation-delay:3.2s; }
+  #uranai-wrap #uranai-result:not(.hidden) > #uranai-aph{ animation-delay:4.1s; }
+  #uranai-wrap #uranai-result:not(.hidden) > .uranai-btnrow{ animation-delay:5.0s; }
+  @keyframes uraRise{ from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:none;} }
+  @keyframes uraFade{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:none;} }
+  #uranai-wrap h1{ font-size:clamp(28px,7vw,46px); margin:0 0 6px; letter-spacing:.14em; color:#fff; text-shadow:0 0 22px rgba(150,170,255,.55); }
+  #uranai-title span{ display:inline-block; opacity:0; }
+  #uranai-title.run span{ animation:uraChar .6s ease both; }
+  #uranai-title.run span:nth-child(1){ animation-delay:.15s; }
+  #uranai-title.run span:nth-child(2){ animation-delay:.42s; }
+  #uranai-title.run span:nth-child(3){ animation-delay:.69s; }
+  #uranai-title.run span:nth-child(4){ animation-delay:.96s; }
+  #uranai-title.run span:nth-child(5){ animation-delay:1.23s; }
+  #uranai-title.run span:nth-child(6){ animation-delay:1.50s; }
+  #uranai-title.run span:nth-child(7){ animation-delay:1.77s; }
+  @keyframes uraChar{ from{opacity:0; transform:translateY(10px) scale(.8); filter:blur(3px);} to{opacity:1; transform:none; filter:none;} }
+  #uranai-wrap .usub{ font-size:clamp(11px,2.6vw,14px); opacity:.7; letter-spacing:.2em; margin:0 0 30px; }
+  #uranai-wrap .ulead{ font-size:clamp(13px,3.1vw,16px); opacity:.9; margin:0 0 16px; }
+  #uranai-name{ display:block; width:80%; max-width:280px; margin:0 auto 22px; padding:12px 14px; font-family:inherit; font-size:18px; text-align:center; color:#fff; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.25); border-radius:12px; user-select:text; -webkit-user-select:text; }
+  #uranai-name::placeholder{ color:rgba(255,255,255,.4); }
+  #uranai-name:focus{ outline:none; border-color:#aab6ff; background:rgba(255,255,255,.13); }
+  #uranai-wrap .uranai-btn{ font:inherit; font-size:clamp(16px,3.7vw,21px); font-weight:700; letter-spacing:.2em; color:#161a35; background:linear-gradient(180deg,#e8d9a8,#cbb87a); border:0; border-radius:999px; padding:13px 46px; cursor:pointer; box-shadow:0 5px 0 #8c7a48,0 10px 22px rgba(0,0,0,.4); }
+  #uranai-wrap .uranai-btn:active{ transform:translateY(3px); box-shadow:0 2px 0 #8c7a48; }
+  #uranai-wrap .ufoot{ font-size:11px; opacity:.5; margin-top:22px; letter-spacing:.08em; }
+  #uranai-wrap .uranai-orb{ font-size:64px; animation:uraShake .8s ease-in-out infinite; }
+  @keyframes uraShake{ 0%,100%{transform:rotate(-9deg);} 50%{transform:rotate(9deg);} }
+  #uranai-readtext{ font-size:clamp(14px,3.3vw,17px); opacity:.92; margin-top:20px; min-height:2.6em; line-height:1.7; }
+  #uranai-rname{ font-size:clamp(13px,3vw,16px); opacity:.85; margin:0 0 6px; }
+  #uranai-type{ font-size:clamp(21px,5.4vw,32px); font-weight:700; color:#ffe9a8; text-shadow:0 0 18px rgba(255,220,140,.5); margin:0 0 20px; line-height:1.35; }
+  #uranai-diag{ font-size:clamp(13px,3.2vw,16px); line-height:2.05; opacity:.96; margin:0 auto 22px; max-width:450px; text-align:left; }
+  #uranai-lucky{ display:flex; flex-wrap:wrap; justify-content:center; gap:6px 16px; font-size:clamp(11px,2.6vw,13px); opacity:.8; margin:0 0 20px; }
+  #uranai-lucky span{ white-space:nowrap; }
+  #uranai-aph{ font-size:clamp(12px,3vw,15px); line-height:1.95; opacity:.85; font-style:italic; margin:0 auto 24px; max-width:430px; }
+  #uranai-wrap .uranai-btnrow{ display:flex; justify-content:center; }
+  #uranai-wrap .uranai-btn2{ font:inherit; font-size:14px; font-weight:700; color:#e9e6ff; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.25); border-radius:999px; padding:10px 26px; cursor:pointer; }
+  #uranai-star{ position:absolute; top:14%; left:-12%; width:120px; height:2px; border-radius:2px; background:linear-gradient(90deg, transparent, #fff 85%, #fff); box-shadow:0 0 10px #fff,0 0 22px rgba(180,200,255,.85); opacity:0; transform:rotate(22deg); pointer-events:none; z-index:15; }
+  #uranai-star.go{ animation:uraStar 2.4s ease-in forwards; }
+  @keyframes uraStar{ 0%{opacity:0; left:-14%; top:6%;} 14%{opacity:1;} 82%{opacity:1;} 100%{opacity:0; left:94%; top:62%;} }
 </style>
 
 <div id="crush-wrap">
@@ -14196,6 +14274,35 @@ function onaraToTitle(e){
   </div>
 </div>
 
+
+<div id="uranai-wrap">
+  <button id="uranai-back-btn" onclick="uranaiToTitle(event)">↩ もどる</button>
+  <button id="uranai-mute">🔊</button>
+  <div id="uranai-sky"></div>
+  <div id="uranai-stage">
+    <div id="uranai-intro" class="uranai-panel">
+      <h1 id="uranai-title"><span>ち</span><span>く</span><span>わ</span><span>う</span><span>ら</span><span>な</span><span>い</span></h1>
+      <p class="usub">― 星と、ちくわと、あなた ―</p>
+      <p class="ulead">名前を、そっと入れてください。</p>
+      <input id="uranai-name" type="text" maxlength="12" placeholder="なまえ" autocomplete="off" />
+      <button id="uranai-draw" class="uranai-btn">占　う</button>
+      <p class="ufoot">※ あたるも、あたらぬも、ちくわしだい。</p>
+    </div>
+    <div id="uranai-reading" class="uranai-panel hidden">
+      <div class="uranai-orb">🎋</div>
+      <p id="uranai-readtext">星を読んでいます…</p>
+    </div>
+    <div id="uranai-result" class="uranai-panel hidden">
+      <p id="uranai-rname"></p>
+      <div id="uranai-type"></div>
+      <p id="uranai-diag"></p>
+      <div id="uranai-lucky"></div>
+      <p id="uranai-aph"></p>
+      <div class="uranai-btnrow"><button id="uranai-again" class="uranai-btn2">別の名前で占う</button></div>
+    </div>
+  </div>
+  <div id="uranai-star"></div>
+</div>
 
 <!-- 🚇 8番ダッシュ本体は games/dash.js に分離（ボタン押下時に遅延ロード）-->
 
@@ -14284,6 +14391,29 @@ function playCrush(e){
 function crushToTitle(e){
   if(e) e.stopPropagation();
   if(typeof window.crushShutdown==='function') window.crushShutdown();
+  goToTitle();
+}
+
+function playUranai(e){
+  if(e) e.stopPropagation();
+  if(!audioCtx){ try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(err){} }
+  if(audioCtx && audioCtx.state==='suspended'){ try{ audioCtx.resume(); }catch(err){} }
+  isAudioStarted = true;
+  if(typeof titleInterval!=='undefined' && titleInterval){ clearInterval(titleInterval); titleInterval=null; }
+  if(typeof bpmInterval!=='undefined' && bpmInterval){ clearInterval(bpmInterval); bpmInterval=null; }
+  if(typeof stopBGM==='function'){ try{ stopBGM(); }catch(err){} }
+  if(typeof currentBgmMode!=='undefined'){ currentBgmMode=null; }
+  document.getElementById('title-screen').style.display='none';
+  gameState='URANAI';
+  var w=document.getElementById('uranai-wrap'); w.classList.add('show'); w.scrollTop=0;
+  if(typeof firstTitleDone!=='undefined'){ firstTitleDone=true; }
+  loadGameModule('games/uranai.js', function(){
+    if(typeof window.uranaiLaunch==='function') window.uranaiLaunch(audioCtx);
+  });
+}
+function uranaiToTitle(e){
+  if(e) e.stopPropagation();
+  if(typeof window.uranaiShutdown==='function') window.uranaiShutdown();
   goToTitle();
 }
 </script>
