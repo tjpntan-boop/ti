@@ -1298,6 +1298,17 @@
         }
         #play-ft-btn:hover { background: #4a3018; border-color: #ffae5e; }
         #play-ft-btn .hassaku-sub { font-size: 10px; font-weight: normal; letter-spacing: 0; opacity: 0.85; color: #f0c89a; }
+        #play-kak-btn {
+            margin-top: 10px;
+            background: #241a3a; color: #e6d8ff;
+            border: 1px solid #8a6ad0; border-radius: 8px; padding: 9px 22px;
+            font-size: 15px; font-weight: bold; cursor: pointer; z-index: 1010; letter-spacing: 1px;
+            display: flex; flex-direction: column; align-items: center; gap: 2px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+            transition: background 0.15s, border-color 0.15s; font-family: inherit;
+        }
+        #play-kak-btn:hover { background: #332552; border-color: #b08ae8; }
+        #play-kak-btn .hassaku-sub { font-size: 10px; font-weight: normal; letter-spacing: 0; opacity: 0.85; color: #c8b8e6; }
 
         /* タイトルに常設する「ブラウザで開く手順」案内ボックス */
         #open-guide {
@@ -3502,7 +3513,7 @@
         <div id="title-content">
         <div id="tap-notice" onclick="beginTitleAudio(event)">▶ タップして音を出す</div>
         <div class="famicom-title">はちばんちくわ</div>
-        <div id="version-label">Ver 2.46.0</div>
+        <div id="version-label">Ver 2.47.0</div>
         <button id="start-btn" class="start-btn" onclick="startGame(event)" style="display:none;">🍩 ちくわを覗く... 🍩</button>
         <button id="title-badge-btn" class="badge-link-btn" onclick="openBadgeScreen('title')" style="display:none;">🏅 称号コレクション</button>
         <button id="reset-record-btn" onclick="resetDiscoveryRecord(event)" style="display:none;">🗑 異変の記録をリセット</button>
@@ -3530,6 +3541,7 @@
             <button id="play-crush-btn" onclick="playCrush(event)">🐰 ちくわビート<span class="hassaku-sub">流れてくる具からちくわだけを潰せ！だんだん速くなる見極めリズムゲー</span></button>
             <button id="play-uranai-btn" onclick="playUranai(event)">🔮 ちくわうらない<span class="hassaku-sub">名前を入れると、あなたを“あったらいいけど無くてもいいもの”に例えて占う、哀愁の診断</span></button>
             <button id="play-ft-btn" onclick="playFreethrow(event)">🏀 ちくわフリースロー<span class="hassaku-sub">長〜いちくわでフリースロー対決！CPUと3本勝負。つっかえても助っ人（神様のおなら・大阪おばはん）が押し込む！？</span></button>
+            <button id="play-kak-btn" onclick="playKakushie(event)">🖼️ ちくわ隠し絵<span class="hassaku-sub">竹輪で埋まった絵を、ルーレットで決めた数だけはがして3択で当てる！少なくめくって一発で当てるほど高得点</span></button>
         </div>
         <div id="open-guide">
             <div class="og-title">⚠️ 音が出ない / タップできない時は</div>
@@ -14343,6 +14355,34 @@ function onaraToTitle(e){
   <div id="ft-ver">js -</div>
 </div>
 
+<!-- 🖼️ ちくわ隠し絵 -->
+<style>
+  #kak-wrap{ position:fixed; inset:0; z-index:5500; display:none; flex-direction:column;
+    align-items:center; justify-content:center; background:#12101a; color:#e8e8f0;
+    font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+    user-select:none; -webkit-user-select:none; -webkit-tap-highlight-color:transparent; touch-action:none; }
+  #kak-wrap.show{ display:flex; }
+  #kak-wrap *{ box-sizing:border-box; }
+  #kak-game-area{ flex:1 1 auto; width:100%; min-height:0; display:flex; align-items:center; justify-content:center; padding:6px; }
+  #kak-stage{ position:relative; width:100%; max-width:600px; max-height:100%; aspect-ratio:600/900; margin:auto; background:#241c34; overflow:hidden; }
+  #kak-cv{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+  #kak-back-btn{ position:absolute; top:8px; left:50%; transform:translateX(-50%); z-index:6700;
+    font-family:inherit; font-size:13px; font-weight:900; cursor:pointer; padding:7px 14px;
+    border-radius:18px; border:none; background:#2c2c3e; color:#fff; box-shadow:0 3px 0 #16161f; }
+  #kak-back-btn:active{ transform:translateX(-50%) translateY(2px); }
+  #kak-ver{ position:absolute; right:6px; bottom:5px; font:11px monospace; color:#6a5f80; z-index:6700; }
+</style>
+<div id="kak-wrap">
+  <button id="kak-back-btn" onclick="kakushieToTitle(event)">↩ もどる</button>
+  <div id="kak-game-area">
+    <div id="kak-stage">
+      <canvas id="kak-cv"></canvas>
+    </div>
+  </div>
+  <div id="kak-ver">js -</div>
+</div>
+
+
 <!-- 🚇 8番ダッシュ本体は games/dash.js に分離（ボタン押下時に遅延ロード）-->
 
 <script>
@@ -14476,6 +14516,29 @@ function playFreethrow(e){
 function freethrowToTitle(e){
   if(e) e.stopPropagation();
   if(typeof window.freethrowShutdown==='function') window.freethrowShutdown();
+  goToTitle();
+}
+/* ===== 🖼️ ちくわ隠し絵（ハブ連携）===== */
+function playKakushie(e){
+  if(e) e.stopPropagation();
+  if(!audioCtx){ try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(err){} }
+  if(audioCtx && audioCtx.state==='suspended'){ try{ audioCtx.resume(); }catch(err){} }
+  isAudioStarted = true;
+  if(typeof titleInterval!=='undefined' && titleInterval){ clearInterval(titleInterval); titleInterval=null; }
+  if(typeof bpmInterval!=='undefined' && bpmInterval){ clearInterval(bpmInterval); bpmInterval=null; }
+  if(typeof stopBGM==='function'){ try{ stopBGM(); }catch(err){} }
+  if(typeof currentBgmMode!=='undefined'){ currentBgmMode=null; }
+  document.getElementById('title-screen').style.display='none';
+  gameState='KAKUSHIE';
+  var w=document.getElementById('kak-wrap'); w.classList.add('show'); w.scrollTop=0;
+  if(typeof firstTitleDone!=='undefined'){ firstTitleDone=true; }
+  loadGameModule('games/kakushie.js', function(){
+    if(typeof window.kakushieLaunch==='function') window.kakushieLaunch(audioCtx);
+  });
+}
+function kakushieToTitle(e){
+  if(e) e.stopPropagation();
+  if(typeof window.kakushieShutdown==='function') window.kakushieShutdown();
   goToTitle();
 }
 </script>
