@@ -3513,7 +3513,7 @@
         <div id="title-content">
         <div id="tap-notice" onclick="beginTitleAudio(event)">▶ タップして音を出す</div>
         <div class="famicom-title">はちばんちくわ</div>
-        <div id="version-label">Ver 2.47.0</div>
+        <div id="version-label">Ver 2.47.1</div>
         <button id="start-btn" class="start-btn" onclick="startGame(event)" style="display:none;">🍩 ちくわを覗く... 🍩</button>
         <button id="title-badge-btn" class="badge-link-btn" onclick="openBadgeScreen('title')" style="display:none;">🏅 称号コレクション</button>
         <button id="reset-record-btn" onclick="resetDiscoveryRecord(event)" style="display:none;">🗑 異変の記録をリセット</button>
@@ -14338,7 +14338,7 @@ function onaraToTitle(e){
   #ft-wrap *{ box-sizing:border-box; }
   #ft-game-area{ flex:1 1 auto; width:100%; min-height:0; display:flex; align-items:center; justify-content:center; padding:6px; }
   #ft-stage{ position:relative; width:100%; max-width:600px; max-height:100%; aspect-ratio:600/900; margin:auto; background:#12121c; overflow:hidden; }
-  #ft-cv{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+  #ft-cv{ position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none; }
   #ft-back-btn{ position:absolute; top:8px; left:50%; transform:translateX(-50%); z-index:6700;
     font-family:inherit; font-size:13px; font-weight:900; cursor:pointer; padding:7px 14px;
     border-radius:18px; border:none; background:#2c2c3e; color:#fff; box-shadow:0 3px 0 #16161f; }
@@ -14365,7 +14365,7 @@ function onaraToTitle(e){
   #kak-wrap *{ box-sizing:border-box; }
   #kak-game-area{ flex:1 1 auto; width:100%; min-height:0; display:flex; align-items:center; justify-content:center; padding:6px; }
   #kak-stage{ position:relative; width:100%; max-width:600px; max-height:100%; aspect-ratio:600/900; margin:auto; background:#241c34; overflow:hidden; }
-  #kak-cv{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+  #kak-cv{ position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none; }
   #kak-back-btn{ position:absolute; top:8px; left:50%; transform:translateX(-50%); z-index:6700;
     font-family:inherit; font-size:13px; font-weight:900; cursor:pointer; padding:7px 14px;
     border-radius:18px; border:none; background:#2c2c3e; color:#fff; box-shadow:0 3px 0 #16161f; }

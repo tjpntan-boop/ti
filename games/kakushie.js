@@ -1,7 +1,7 @@
 
 (function(){
 "use strict";
-var KAKVER='2.47.0';
+var KAKVER='2.47.1';
 const DW=600, DH=900;
 var cv=null, ctx=null;
 let scale=1;
@@ -364,8 +364,8 @@ window.kakushieLaunch=function(ctx2){
   cv=document.getElementById('kak-cv'); ctx=cv?cv.getContext('2d'):null;
   var v=document.getElementById('kak-ver'); if(v) v.textContent='js '+KAKVER;
   if(cv && !cv.__kakb){ cv.__kakb=1;
-    cv.addEventListener('pointerdown',onDown,{passive:false});
-    cv.addEventListener('touchstart',onDown,{passive:false});
+    if('PointerEvent' in window){ cv.addEventListener('pointerdown',onDown,{passive:false}); }
+    else { cv.addEventListener('touchstart',onDown,{passive:false}); cv.addEventListener('mousedown',onDown,{passive:false}); }
   }
   window.addEventListener('resize',onResize);
   state=ST.TITLE; resize();

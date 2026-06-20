@@ -1,7 +1,7 @@
 
 (function(){
 "use strict";
-var FTVER='2.46.0';
+var FTVER='2.47.1';
 const DW=600, DH=900;
 var cv=null, ctx=null;
 let scale=1;
@@ -443,8 +443,8 @@ window.freethrowLaunch=function(ctx2){
   var v=document.getElementById('ft-ver'); if(v) v.textContent='js '+FTVER;
   wrapEl=document.getElementById('ft-wrap');
   if(wrapEl && !wrapEl.__ftb){ wrapEl.__ftb=1;
-    wrapEl.addEventListener('pointerdown',ftTap,{passive:false});
-    wrapEl.addEventListener('touchstart',ftTap,{passive:false});
+    if('PointerEvent' in window){ wrapEl.addEventListener('pointerdown',ftTap,{passive:false}); }
+    else { wrapEl.addEventListener('touchstart',ftTap,{passive:false}); wrapEl.addEventListener('mousedown',ftTap,{passive:false}); }
   }
   window.addEventListener('resize',onResize);
   state=ST.TITLE; bgmReady=true; cheerT=0;
