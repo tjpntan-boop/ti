@@ -1,7 +1,7 @@
 
 (function(){
 "use strict";
-var KAKVER='2.47.1';
+var KAKVER='2.48.1';
 const DW=600, DH=900;
 var cv=null, ctx=null;
 let scale=1;
@@ -160,8 +160,35 @@ const SFX={
   fin(){ [523,659,784,1047,1319].forEach((f,i)=>setTimeout(()=>tone(f,0.35,'sine',0.13),i*110)); }
 };
 
+// ===== BGM（考えている風：のんびりラウンジ＋クロックのチク…音）=====
+const KNB={C2:65.41,G2:98,A2:110,C3:130.81,D3:146.83,E3:164.81,F3:174.61,G3:196,A3:220,C4:261.63,D4:293.66,E4:329.63,F4:349.23,G4:392,A4:440,C5:523.25};
+const KLEAD=['G4',0,0,'E4',0,'G4',0,0, 'A4',0,0,'G4',0,'E4',0,0, 'D4',0,'F4',0,'A4',0,'G4',0, 'E4',0,'D4',0,0,0,0,0];
+const KBASS=['C3',0,0,0,'G2',0,0,0, 'A2',0,0,0,'E3',0,0,0, 'D3',0,0,0,'A2',0,0,0, 'G2',0,0,0,'D3',0,0,0];
+const KSTEP=0.19;
+var kbgm={on:false,step:0,next:0,timer:null}, kbgmGain=null;
+function kbsq(freq,t,dur,v,type){ if(!actx||!kbgmGain)return; var o=actx.createOscillator(),g=actx.createGain();
+  o.type=type||'triangle'; o.frequency.setValueAtTime(freq,t);
+  g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(v,t+0.02); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g).connect(kbgmGain); o.start(t); o.stop(t+dur+0.02); }
+function ktick(t){ if(!actx||!kbgmGain)return; var o=actx.createOscillator(),g=actx.createGain(); o.type='sine';
+  o.frequency.setValueAtTime(2100,t); g.gain.setValueAtTime(0.045,t); g.gain.exponentialRampToValueAtTime(0.0001,t+0.03);
+  o.connect(g).connect(kbgmGain); o.start(t); o.stop(t+0.05); }
+function khat(t){ if(!actx||!kbgmGain)return; var n=Math.max(1,(actx.sampleRate*0.025)|0),b=actx.createBuffer(1,n,actx.sampleRate),d=b.getChannelData(0);
+  for(var k=0;k<n;k++)d[k]=Math.random()*2-1; var s=actx.createBufferSource();s.buffer=b; var g=actx.createGain(),f=actx.createBiquadFilter();
+  f.type='highpass'; f.frequency.value=8000; g.gain.setValueAtTime(0.028,t); g.gain.exponentialRampToValueAtTime(0.0001,t+0.025);
+  s.connect(f).connect(g).connect(kbgmGain); s.start(t); s.stop(t+0.026); }
+function kbgmPlay(i,t){ var ln=KLEAD[i]; if(ln) kbsq(KNB[ln],t,KSTEP*1.6,0.12,'triangle');
+  var bn=KBASS[i]; if(bn) kbsq(KNB[bn],t,KSTEP*1.9,0.16,'sine');
+  if(i%4===0) ktick(t); if(i%2===1) khat(t); }
+function kbgmSched(){ if(!actx||!kbgm.on)return; while(kbgm.next<actx.currentTime+0.12){ kbgmPlay(kbgm.step,kbgm.next); kbgm.next+=KSTEP; kbgm.step=(kbgm.step+1)%32; } }
+function startBGM(){ if(!actx)return; stopBGM(); kbgmGain=actx.createGain(); kbgmGain.gain.value=0.0001; kbgmGain.connect(master);
+  kbgmGain.gain.linearRampToValueAtTime(0.3,actx.currentTime+0.6);
+  kbgm.on=true; kbgm.step=0; kbgm.next=actx.currentTime+0.08; kbgm.timer=setInterval(kbgmSched,30); }
+function stopBGM(){ kbgm.on=false; if(kbgm.timer){clearInterval(kbgm.timer);kbgm.timer=null;}
+  if(kbgmGain){ try{ var t=actx.currentTime; kbgmGain.gain.cancelScheduledValues(t); kbgmGain.gain.setValueAtTime(kbgmGain.gain.value,t); kbgmGain.gain.linearRampToValueAtTime(0.0001,t+0.2);}catch(e){} var g=kbgmGain; setTimeout(function(){try{g.disconnect();}catch(e){}},300); kbgmGain=null; } }
+
 // ===== 進行 =====
-function startGame(){ order=shuffle(PICS.map((_,i)=>i)).slice(0,5); pIdx=0; total=0; loadPic(); }
+function startGame(){ startBGM(); order=shuffle(PICS.map((_,i)=>i)).slice(0,5); pIdx=0; total=0; loadPic(); }
 function loadPic(){ cur=PICS[order[pIdx]];
   covered=[]; for(let r=0;r<GRID;r++){ covered.push([]); for(let c=0;c<GRID;c++) covered[r].push(true); }
   remaining=0; anyRevealed=false; spinsUsed=0; pops=[]; state=ST.PLAY; }
@@ -184,7 +211,7 @@ function pickChoice(name){
   state=ST.RESULT; resTimer=2.4;
 }
 var curPointsAtAnswer=0;
-function nextPic(){ pIdx++; if(pIdx>=order.length){ if(total>best){ best=total; try{localStorage.setItem(KEY,String(best));}catch(e){} } SFX.fin(); state=ST.OVER; } else loadPic(); }
+function nextPic(){ pIdx++; if(pIdx>=order.length){ if(total>best){ best=total; try{localStorage.setItem(KEY,String(best));}catch(e){} } SFX.fin(); stopBGM(); state=ST.OVER; } else loadPic(); }
 
 // ===== 入力 =====
 function getXY(e){ const r=cv.getBoundingClientRect(); const cx=(e.touches?e.touches[0].clientX:e.clientX)-r.left;
@@ -373,6 +400,7 @@ window.kakushieLaunch=function(ctx2){
 };
 window.kakushieShutdown=function(){
   running=false; if(rafId) cancelAnimationFrame(rafId); rafId=0;
+  try{ stopBGM(); }catch(e){}
   window.removeEventListener('resize',onResize);
   try{ if(master) master.disconnect(); }catch(e){} master=null; actx=null;
 };
